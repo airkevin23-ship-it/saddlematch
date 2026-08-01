@@ -114,8 +114,12 @@ export default async function LandingPage() {
             {/* Mockup 1 — a profile built on prompts */}
             <div className="text-left">
               <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] overflow-hidden max-w-[280px] mx-auto sm:mx-0">
-                <div className="aspect-[4/5] bg-line flex items-center justify-center">
-                  <CowboyHatIcon className="w-14 h-14 text-ink-faint" />
+                <div className="aspect-[4/5] bg-line overflow-hidden">
+                  <img
+                    src="/maddie-profile.png"
+                    alt="Maddie enjoying an Austin evening"
+                    className="h-full w-full object-cover object-center"
+                  />
                 </div>
                 <div className="p-4">
                   <p className="font-extrabold text-sm">Maddie, 27</p>
@@ -142,17 +146,19 @@ export default async function LandingPage() {
                 </p>
                 <div className="space-y-2">
                   {[
-                    { name: "Jordan, 29", city: "Houston" },
-                    { name: "Casey, 26", city: "Dallas" },
-                    { name: "Priya, 28", city: "San Antonio" },
+                    { name: "Jordan, 29", city: "Houston", image: "/jordan-profile.png" },
+                    { name: "Casey, 26", city: "Dallas", image: "/casey-profile.png" },
+                    { name: "Priya, 28", city: "San Antonio", image: "/maddie-profile.png" },
                   ].map((p) => (
                     <div
                       key={p.name}
                       className="flex items-center gap-2 rounded-xl border border-line bg-cream px-3 py-2"
                     >
-                      <span className="w-8 h-8 rounded-full bg-line flex items-center justify-center shrink-0">
-                        <CowboyHatIcon className="w-4 h-4 text-ink-faint" />
-                      </span>
+                      <img
+                        src={p.image}
+                        alt=""
+                        className="w-8 h-8 rounded-full object-cover shrink-0"
+                      />
                       <div>
                         <p className="text-xs font-semibold leading-tight">{p.name}</p>
                         <p className="text-[10px] text-ink-soft leading-tight">{p.city}</p>
