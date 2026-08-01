@@ -13,7 +13,7 @@ export default function DiscoverPage() {
   const [error, setError] = useState<string | null>(null);
   const [matchToast, setMatchToast] = useState<string | null>(null);
 
-  const [openPromptIndex, setOpenPromptIndex] = useState<number | null>(null);
+  const [openPromptIndex, setOpenPromptIndex] = useState<number | "photo" | null>(null);
   const [comment, setComment] = useState("");
   const [sending, setSending] = useState(false);
 
@@ -154,7 +154,7 @@ export default function DiscoverPage() {
   const remaining = candidates.length - index;
 
   return (
-    <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink">
+    <div className="max-w-xl mx-auto px-4 sm:px-6 py-6 sm:py-10 bg-cream min-h-screen text-ink">
       {matchToast && (
         <div className="mb-4 rounded-xl bg-brand-soft border border-brand/30 text-brand-dark text-sm font-semibold px-4 py-3 text-center">
           {matchToast}
@@ -162,9 +162,10 @@ export default function DiscoverPage() {
       )}
 
       {!loading && !error && candidates.length > 0 && (
-        <p className="text-xs text-ink-soft text-center mb-4 font-medium tracking-wide uppercase">
-          {remaining} of {candidates.length} in today&rsquo;s roundup
-        </p>
+        <div className="mb-5 flex items-center justify-between px-1">
+          <p className="text-xs font-bold tracking-[0.16em] uppercase text-brand">Today&rsquo;s roundup</p>
+          <p className="text-xs text-ink-soft font-medium">{remaining} left</p>
+        </div>
       )}
 
       {loading && <p className="text-ink-soft text-center">Rounding up today&rsquo;s picks…</p>}
@@ -208,7 +209,32 @@ export default function DiscoverPage() {
             ) : (
               <CowboyHatIcon className="w-14 h-14" />
             )}
+            <button
+              onClick={() => setOpenPromptIndex(openPromptIndex === "photo" ? null : "photo")}
+              className="absolute bottom-3 right-3 flex h-12 w-12 items-center justify-center rounded-full bg-ink text-xl text-white shadow-lg hover:bg-brand transition-colors"
+              aria-label="Like this photo"
+            >
+              {openPromptIndex === "photo" ? "♥" : "♡"}
+            </button>
           </div>
+
+          {openPromptIndex === "photo" && (
+            <div className="border-b border-line bg-brand-soft p-4">
+              <p className="text-xs font-bold text-brand-dark">Like their photo with a note</p>
+              <textarea
+                autoFocus
+                value={comment}
+                onChange={(event) => setComment(event.target.value)}
+                placeholder="What caught your eye?"
+                rows={2}
+                className="mt-2 w-full resize-none rounded-xl border border-brand/20 bg-card px-3 py-2 text-sm outline-none focus:border-brand"
+              />
+              <div className="mt-2 flex gap-2">
+                <button onClick={() => setOpenPromptIndex(null)} className="min-h-11 flex-1 rounded-xl border border-line bg-card text-sm font-semibold text-ink-soft">Cancel</button>
+                <button onClick={() => handleSwipe("like", comment.trim() || undefined)} disabled={sending} className="min-h-11 flex-1 rounded-xl bg-brand text-sm font-bold text-white disabled:opacity-50">{sending ? "Sending…" : "Send like"}</button>
+              </div>
+            </div>
+          )}
 
           {current.intro_video_url && (
             <div className="border-b border-line bg-ink p-2">
@@ -217,9 +243,9 @@ export default function DiscoverPage() {
             </div>
           )}
 
-          <div className="p-5">
+          <div className="p-5 sm:p-6">
             <div className="flex items-start justify-between gap-2">
-              <h2 className="text-xl font-extrabold tracking-tight">
+              <h2 className="text-2xl font-extrabold tracking-tight">
                 {current.display_name}, {current.age}
               </h2>
               <div className="flex items-center gap-3 shrink-0 pt-1">
@@ -240,8 +266,12 @@ export default function DiscoverPage() {
               </div>
             </div>
             {current.bio && (
-              <p className="text-ink-soft mt-1 text-sm">{current.bio}</p>
+              <p className="text-ink-soft mt-1 text-base leading-relaxed">{current.bio}</p>
             )}
+            <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+              <div className="rounded-xl bg-cream px-3 py-2.5"><span className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Based in</span><span className="font-semibold">Texas</span></div>
+              <div className="rounded-xl bg-cream px-3 py-2.5"><span className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Looking for</span><span className="font-semibold">Real connection</span></div>
+            </div>
             {current.interests?.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 {current.interests.map((interest) => (
@@ -279,12 +309,12 @@ export default function DiscoverPage() {
                 {current.prompts.map((p, i) => (
                   <div
                     key={i}
-                    className="rounded-2xl border border-line bg-cream p-4"
+                    className="rounded-2xl border border-line bg-cream p-4 sm:p-5"
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-xs text-ink-soft font-medium">{p.question}</p>
-                        <p className="text-sm mt-1">{p.answer}</p>
+                      <div className="min-w-0">
+                        <p className="text-xs text-ink-soft font-bold uppercase tracking-wide">{p.question}</p>
+                        <p className="text-base mt-2 leading-relaxed font-medium">{p.answer}</p>
                       </div>
                       <button
                         onClick={() =>
@@ -321,18 +351,18 @@ export default function DiscoverPage() {
             )}
           </div>
 
-          <div className="flex border-t border-line">
+          <div className="sticky bottom-20 sm:bottom-0 flex border-t border-line bg-card">
             <button
               onClick={() => handleSwipe("pass")}
               disabled={sending}
-              className="flex-1 py-4 text-ink-soft hover:bg-line/40 font-semibold disabled:opacity-50 transition-colors"
+              className="flex-1 min-h-14 text-ink-soft hover:bg-line/40 font-semibold disabled:opacity-50 transition-colors"
             >
               Pass
             </button>
             <button
               onClick={() => handleSwipe("like")}
               disabled={sending}
-              className="flex-1 py-4 text-brand hover:bg-brand-soft font-bold border-l border-line disabled:opacity-50 transition-colors"
+              className="flex-1 min-h-14 text-brand hover:bg-brand-soft font-bold border-l border-line disabled:opacity-50 transition-colors"
             >
               Like profile
             </button>
