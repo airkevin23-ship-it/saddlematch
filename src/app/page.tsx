@@ -41,10 +41,14 @@ export default async function LandingPage() {
   return (
     <main className="min-h-screen flex flex-col bg-cream text-ink">
       <header className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 max-w-5xl mx-auto w-full">
-        <span className="flex items-center gap-1.5 font-extrabold text-lg sm:text-xl tracking-tight">
+        <Link
+          href="/"
+          aria-label="SaddleMatch home"
+          className="flex min-h-11 items-center gap-1.5 rounded-lg font-extrabold text-lg sm:text-xl tracking-tight focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+        >
           <HorseshoeIcon className="w-5 h-5 text-brand" />
           {APP_NAME}
-        </span>
+        </Link>
         <nav className="flex items-center gap-3 sm:gap-5 text-sm font-medium">
           <Link href="/login" className="text-ink-soft hover:text-ink transition-colors">
             Log in
