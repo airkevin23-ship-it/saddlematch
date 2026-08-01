@@ -27,6 +27,9 @@ export default function OnboardingPage() {
   const [birthdate, setBirthdate] = useState("");
   const [gender, setGender] = useState<Gender>("male");
   const [interestedIn, setInterestedIn] = useState<Gender[]>(["female"]);
+  const [minAge, setMinAge] = useState(24);
+  const [maxAge, setMaxAge] = useState(45);
+  const [relationshipIntent, setRelationshipIntent] = useState<"long_term" | "short_term" | "open_to_either">("long_term");
   const [cityId, setCityId] = useState(CITIES[0].id);
   const [tagline, setTagline] = useState("");
   const [interests, setInterests] = useState("");
@@ -94,6 +97,10 @@ export default function OnboardingPage() {
       setError("You need to be 18 or older to use " + APP_NAME + ".");
       return;
     }
+    if (minAge < 18 || maxAge < minAge) {
+      setError("Choose a valid age range.");
+      return;
+    }
 
     setLoading(true);
 
@@ -113,6 +120,9 @@ export default function OnboardingPage() {
       birthdate,
       gender,
       interested_in: interestedIn,
+      min_age: minAge,
+      max_age: maxAge,
+      relationship_intent: relationshipIntent,
       city_id: cityId,
       bio: tagline,
       interests: interests.split(",").map((s) => s.trim()).filter(Boolean),
@@ -207,6 +217,26 @@ export default function OnboardingPage() {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="rounded-2xl border border-line bg-card p-4">
+            <p className="text-sm font-bold">Dating preferences</p>
+            <p className="mt-1 text-xs text-ink-soft">These guide your daily roundup. You can change them later.</p>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <label className="text-sm text-ink-soft">Minimum age
+                <input type="number" min="18" max="99" value={minAge} onChange={(e) => setMinAge(Number(e.target.value))} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand" />
+              </label>
+              <label className="text-sm text-ink-soft">Maximum age
+                <input type="number" min="18" max="99" value={maxAge} onChange={(e) => setMaxAge(Number(e.target.value))} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand" />
+              </label>
+            </div>
+            <label className="mt-3 block text-sm text-ink-soft">I&rsquo;m looking for
+              <select value={relationshipIntent} onChange={(e) => setRelationshipIntent(e.target.value as typeof relationshipIntent)} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand">
+                <option value="long_term">A long-term relationship</option>
+                <option value="short_term">Something short-term</option>
+                <option value="open_to_either">Open to either</option>
+              </select>
+            </label>
           </div>
 
           <div>

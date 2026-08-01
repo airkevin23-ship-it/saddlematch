@@ -19,6 +19,9 @@ export interface Profile {
   birthdate: string;
   gender: Gender;
   interested_in: Gender[];
+  min_age: number;
+  max_age: number;
+  relationship_intent: "long_term" | "short_term" | "open_to_either";
   city_id: number;
   bio: string;
   interests: string[];

@@ -13,6 +13,9 @@ export default function ProfilePage() {
   const [deleting, setDeleting] = useState(false);
   const [interestsInput, setInterestsInput] = useState("");
   const [prompts, setPrompts] = useState<Prompt[]>([]);
+  const [minAge, setMinAge] = useState(18);
+  const [maxAge, setMaxAge] = useState(99);
+  const [relationshipIntent, setRelationshipIntent] = useState<"long_term" | "short_term" | "open_to_either">("open_to_either");
   const [saving, setSaving] = useState(false);
   const [mediaSaving, setMediaSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -34,6 +37,9 @@ export default function ProfilePage() {
 
       if (data) {
         setProfile(data);
+        setMinAge(data.min_age ?? 18);
+        setMaxAge(data.max_age ?? 99);
+        setRelationshipIntent(data.relationship_intent ?? "open_to_either");
         setInterestsInput((data.interests ?? []).join(", "));
         setPrompts(
           data.prompts && data.prompts.length === 3
@@ -60,6 +66,10 @@ export default function ProfilePage() {
 
   async function handleAiPrompt(i: number) {
     if (!profile) return;
+    if (minAge < 18 || maxAge < minAge) {
+      setError("Choose a valid age range.");
+      return;
+    }
     setAiLoadingIndex(i);
     setError(null);
     const city = CITIES.find((c) => c.id === profile.city_id);
@@ -98,6 +108,9 @@ export default function ProfilePage() {
         city_id: profile.city_id,
         interests: interestsInput.split(",").map((s) => s.trim()).filter(Boolean),
         prompts,
+        min_age: minAge,
+        max_age: maxAge,
+        relationship_intent: relationshipIntent,
         updated_at: new Date().toISOString(),
       })
       .eq("id", profile.id);
@@ -318,6 +331,16 @@ export default function ProfilePage() {
             className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
           />
         </div>
+
+        <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
+          <h2 className="font-bold">Dating preferences</h2>
+          <p className="mt-1 text-xs text-ink-soft">These set your normal daily-match range.</p>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <label className="text-sm text-ink-soft">Minimum age<input type="number" min="18" max="99" value={minAge} onChange={(e) => setMinAge(Number(e.target.value))} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand" /></label>
+            <label className="text-sm text-ink-soft">Maximum age<input type="number" min="18" max="99" value={maxAge} onChange={(e) => setMaxAge(Number(e.target.value))} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand" /></label>
+          </div>
+          <label className="mt-3 block text-sm text-ink-soft">I&rsquo;m looking for<select value={relationshipIntent} onChange={(e) => setRelationshipIntent(e.target.value as typeof relationshipIntent)} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand"><option value="long_term">A long-term relationship</option><option value="short_term">Something short-term</option><option value="open_to_either">Open to either</option></select></label>
+        </section>
 
         <div className="pt-4 border-t border-line">
           <p className="text-sm font-bold mb-3">Your 3 prompts</p>

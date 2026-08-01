@@ -23,8 +23,12 @@ export default function DiscoverPage() {
   const [safetyBusy, setSafetyBusy] = useState(false);
   const [safetyMessage, setSafetyMessage] = useState<string | null>(null);
   const [wildflowerLoading, setWildflowerLoading] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filterMinAge, setFilterMinAge] = useState(18);
+  const [filterMaxAge, setFilterMaxAge] = useState(99);
+  const [filterGenders, setFilterGenders] = useState<string[]>([]);
 
-  async function loadQueue() {
+  async function loadQueue(useFilters = false) {
     setLoading(true);
     setError(null);
     setOpenPromptIndex(null);
@@ -32,7 +36,13 @@ export default function DiscoverPage() {
     setPreviewReason(null);
 
     try {
-      const res = await fetch("/api/daily-queue");
+      const params = new URLSearchParams();
+      if (useFilters) {
+        params.set("minAge", String(filterMinAge));
+        params.set("maxAge", String(filterMaxAge));
+        if (filterGenders.length) params.set("genders", filterGenders.join(","));
+      }
+      const res = await fetch(`/api/daily-queue${params.size ? `?${params}` : ""}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Couldn't load today's roundup.");
       setCandidates(data.candidates ?? []);
@@ -54,6 +64,10 @@ export default function DiscoverPage() {
     setComment("");
     setPreviewReason(null);
     setPreviewError(null);
+  }
+
+  function toggleFilterGender(gender: string) {
+    setFilterGenders((current) => current.includes(gender) ? current.filter((item) => item !== gender) : [...current, gender]);
   }
 
   async function handleSwipe(action: "like" | "pass", likeCommentArg?: string, promptIndex?: number) {
@@ -182,8 +196,26 @@ export default function DiscoverPage() {
       {!loading && !error && candidates.length > 0 && (
         <div className="mb-5 flex items-center justify-between px-1">
           <p className="text-xs font-bold tracking-[0.16em] uppercase text-brand">Today&rsquo;s roundup</p>
-          <p className="text-xs text-ink-soft font-medium">{remaining} left</p>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setFiltersOpen((open) => !open)} className="min-h-10 rounded-lg px-2 text-xs font-bold text-ink-soft hover:bg-card hover:text-ink">Filters</button>
+            <p className="text-xs text-ink-soft font-medium">{remaining} left</p>
+          </div>
         </div>
+      )}
+
+      {filtersOpen && (
+        <section className="mb-5 rounded-2xl border border-line bg-card p-4 shadow-sm">
+          <div className="flex items-center justify-between"><h2 className="font-bold">Filters</h2><button onClick={() => setFiltersOpen(false)} className="min-h-10 px-2 text-sm font-semibold text-ink-soft">Done</button></div>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <label className="text-xs font-semibold text-ink-soft">Minimum age<input type="number" min="18" max="99" value={filterMinAge} onChange={(e) => setFilterMinAge(Number(e.target.value))} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base text-ink outline-none focus:border-brand" /></label>
+            <label className="text-xs font-semibold text-ink-soft">Maximum age<input type="number" min="18" max="99" value={filterMaxAge} onChange={(e) => setFilterMaxAge(Number(e.target.value))} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base text-ink outline-none focus:border-brand" /></label>
+          </div>
+          <p className="mt-4 text-xs font-semibold text-ink-soft">Show me</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {["male", "female", "nonbinary", "other"].map((gender) => <button type="button" key={gender} onClick={() => toggleFilterGender(gender)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold capitalize ${filterGenders.includes(gender) ? "border-brand bg-brand text-white" : "border-line text-ink-soft"}`}>{gender === "male" ? "Men" : gender === "female" ? "Women" : gender}</button>)}
+          </div>
+          <button onClick={() => { setFiltersOpen(false); loadQueue(true); }} className="mt-4 min-h-12 w-full rounded-xl bg-brand font-bold text-white">Apply filters</button>
+        </section>
       )}
 
       {loading && <p className="text-ink-soft text-center">Rounding up today&rsquo;s picks…</p>}

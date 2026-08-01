@@ -6,7 +6,7 @@ import { DAILY_QUEUE_SIZE } from "@/lib/constants";
 // each user gets a small, capped, once-a-day queue of candidates.
 // Revisiting the same day returns the same queue (minus anyone they've
 // since swiped on); a new day rolls a fresh batch.
-export async function GET() {
+export async function GET(request: Request) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -27,6 +27,11 @@ export async function GET() {
   }
 
   const today = new Date().toISOString().slice(0, 10);
+  const searchParams = new URL(request.url).searchParams;
+  const filteredMinAge = Number(searchParams.get("minAge")) || me.min_age || 18;
+  const filteredMaxAge = Number(searchParams.get("maxAge")) || me.max_age || 99;
+  const filteredGenders = searchParams.get("genders")?.split(",").filter(Boolean) ?? [];
+  const hasTemporaryFilters = searchParams.has("minAge") || searchParams.has("maxAge") || searchParams.has("genders");
 
   const { data: swiped } = await supabase
     .from("swipes")
@@ -54,7 +59,7 @@ export async function GET() {
 
   let candidateIds: string[];
 
-  if (existingQueue && existingQueue.queue_date === today) {
+  if (!hasTemporaryFilters && existingQueue && existingQueue.queue_date === today) {
     candidateIds = existingQueue.candidate_ids.filter(
       (id: string) => !swipedIds.has(id) && !blockedIds.has(id)
     );
@@ -72,20 +77,24 @@ export async function GET() {
       .not("id", "in", `(${excludeIds.join(",")})`)
       .limit(DAILY_QUEUE_SIZE * 3);
 
-    if (me.interested_in?.length) {
-      query = query.in("gender", me.interested_in);
+    const genders = filteredGenders.length ? filteredGenders : me.interested_in;
+    if (genders?.length) {
+      query = query.in("gender", genders);
     }
+    query = query.gte("age", filteredMinAge).lte("age", filteredMaxAge);
 
     const { data: pool } = await query;
     const shuffled = (pool ?? []).map((p) => p.id).sort(() => Math.random() - 0.5);
     candidateIds = shuffled.slice(0, DAILY_QUEUE_SIZE);
 
-    await supabase.from("daily_queues").upsert({
-      user_id: user.id,
-      queue_date: today,
-      candidate_ids: candidateIds,
-      updated_at: new Date().toISOString(),
-    });
+    if (!hasTemporaryFilters) {
+      await supabase.from("daily_queues").upsert({
+        user_id: user.id,
+        queue_date: today,
+        candidate_ids: candidateIds,
+        updated_at: new Date().toISOString(),
+      });
+    }
   }
 
   if (candidateIds.length === 0) {
