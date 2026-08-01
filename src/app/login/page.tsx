@@ -13,22 +13,50 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const [confirmationSent, setConfirmationSent] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setNeedsConfirmation(false);
+    setConfirmationSent(false);
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      setError(error.message);
+      if (/email not confirmed/i.test(error.message)) {
+        setError("Please confirm your email before logging in.");
+        setNeedsConfirmation(true);
+      } else if (/invalid login credentials/i.test(error.message)) {
+        setError("That email and password do not match. Passwords are case-sensitive.");
+      } else {
+        setError(error.message);
+      }
       setLoading(false);
       return;
     }
 
     router.push("/app/discover");
     router.refresh();
+  }
+
+  async function resendConfirmation() {
+    if (!email) {
+      setError("Enter your email address first, then resend the confirmation.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+    });
+    setConfirmationSent(!error);
+    setError(error ? error.message : null);
+    setLoading(false);
   }
 
   return (
@@ -57,6 +85,8 @@ export default function LoginPage() {
             className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
           />
           {error && <p className="text-sm text-red-600">{error}</p>}
+          {needsConfirmation && <button type="button" onClick={resendConfirmation} disabled={loading} className="min-h-11 text-sm font-semibold text-brand hover:text-brand-dark disabled:opacity-50">Resend confirmation email</button>}
+          {confirmationSent && <p className="text-sm font-semibold text-brand">Confirmation email sent. Open the link in your inbox, then return here to log in.</p>}
           <button
             type="submit"
             disabled={loading}
