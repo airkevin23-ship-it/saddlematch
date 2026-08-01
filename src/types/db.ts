@@ -1,4 +1,5 @@
 export type Gender = "male" | "female" | "nonbinary" | "other";
+export type RelationshipIntent = "long_term" | "life_partner" | "marriage" | "short_term" | "casual" | "friendship" | "figuring_it_out" | "open_to_either";
 
 export type CitySlug = "houston" | "austin" | "dallas" | "san-antonio";
 
@@ -21,7 +22,7 @@ export interface Profile {
   interested_in: Gender[];
   min_age: number;
   max_age: number;
-  relationship_intent: "long_term" | "short_term" | "open_to_either";
+  relationship_intent: RelationshipIntent;
   preference_details?: Record<string, string>;
   city_id: number;
   bio: string;
