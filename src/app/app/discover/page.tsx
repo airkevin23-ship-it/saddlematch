@@ -22,6 +22,7 @@ export default function DiscoverPage() {
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [safetyBusy, setSafetyBusy] = useState(false);
   const [safetyMessage, setSafetyMessage] = useState<string | null>(null);
+  const [wildflowerLoading, setWildflowerLoading] = useState(false);
 
   async function loadQueue() {
     setLoading(true);
@@ -121,6 +122,23 @@ export default function DiscoverPage() {
     }
   }
 
+  async function sendWildflower(targetId: string) {
+    setWildflowerLoading(true);
+    try {
+      const response = await fetch("/api/stripe/wildflower", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetId }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Couldn't start checkout.");
+      window.location.assign(data.url);
+    } catch (err) {
+      setPreviewError(err instanceof Error ? err.message : "Couldn't start checkout.");
+      setWildflowerLoading(false);
+    }
+  }
+
   async function handleBlock(targetId: string) {
     if (!confirm("Block this person? You won't see each other again.")) return;
     setSafetyBusy(true);
@@ -193,30 +211,28 @@ export default function DiscoverPage() {
 
       {current && (
         <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] overflow-hidden">
-          <div className="aspect-[4/5] bg-line flex items-center justify-center text-ink-faint relative">
-            {current.is_demo && (
-              <span className="absolute top-2 left-2 bg-ink text-cream text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full">
-                Demo profile
-              </span>
-            )}
-            {current.photo_urls?.[0] ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={current.photo_urls[0]}
-                alt={current.display_name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <CowboyHatIcon className="w-14 h-14" />
-            )}
-            <button
-              onClick={() => setOpenPromptIndex(openPromptIndex === "photo" ? null : "photo")}
-              className="absolute bottom-3 right-3 flex h-12 w-12 items-center justify-center rounded-full bg-ink text-xl text-white shadow-lg hover:bg-brand transition-colors"
-              aria-label="Like this photo"
-            >
-              {openPromptIndex === "photo" ? "♥" : "♡"}
-            </button>
-          </div>
+          {(current.photo_urls?.length ? current.photo_urls : [null]).map((photoUrl, photoIndex) => (
+            <div key={photoUrl ?? "empty-photo"} className="aspect-[4/5] bg-line flex items-center justify-center text-ink-faint relative border-b border-line last:border-b-0">
+              {current.is_demo && photoIndex === 0 && (
+                <span className="absolute top-3 left-3 bg-ink text-cream text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full">
+                  Demo profile
+                </span>
+              )}
+              {photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={photoUrl} alt={`${current.display_name} photo ${photoIndex + 1}`} className="w-full h-full object-cover" />
+              ) : (
+                <CowboyHatIcon className="w-14 h-14" />
+              )}
+              <button
+                onClick={() => setOpenPromptIndex(openPromptIndex === "photo" ? null : "photo")}
+                className="absolute bottom-3 right-3 flex h-12 w-12 items-center justify-center rounded-full bg-ink text-xl text-white shadow-lg hover:bg-brand transition-colors"
+                aria-label={`Like photo ${photoIndex + 1}`}
+              >
+                {openPromptIndex === "photo" ? "♥" : "♡"}
+              </button>
+            </div>
+          ))}
 
           {openPromptIndex === "photo" && (
             <div className="border-b border-line bg-brand-soft p-4">
@@ -284,6 +300,15 @@ export default function DiscoverPage() {
                 ))}
               </div>
             )}
+
+            <button
+              onClick={() => sendWildflower(current.id)}
+              disabled={wildflowerLoading}
+              className="mt-4 flex min-h-12 w-full items-center justify-center rounded-xl border border-brand/30 bg-brand-soft px-4 text-sm font-bold text-brand-dark hover:bg-brand hover:text-white disabled:opacity-50 transition-colors"
+            >
+              {wildflowerLoading ? "Opening checkout…" : "✿ Send a Wildflower · $5"}
+            </button>
+            <p className="mt-1.5 text-center text-[11px] text-ink-faint">A one-time extra-interest signal. It does not guarantee a match.</p>
 
             {/* AI compatibility preview — Coffee Meets Bagel style, shown before deciding */}
             <div className="mt-4">

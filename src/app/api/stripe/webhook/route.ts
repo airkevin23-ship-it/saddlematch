@@ -94,6 +94,18 @@ export async function POST(request: Request) {
       const customerId =
         typeof session.customer === "string" ? session.customer : session.customer?.id;
 
+      if (session.metadata?.type === "wildflower") {
+        const targetId = session.metadata.target_id;
+        if (userId && targetId) {
+          await supabase.from("wildflowers").upsert({
+            sender_id: userId,
+            recipient_id: targetId,
+            stripe_checkout_session_id: session.id,
+          }, { onConflict: "stripe_checkout_session_id" });
+        }
+        break;
+      }
+
       if (userId && customerId) {
         await supabase.from("subscriptions").upsert({
           user_id: userId,
