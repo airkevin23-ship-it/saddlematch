@@ -7,6 +7,21 @@ import { createClient } from "@/lib/supabase/client";
 import { CITIES, PROMPT_BANK } from "@/lib/constants";
 import type { Profile, Prompt } from "@/types/db";
 
+const DETAIL_FIELDS = [
+  ["politics", "Politics", ["Prefer not to say", "Conservative", "Moderate", "Liberal", "Not political"]],
+  ["languages", "Languages spoken", ["Not answered yet", "English", "Spanish", "English and Spanish", "Other"]],
+  ["relationshipType", "Relationship type", ["Not answered yet", "Monogamous", "Open to exploring", "Prefer not to say"]],
+  ["drinking", "Drinking", ["Not answered yet", "No", "Sometimes", "Socially", "Regularly"]],
+  ["smoking", "Smoking", ["Not answered yet", "No", "Sometimes", "Yes"]],
+  ["marijuana", "Marijuana", ["Not answered yet", "No", "Sometimes", "Yes"]],
+  ["drugs", "Drugs", ["Not answered yet", "No", "Prefer not to say"]],
+] as const;
+
+type DetailKey = typeof DETAIL_FIELDS[number][0];
+type Details = Record<DetailKey, string>;
+const EMPTY_DETAILS: Details = Object.fromEntries(DETAIL_FIELDS.map(([key, , options]) => [key, options[0]])) as Details;
+const EMPTY_VISIBILITY: Record<DetailKey, boolean> = Object.fromEntries(DETAIL_FIELDS.map(([key]) => [key, true])) as Record<DetailKey, boolean>;
+
 export default function ProfilePage() {
   const supabase = createClient();
   const router = useRouter();
@@ -22,6 +37,9 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
   const [aiLoadingIndex, setAiLoadingIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [profileTab, setProfileTab] = useState<"edit" | "view">("edit");
+  const [details, setDetails] = useState<Details>(EMPTY_DETAILS);
+  const [visibility, setVisibility] = useState<Record<DetailKey, boolean>>(EMPTY_VISIBILITY);
 
   useEffect(() => {
     (async () => {
@@ -41,6 +59,9 @@ export default function ProfilePage() {
         setMinAge(data.min_age ?? 18);
         setMaxAge(data.max_age ?? 99);
         setRelationshipIntent(data.relationship_intent ?? "open_to_either");
+        const savedDetails = ((data.preference_details as unknown as { profile?: { values?: Partial<Details>; visibility?: Partial<Record<DetailKey, boolean>> } } | undefined)?.profile ?? {});
+        setDetails({ ...EMPTY_DETAILS, ...(savedDetails.values ?? {}) });
+        setVisibility({ ...EMPTY_VISIBILITY, ...(savedDetails.visibility ?? {}) });
         setInterestsInput((data.interests ?? []).join(", "));
         setPrompts(
           data.prompts && data.prompts.length === 3
@@ -112,6 +133,7 @@ export default function ProfilePage() {
         min_age: minAge,
         max_age: maxAge,
         relationship_intent: relationshipIntent,
+        preference_details: { ...(profile.preference_details ?? {}), profile: { values: details, visibility } } as unknown as Record<string, string>,
         updated_at: new Date().toISOString(),
       })
       .eq("id", profile.id);
@@ -204,15 +226,20 @@ export default function ProfilePage() {
     return <div className="px-6 py-10 text-ink-soft bg-cream min-h-screen">Loading…</div>;
   }
 
+  const completedItems = [profile.photo_urls.length > 0, Boolean(profile.bio), prompts.some((prompt) => Boolean(prompt.answer.trim())), profile.interests.length > 0, Boolean(profile.intro_video_url), Object.values(details).some((value) => value !== "Not answered yet" && value !== "Prefer not to say")].filter(Boolean).length;
+  const completionScore = Math.round((completedItems / 6) * 100);
+
   return (
     <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink">
-      <h1 className="text-xl font-extrabold mb-6 tracking-tight">Edit profile</h1>
+      <div className="mb-6 flex items-center justify-between"><h1 className="text-xl font-extrabold tracking-tight">{profile.display_name} <span className="text-brand">· {completionScore}%</span></h1><Link href="/app/discover" className="text-sm font-semibold text-ink-soft">Done</Link></div>
+      <div className="mb-6 grid grid-cols-2 border-b border-line"><button type="button" onClick={() => setProfileTab("edit")} className={`min-h-12 border-b-4 text-base font-bold ${profileTab === "edit" ? "border-ink text-ink" : "border-transparent text-ink-faint"}`}>Edit</button><button type="button" onClick={() => setProfileTab("view")} className={`min-h-12 border-b-4 text-base font-bold ${profileTab === "view" ? "border-ink text-ink" : "border-transparent text-ink-faint"}`}>View</button></div>
+      {profileTab === "view" && <section className="mb-6 space-y-4">{profile.photo_urls[0] && <div className="aspect-[4/5] overflow-hidden rounded-3xl bg-line">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={profile.photo_urls[0]} alt="Profile preview" className="h-full w-full object-cover" /></div>}<div className="rounded-2xl border border-line bg-card p-5"><h2 className="text-2xl font-extrabold">{profile.display_name}</h2>{profile.bio && <p className="mt-2 leading-relaxed text-ink-soft">{profile.bio}</p>}</div><div className="rounded-2xl border border-line bg-card px-4">{DETAIL_FIELDS.filter(([key]) => visibility[key]).map(([key, label]) => <div key={key} className="border-b border-line py-4 last:border-0"><p className="font-bold">{label}</p><p className="mt-1 text-ink-soft">{details[key]}</p></div>)}<div className="py-4"><p className="font-bold">Dating intentions</p><p className="mt-1 text-ink-soft">{relationshipIntent === "long_term" ? "Long-term relationship" : relationshipIntent === "short_term" ? "Short-term relationship" : "Open to either"}</p></div></div></section>}
 
       <Link href="/app/preferences" className="mb-5 flex min-h-14 items-center justify-between rounded-2xl border border-line bg-card px-4 font-bold text-ink hover:border-brand">
         <span>Dating preferences</span><span className="text-brand">Edit</span>
       </Link>
 
-      <div className="space-y-5">
+      <div className={profileTab === "edit" ? "space-y-5" : "hidden"}>
         <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
           <div className="flex items-start justify-between gap-3 mb-4">
             <div>
@@ -314,6 +341,12 @@ export default function ProfilePage() {
               </label>
             </div>
           )}
+        </section>
+
+        <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
+          <div className="flex items-center justify-between"><h2 className="font-bold">About you</h2><span className="text-xs text-ink-faint">Visible controls</span></div>
+          <p className="mt-1 text-xs text-ink-soft">Choose what to share on your public profile. You can change this anytime.</p>
+          <div className="mt-3">{DETAIL_FIELDS.map(([key, label, options]) => <div key={key} className="border-b border-line py-3 last:border-0"><div className="flex items-center justify-between gap-3"><label className="min-w-0 flex-1"><span className="block text-sm font-bold">{label}</span><select value={details[key]} onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))} className="mt-1 w-full bg-transparent text-base text-ink-soft outline-none">{options.map((option) => <option key={option}>{option}</option>)}</select></label><button type="button" onClick={() => setVisibility((current) => ({ ...current, [key]: !current[key] }))} className={`min-h-9 rounded-lg px-2 text-xs font-bold ${visibility[key] ? "bg-brand-soft text-brand-dark" : "bg-line text-ink-faint"}`}>{visibility[key] ? "Visible" : "Hidden"}</button></div></div>)}</div>
         </section>
 
         <div>
