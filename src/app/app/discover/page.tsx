@@ -210,6 +210,13 @@ export default function DiscoverPage() {
             )}
           </div>
 
+          {current.intro_video_url && (
+            <div className="border-b border-line bg-ink p-2">
+              <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-cream/70">Intro video</p>
+              <video src={current.intro_video_url} controls playsInline preload="metadata" className="w-full rounded-xl" />
+            </div>
+          )}
+
           <div className="p-5">
             <div className="flex items-start justify-between gap-2">
               <h2 className="text-xl font-extrabold tracking-tight">

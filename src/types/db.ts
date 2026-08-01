@@ -23,6 +23,7 @@ export interface Profile {
   bio: string;
   interests: string[];
   photo_urls: string[];
+  intro_video_url?: string | null;
   prompts: Prompt[];
   is_active: boolean;
   is_demo?: boolean;
@@ -43,6 +44,7 @@ export interface PublicProfile {
   bio: string;
   interests: string[];
   photo_urls: string[];
+  intro_video_url?: string | null;
   prompts: Prompt[];
   is_active: boolean;
   is_demo: boolean;
