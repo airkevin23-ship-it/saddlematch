@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getStripeClient } from "@/lib/stripe";
 
-// Creates a Stripe Checkout session for the $9.99/mo Plus subscription
-// and returns the URL to redirect the browser to.
+// Creates a Stripe Checkout session for SaddleMatch Plus and returns the URL
+// to redirect the browser to. When configured, Stripe applies the introductory
+// coupon for the first three billing cycles before the regular $9.99 rate.
 export async function POST() {
   const supabase = await createClient();
   const {
@@ -33,6 +34,8 @@ export async function POST() {
     customerId = customer.id;
   }
 
+  const introductoryCoupon = process.env.STRIPE_INTRO_COUPON_ID;
+
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
@@ -42,6 +45,9 @@ export async function POST() {
     metadata: { supabase_user_id: user.id },
     subscription_data: {
       metadata: { supabase_user_id: user.id },
+      ...(introductoryCoupon
+        ? { discounts: [{ coupon: introductoryCoupon }] }
+        : {}),
     },
   });
 
