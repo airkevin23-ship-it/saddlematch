@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fff8f3;
+  --foreground: #1b1917;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* TX Connect brand palette — warm, Hinge-inspired light theme */
+  --color-cream: #fff8f3;
+  --color-card: #ffffff;
+  --color-ink: #1b1917;
+  --color-ink-soft: #746e68;
+  --color-ink-faint: #a39c94;
+  --color-line: #ece2d8;
+  --color-line-strong: #ddd0c2;
+  --color-brand: #e0264f;
+  --color-brand-dark: #bd1c40;
+  --color-brand-soft: #fde6ec;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
