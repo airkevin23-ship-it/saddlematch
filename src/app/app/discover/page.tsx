@@ -5,9 +5,55 @@ import { createClient } from "@/lib/supabase/client";
 import type { PublicProfile } from "@/types/db";
 import { CowboyHatIcon } from "@/components/western-icons";
 
+const SAMPLE_PROFILES: PublicProfile[] = [
+  {
+    id: "sample-maddie",
+    display_name: "Maddie",
+    age: 27,
+    gender: "female",
+    city_id: 2,
+    bio: "Live music, weekend trail rides, and finding the best breakfast tacos in town.",
+    interests: ["Horses", "Live music", "Weekend trips"],
+    photo_urls: ["/maddie-profile.png"],
+    prompts: [{ question: "Best local spot for a first date…", answer: "Somewhere with good queso and a little live music." }],
+    is_active: true,
+    is_demo: true,
+    created_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "sample-jordan",
+    display_name: "Jordan",
+    age: 29,
+    gender: "male",
+    city_id: 1,
+    bio: "Houston-based, always up for a rodeo, a road trip, or cooking for friends.",
+    interests: ["Rodeos", "Cooking", "Dogs"],
+    photo_urls: ["/jordan-profile.png"],
+    prompts: [{ question: "My simple pleasures are…", answer: "A great cup of coffee, a good dog, and a wide-open Saturday." }],
+    is_active: true,
+    is_demo: true,
+    created_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "sample-casey",
+    display_name: "Casey",
+    age: 26,
+    gender: "female",
+    city_id: 3,
+    bio: "Country concerts, family dinners, and making room for the people who matter.",
+    interests: ["Country music", "Family", "Outdoors"],
+    photo_urls: ["/casey-profile.png"],
+    prompts: [{ question: "The way to win me over is…", answer: "Be kind, be consistent, and make me laugh." }],
+    is_active: true,
+    is_demo: true,
+    created_at: "2026-01-01T00:00:00.000Z",
+  },
+];
+
 export default function DiscoverPage() {
   const supabase = createClient();
   const [candidates, setCandidates] = useState<PublicProfile[]>([]);
+  const [showingSamples, setShowingSamples] = useState(false);
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +91,9 @@ export default function DiscoverPage() {
       const res = await fetch(`/api/daily-queue${params.size ? `?${params}` : ""}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Couldn't load today's roundup.");
-      setCandidates(data.candidates ?? []);
+      const nextCandidates = data.candidates ?? [];
+      setCandidates(nextCandidates.length ? nextCandidates : SAMPLE_PROFILES);
+      setShowingSamples(nextCandidates.length === 0);
       setIndex(0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Couldn't load today's roundup.");
@@ -73,6 +121,13 @@ export default function DiscoverPage() {
   async function handleSwipe(action: "like" | "pass", likeCommentArg?: string, promptIndex?: number) {
     const current = candidates[index];
     if (!current) return;
+
+    if (current.is_demo) {
+      setSafetyMessage(action === "like" ? "Sample profile liked. Real matches will appear here as members join." : "Sample profile passed.");
+      resetCardState();
+      setIndex((i) => i + 1);
+      return;
+    }
 
     const {
       data: { user },
@@ -203,6 +258,12 @@ export default function DiscoverPage() {
         </div>
       )}
 
+      {showingSamples && current && (
+        <div className="mb-5 rounded-2xl border border-brand/25 bg-brand-soft px-4 py-3 text-center text-sm text-brand-dark">
+          <strong>Welcome to SaddleMatch.</strong> You&rsquo;re viewing sample profiles while your local community grows. They are clearly marked and cannot create a real match.
+        </div>
+      )}
+
       {filtersOpen && (
         <section className="mb-5 rounded-2xl border border-line bg-card p-4 shadow-sm">
           <div className="flex items-center justify-between"><h2 className="font-bold">Filters</h2><button onClick={() => setFiltersOpen(false)} className="min-h-10 px-2 text-sm font-semibold text-ink-soft">Done</button></div>
@@ -247,7 +308,7 @@ export default function DiscoverPage() {
             <div key={photoUrl ?? "empty-photo"} className="aspect-[4/5] bg-line flex items-center justify-center text-ink-faint relative border-b border-line last:border-b-0">
               {current.is_demo && photoIndex === 0 && (
                 <span className="absolute top-3 left-3 bg-ink text-cream text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full">
-                  Demo profile
+                  Sample profile
                 </span>
               )}
               {photoUrl ? (
