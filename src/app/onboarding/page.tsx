@@ -114,20 +114,30 @@ export default function OnboardingPage() {
       return;
     }
 
-    const { error } = await supabase.from("profiles").upsert({
+    const baseProfile = {
       id: user.id,
       display_name: displayName,
       birthdate,
       gender,
       interested_in: interestedIn,
-      min_age: minAge,
-      max_age: maxAge,
-      relationship_intent: relationshipIntent,
       city_id: cityId,
       bio: tagline,
       interests: interests.split(",").map((s) => s.trim()).filter(Boolean),
       prompts,
+    };
+
+    let { error } = await supabase.from("profiles").upsert({
+      ...baseProfile,
+      min_age: minAge,
+      max_age: maxAge,
+      relationship_intent: relationshipIntent,
     });
+
+    // A newly added database field can take a short time to reach every API cache.
+    // Keep onboarding usable during that brief window; defaults are applied later.
+    if (error?.message.includes("schema cache")) {
+      ({ error } = await supabase.from("profiles").upsert(baseProfile));
+    }
 
     if (error) {
       setError(error.message);
