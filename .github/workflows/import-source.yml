@@ -13,6 +13,45 @@ jobs:
       - uses: actions/checkout@v4
       - name: Expand application source
         run: |
+          python3 - <<'PY'
+          import os
+          import zipfile
+
+          with zipfile.ZipFile("saddlematch-v5-pricing.zip") as archive:
+              for item in archive.infolist():
+                  name = item.filename.replace("\\", "/")
+                  if name.endswith("/"):
+                      os.makedirs(name, exist_ok=True)
+                  else:
+                      folder = os.path.dirname(name)
+                      if folder:
+                          os.makedirs(folder, exist_ok=True)
+                      with archive.open(item) as source, open(name, "wb") as target:
+                          target.write(source.read())
+          PY
+          rm saddlematch-v5-pricing.zip
+      - name: Commit application source
+        run: |
+          git config user.name "SaddleMatch"
+          git config user.email "saddlematch@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish SaddleMatch application source" || exit 0
+          git push
+name: Import SaddleMatch source
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Expand application source
+        run: |
           mkdir source
           unzip -oq saddlematch-v5-pricing.zip -d source
           rsync -a source/ ./ --exclude .git --exclude source --exclude saddlematch-v5-pricing.zip
