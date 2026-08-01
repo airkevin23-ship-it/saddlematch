@@ -31,6 +31,7 @@ export default function OnboardingPage() {
   const [maxAge, setMaxAge] = useState(45);
   const [relationshipIntent, setRelationshipIntent] = useState<"long_term" | "short_term" | "open_to_either">("long_term");
   const [cityId, setCityId] = useState(CITIES[0].id);
+  const [zipCode, setZipCode] = useState("");
   const [tagline, setTagline] = useState("");
   const [interests, setInterests] = useState("");
   const [prompts, setPrompts] = useState<Prompt[]>(EMPTY_PROMPTS);
@@ -101,6 +102,10 @@ export default function OnboardingPage() {
       setError("Choose a valid age range.");
       return;
     }
+    if (zipCode && !/^\d{5}(-\d{4})?$/.test(zipCode)) {
+      setError("Enter a valid 5-digit ZIP code, or leave it blank.");
+      return;
+    }
 
     setLoading(true);
 
@@ -121,6 +126,7 @@ export default function OnboardingPage() {
       gender,
       interested_in: interestedIn,
       city_id: cityId,
+      preference_details: { location: { zipCode } },
       bio: tagline,
       interests: interests.split(",").map((s) => s.trim()).filter(Boolean),
       prompts,
@@ -166,6 +172,12 @@ export default function OnboardingPage() {
               onChange={(e) => setDisplayName(e.target.value)}
               className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
             />
+          </div>
+
+          <div>
+            <label className="text-sm text-ink-soft block mb-1 font-medium">ZIP code <span className="font-normal">(optional)</span></label>
+            <input value={zipCode} onChange={(event) => setZipCode(event.target.value.replace(/[^\d-]/g, "").slice(0, 10))} inputMode="numeric" autoComplete="postal-code" placeholder="For nearby matches" className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors" />
+            <p className="mt-1 text-xs text-ink-soft">Private—never displayed on your profile. Used only for nearby matching.</p>
           </div>
 
           <div>
