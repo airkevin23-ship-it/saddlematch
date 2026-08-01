@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { CITIES, PROMPT_BANK } from "@/lib/constants";
-import type { Profile, Prompt } from "@/types/db";
+import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 
 const DETAIL_FIELDS = [
   ["politics", "Politics", ["Prefer not to say", "Conservative", "Moderate", "Liberal", "Not political"]],
@@ -21,6 +21,16 @@ type DetailKey = typeof DETAIL_FIELDS[number][0];
 type Details = Record<DetailKey, string>;
 const EMPTY_DETAILS: Details = Object.fromEntries(DETAIL_FIELDS.map(([key, , options]) => [key, options[0]])) as Details;
 const EMPTY_VISIBILITY: Record<DetailKey, boolean> = Object.fromEntries(DETAIL_FIELDS.map(([key]) => [key, true])) as Record<DetailKey, boolean>;
+const DATING_INTENTIONS: { value: RelationshipIntent; label: string }[] = [
+  { value: "long_term", label: "A long-term relationship" },
+  { value: "life_partner", label: "A life partner" },
+  { value: "marriage", label: "Marriage" },
+  { value: "short_term", label: "Something short-term" },
+  { value: "casual", label: "Casual dating" },
+  { value: "friendship", label: "Friendship first" },
+  { value: "figuring_it_out", label: "Figuring it out" },
+  { value: "open_to_either", label: "Open to exploring" },
+];
 
 export default function ProfilePage() {
   const supabase = createClient();
@@ -31,7 +41,7 @@ export default function ProfilePage() {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [minAge, setMinAge] = useState(18);
   const [maxAge, setMaxAge] = useState(99);
-  const [relationshipIntent, setRelationshipIntent] = useState<"long_term" | "short_term" | "open_to_either">("open_to_either");
+  const [relationshipIntent, setRelationshipIntent] = useState<RelationshipIntent>("open_to_either");
   const [saving, setSaving] = useState(false);
   const [mediaSaving, setMediaSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -233,7 +243,7 @@ export default function ProfilePage() {
     <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink">
       <div className="mb-6 flex items-center justify-between"><h1 className="text-xl font-extrabold tracking-tight">{profile.display_name} <span className="text-brand">· {completionScore}%</span></h1><Link href="/app/discover" className="text-sm font-semibold text-ink-soft">Done</Link></div>
       <div className="mb-6 grid grid-cols-2 border-b border-line"><button type="button" onClick={() => setProfileTab("edit")} className={`min-h-12 border-b-4 text-base font-bold ${profileTab === "edit" ? "border-ink text-ink" : "border-transparent text-ink-faint"}`}>Edit</button><button type="button" onClick={() => setProfileTab("view")} className={`min-h-12 border-b-4 text-base font-bold ${profileTab === "view" ? "border-ink text-ink" : "border-transparent text-ink-faint"}`}>View</button></div>
-      {profileTab === "view" && <section className="mb-6 space-y-4">{profile.photo_urls[0] && <div className="aspect-[4/5] overflow-hidden rounded-3xl bg-line">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={profile.photo_urls[0]} alt="Profile preview" className="h-full w-full object-cover" /></div>}<div className="rounded-2xl border border-line bg-card p-5"><h2 className="text-2xl font-extrabold">{profile.display_name}</h2>{profile.bio && <p className="mt-2 leading-relaxed text-ink-soft">{profile.bio}</p>}</div><div className="rounded-2xl border border-line bg-card px-4">{DETAIL_FIELDS.filter(([key]) => visibility[key]).map(([key, label]) => <div key={key} className="border-b border-line py-4 last:border-0"><p className="font-bold">{label}</p><p className="mt-1 text-ink-soft">{details[key]}</p></div>)}<div className="py-4"><p className="font-bold">Dating intentions</p><p className="mt-1 text-ink-soft">{relationshipIntent === "long_term" ? "Long-term relationship" : relationshipIntent === "short_term" ? "Short-term relationship" : "Open to either"}</p></div></div></section>}
+      {profileTab === "view" && <section className="mb-6 space-y-4">{profile.photo_urls[0] && <div className="aspect-[4/5] overflow-hidden rounded-3xl bg-line">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={profile.photo_urls[0]} alt="Profile preview" className="h-full w-full object-cover" /></div>}<div className="rounded-2xl border border-line bg-card p-5"><h2 className="text-2xl font-extrabold">{profile.display_name}</h2>{profile.bio && <p className="mt-2 leading-relaxed text-ink-soft">{profile.bio}</p>}</div><div className="rounded-2xl border border-line bg-card px-4">{DETAIL_FIELDS.filter(([key]) => visibility[key]).map(([key, label]) => <div key={key} className="border-b border-line py-4 last:border-0"><p className="font-bold">{label}</p><p className="mt-1 text-ink-soft">{details[key]}</p></div>)}<div className="py-4"><p className="font-bold">Dating intentions</p><p className="mt-1 text-ink-soft">{DATING_INTENTIONS.find((option) => option.value === relationshipIntent)?.label ?? "Open to exploring"}</p></div></div></section>}
 
       <Link href="/app/preferences" className="mb-5 flex min-h-14 items-center justify-between rounded-2xl border border-line bg-card px-4 font-bold text-ink hover:border-brand">
         <span>Dating preferences</span><span className="text-brand">Edit</span>
@@ -408,7 +418,7 @@ export default function ProfilePage() {
             <label className="text-sm text-ink-soft">Minimum age<input type="number" min="18" max="99" value={minAge} onChange={(e) => setMinAge(Number(e.target.value))} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand" /></label>
             <label className="text-sm text-ink-soft">Maximum age<input type="number" min="18" max="99" value={maxAge} onChange={(e) => setMaxAge(Number(e.target.value))} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand" /></label>
           </div>
-          <label className="mt-3 block text-sm text-ink-soft">I&rsquo;m looking for<select value={relationshipIntent} onChange={(e) => setRelationshipIntent(e.target.value as typeof relationshipIntent)} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand"><option value="long_term">A long-term relationship</option><option value="short_term">Something short-term</option><option value="open_to_either">Open to either</option></select></label>
+          <label className="mt-3 block text-sm text-ink-soft">I&rsquo;m looking for<select value={relationshipIntent} onChange={(e) => setRelationshipIntent(e.target.value as RelationshipIntent)} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand">{DATING_INTENTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
         </section>
 
         <div className="pt-4 border-t border-line">
