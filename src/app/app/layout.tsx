@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { APP_NAME } from "@/lib/constants";
+import { HorseshoeIcon } from "@/components/western-icons";
 import SignOutButton from "./sign-out-button";
 
 export default async function AppLayout({
@@ -31,8 +32,8 @@ export default async function AppLayout({
   return (
     <div className="min-h-screen flex flex-col bg-cream">
       <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-line bg-cream/90 backdrop-blur">
-        <Link href="/app/discover" className="flex items-center gap-2 font-extrabold text-lg tracking-tight text-ink">
-          <img src="/saddlematch-logo.png" alt="" className="h-7 w-7 object-contain" />
+        <Link href="/app/discover" className="flex items-center gap-1.5 font-extrabold text-lg tracking-tight text-ink">
+          <HorseshoeIcon className="w-5 h-5 text-brand" />
           {APP_NAME}
         </Link>
         <nav className="flex items-center gap-6 text-sm font-medium text-ink-soft">

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import {
   CactusIcon,
   CowboyHatIcon,
+  HorseshoeIcon,
   WesternStarIcon,
 } from "@/components/western-icons";
 import {
@@ -40,8 +41,8 @@ export default async function LandingPage() {
   return (
     <main className="min-h-screen flex flex-col bg-cream text-ink">
       <header className="flex items-center justify-between px-6 py-5 max-w-5xl mx-auto w-full">
-        <span className="flex items-center gap-2 font-extrabold text-xl tracking-tight">
-          <img src="/saddlematch-logo.png" alt="" className="h-8 w-8 object-contain" />
+        <span className="flex items-center gap-1.5 font-extrabold text-xl tracking-tight">
+          <HorseshoeIcon className="w-5 h-5 text-brand" />
           {APP_NAME}
         </span>
         <nav className="flex items-center gap-5 text-sm font-medium">

@@ -3,12 +3,11 @@ import "./globals.css";
 import { APP_NAME, TAGLINE } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: `${APP_NAME} — ${TAGLINE}`,
+  title: "SaddleMatch — Dating for the Western Lifestyle",
   description:
     "Meet people who share your love of country music, rodeos, rural life, and real Texas connection — a dating app built for Houston, Austin, Dallas, and San Antonio.",
-  icons: {
-    icon: "/saddlematch-logo.png",
-    apple: "/saddlematch-logo.png",
+  verification: {
+    google: "Z3Av3uQVkE7i5PEZX3V-PagHve9JEdGUJNM3kLYVbeQ",
   },
 };
 
