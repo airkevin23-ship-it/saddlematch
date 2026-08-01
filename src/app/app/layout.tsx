@@ -32,7 +32,7 @@ export default async function AppLayout({
   return (
     <div className="min-h-screen flex flex-col bg-cream">
       <header className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-line bg-cream/90 backdrop-blur">
-        <Link href="/app/discover" className="flex items-center gap-1.5 font-extrabold text-lg tracking-tight text-ink">
+        <Link href="/" aria-label="SaddleMatch home" className="flex items-center gap-1.5 font-extrabold text-lg tracking-tight text-ink">
           <HorseshoeIcon className="w-5 h-5 text-brand" />
           {APP_NAME}
         </Link>
