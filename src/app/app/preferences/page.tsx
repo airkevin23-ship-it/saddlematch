@@ -3,13 +3,24 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Gender, Profile } from "@/types/db";
+import type { Gender, Profile, RelationshipIntent } from "@/types/db";
 
 const GENDERS: { value: Gender; label: string }[] = [
   { value: "male", label: "Men" },
   { value: "female", label: "Women" },
   { value: "nonbinary", label: "Nonbinary people" },
   { value: "other", label: "Other" },
+];
+
+const DATING_INTENTIONS: { value: RelationshipIntent; label: string }[] = [
+  { value: "long_term", label: "Long-term relationship" },
+  { value: "life_partner", label: "Life partner" },
+  { value: "marriage", label: "Marriage" },
+  { value: "short_term", label: "Short-term relationship" },
+  { value: "casual", label: "Casual dating" },
+  { value: "friendship", label: "Friendship first" },
+  { value: "figuring_it_out", label: "Figuring it out" },
+  { value: "open_to_either", label: "Open to exploring" },
 ];
 
 const OPTIONS = {
@@ -22,6 +33,11 @@ const OPTIONS = {
   religion: ["Open to all", "Christian", "Catholic", "Jewish", "Muslim", "Spiritual", "Other"],
   politics: ["Open to all", "Conservative", "Moderate", "Liberal", "Not political"],
   height: ["Open to all", "5'0\"+", "5'4\"+", "5'8\"+", "6'0\"+"],
+  relationshipType: ["Open to all", "Monogamous", "Non-monogamous", "Figuring it out"],
+  ethnicity: ["Open to all", "Asian", "Black", "Hispanic / Latino", "Middle Eastern", "Native American", "White", "Multiracial", "Other"],
+  languages: ["Open to all", "English", "Spanish", "English and Spanish", "Other"],
+  education: ["Open to all", "High school", "Some college", "Bachelor's degree", "Graduate degree", "Trade / technical"],
+  westernLifestyle: ["Open to all", "Owns horses", "Rides often", "Ranch or farm life", "Rodeo and western events"],
 } as const;
 
 type DetailKey = keyof typeof OPTIONS;
@@ -47,8 +63,9 @@ export default function PreferencesPage() {
   const [genders, setGenders] = useState<Gender[]>([]);
   const [minAge, setMinAge] = useState(18);
   const [maxAge, setMaxAge] = useState(99);
-  const [intent, setIntent] = useState("open_to_either");
+  const [intent, setIntent] = useState<RelationshipIntent>("open_to_either");
   const [details, setDetails] = useState<Details>(defaults);
+  const [otherDetails, setOtherDetails] = useState<Record<string, unknown>>({});
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -63,7 +80,13 @@ export default function PreferencesPage() {
       setMinAge(data.min_age ?? 18);
       setMaxAge(data.max_age ?? 99);
       setIntent(data.relationship_intent ?? "open_to_either");
-      setDetails({ ...defaults, ...(data.preference_details ?? {}) });
+      const savedPreferences = (data.preference_details ?? {}) as Record<string, unknown>;
+      const { profile: _profileDetails, location: _locationDetails, ...savedFilters } = savedPreferences;
+      setOtherDetails({
+        ...(_profileDetails ? { profile: _profileDetails } : {}),
+        ...(_locationDetails ? { location: _locationDetails } : {}),
+      });
+      setDetails({ ...defaults, ...savedFilters } as Details);
     })();
   }, [supabase]);
 
@@ -83,7 +106,7 @@ export default function PreferencesPage() {
       min_age: minAge,
       max_age: maxAge,
       relationship_intent: intent,
-      preference_details: details,
+      preference_details: { ...otherDetails, ...details } as Record<string, string>,
       updated_at: new Date().toISOString(),
     }).eq("id", profile.id);
     setMessage(error ? "Couldn't save your preferences. Try again." : "Preferences saved.");
@@ -118,7 +141,7 @@ export default function PreferencesPage() {
               <label className="text-sm font-bold">Maximum age<input type="number" min="18" max="99" value={maxAge} onChange={(event) => setMaxAge(Number(event.target.value))} className="mt-2 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base font-normal outline-none focus:border-brand" /></label>
             </div>
             <PreferenceRow label="Maximum distance" value={details.distance} options={OPTIONS.distance} onChange={(value) => changeDetail("distance", value)} />
-            <label className="block py-4"><span className="font-bold">Dating intention</span><select value={intent} onChange={(event) => setIntent(event.target.value)} className="mt-1 w-full appearance-none bg-transparent text-lg text-ink-soft outline-none"><option value="long_term">Long-term relationship</option><option value="short_term">Short-term relationship</option><option value="open_to_either">Open to either</option></select></label>
+            <label className="block py-4"><span className="font-bold">Dating intention</span><select value={intent} onChange={(event) => setIntent(event.target.value as RelationshipIntent)} className="mt-1 w-full appearance-none bg-transparent text-lg text-ink-soft outline-none">{DATING_INTENTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
           </div>
         </section>
         <section className="mt-7">
