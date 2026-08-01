@@ -42,6 +42,22 @@ const OPTIONS = {
 
 type DetailKey = keyof typeof OPTIONS;
 type Details = Record<DetailKey, string>;
+const DETAIL_LABELS: Record<DetailKey, string> = {
+  distance: "Maximum distance",
+  children: "Children",
+  familyPlans: "Family plans",
+  smoking: "Smoking",
+  drinking: "Drinking",
+  marijuana: "Marijuana",
+  religion: "Religion",
+  politics: "Politics",
+  height: "Height",
+  relationshipType: "Relationship Type",
+  ethnicity: "Ethnicity",
+  languages: "Languages",
+  education: "Education",
+  westernLifestyle: "Western Lifestyle",
+};
 const defaults: Details = Object.fromEntries(
   Object.entries(OPTIONS).map(([key, values]) => [key, values[0]])
 ) as Details;
@@ -147,7 +163,7 @@ export default function PreferencesPage() {
         <section className="mt-7">
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-ink-faint">More preferences</p>
           <div className="mt-2 rounded-2xl border border-line bg-card px-4">
-            {(Object.keys(OPTIONS).filter((key) => key !== "distance") as DetailKey[]).map((key) => <PreferenceRow key={key} label={key === "familyPlans" ? "Family plans" : key[0].toUpperCase() + key.slice(1)} value={details[key]} options={OPTIONS[key]} onChange={(value) => changeDetail(key, value)} />)}
+            {(Object.keys(OPTIONS).filter((key) => key !== "distance") as DetailKey[]).map((key) => <PreferenceRow key={key} label={DETAIL_LABELS[key]} value={details[key]} options={OPTIONS[key]} onChange={(value) => changeDetail(key, value)} />)}
           </div>
         </section>
         {message && <p className="mt-4 text-center text-sm font-semibold text-brand">{message}</p>}
