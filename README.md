@@ -163,3 +163,7 @@ supabase/
 - **AI features fail closed.** Every `/api/ai/*` route re-checks the caller's
   subscription status server-side (never trust the client), independent of
   whatever the UI shows.
+
+
+## Deployment
+Managed with Vercel and GitHub.
