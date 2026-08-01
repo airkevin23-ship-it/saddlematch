@@ -236,10 +236,25 @@ export default function ProfilePage() {
                 </button>
               </div>
             ))}
-            {profile.photo_urls.length < 6 && (
-              <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-line-strong bg-cream px-2 text-center text-xs font-bold text-ink-soft hover:border-brand hover:text-brand">
-                <span className="text-lg leading-none">+</span>
-                <span className="mt-1">Add photo</span>
+          </div>
+          {profile.photo_urls.length < 6 && (
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <label className="flex min-h-12 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-cream px-3 text-sm font-bold text-ink-soft hover:border-brand hover:text-brand">
+                Choose from library
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="sr-only"
+                  disabled={mediaSaving}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) uploadMedia(file, "photo");
+                    event.currentTarget.value = "";
+                  }}
+                />
+              </label>
+              <label className="flex min-h-12 cursor-pointer items-center justify-center rounded-xl bg-brand px-3 text-sm font-bold text-white hover:bg-brand-dark">
+                Take a photo
                 <input
                   type="file"
                   accept="image/*"
@@ -253,8 +268,8 @@ export default function ProfilePage() {
                   }}
                 />
               </label>
-            )}
-          </div>
+            </div>
+          )}
           {mediaSaving && <p className="mt-3 text-xs font-medium text-brand">Uploading your media…</p>}
         </section>
 
@@ -267,21 +282,37 @@ export default function ProfilePage() {
               <button type="button" onClick={removeVideo} className="mt-2 min-h-11 text-sm font-semibold text-red-600 hover:text-red-700">Remove video</button>
             </div>
           ) : (
-            <label className="mt-3 flex min-h-12 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-cream px-4 text-sm font-bold text-ink-soft hover:border-brand hover:text-brand">
-              Add an intro video
-              <input
-                type="file"
-                accept="video/*"
-                capture="user"
-                className="sr-only"
-                disabled={mediaSaving}
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) uploadMedia(file, "video");
-                  event.currentTarget.value = "";
-                }}
-              />
-            </label>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <label className="flex min-h-12 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-cream px-3 text-sm font-bold text-ink-soft hover:border-brand hover:text-brand">
+                Choose video
+                <input
+                  type="file"
+                  accept="video/*"
+                  className="sr-only"
+                  disabled={mediaSaving}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) uploadMedia(file, "video");
+                    event.currentTarget.value = "";
+                  }}
+                />
+              </label>
+              <label className="flex min-h-12 cursor-pointer items-center justify-center rounded-xl bg-brand px-3 text-sm font-bold text-white hover:bg-brand-dark">
+                Record a video
+                <input
+                  type="file"
+                  accept="video/*"
+                  capture="user"
+                  className="sr-only"
+                  disabled={mediaSaving}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) uploadMedia(file, "video");
+                    event.currentTarget.value = "";
+                  }}
+                />
+              </label>
+            </div>
           )}
         </section>
 
