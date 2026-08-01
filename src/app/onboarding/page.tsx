@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { APP_NAME, CITIES, PROMPT_BANK } from "@/lib/constants";
-import type { Gender, Prompt } from "@/types/db";
+import type { Gender, Prompt, RelationshipIntent } from "@/types/db";
 
 const GENDERS: { value: Gender; label: string }[] = [
   { value: "male", label: "Man" },
@@ -19,6 +19,17 @@ const EMPTY_PROMPTS: Prompt[] = [
   { question: PROMPT_BANK[2], answer: "" },
 ];
 
+const DATING_INTENTIONS: { value: RelationshipIntent; label: string }[] = [
+  { value: "long_term", label: "A long-term relationship" },
+  { value: "life_partner", label: "A life partner" },
+  { value: "marriage", label: "Marriage" },
+  { value: "short_term", label: "Something short-term" },
+  { value: "casual", label: "Casual dating" },
+  { value: "friendship", label: "Friendship first" },
+  { value: "figuring_it_out", label: "Figuring it out" },
+  { value: "open_to_either", label: "Open to exploring" },
+];
+
 export default function OnboardingPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -29,7 +40,7 @@ export default function OnboardingPage() {
   const [interestedIn, setInterestedIn] = useState<Gender[]>(["female"]);
   const [minAge, setMinAge] = useState(24);
   const [maxAge, setMaxAge] = useState(45);
-  const [relationshipIntent, setRelationshipIntent] = useState<"long_term" | "short_term" | "open_to_either">("long_term");
+  const [relationshipIntent, setRelationshipIntent] = useState<RelationshipIntent>("long_term");
   const [cityId, setCityId] = useState(CITIES[0].id);
   const [zipCode, setZipCode] = useState("");
   const [tagline, setTagline] = useState("");
@@ -253,10 +264,8 @@ export default function OnboardingPage() {
               </label>
             </div>
             <label className="mt-3 block text-sm text-ink-soft">I&rsquo;m looking for
-              <select value={relationshipIntent} onChange={(e) => setRelationshipIntent(e.target.value as typeof relationshipIntent)} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand">
-                <option value="long_term">A long-term relationship</option>
-                <option value="short_term">Something short-term</option>
-                <option value="open_to_either">Open to either</option>
+              <select value={relationshipIntent} onChange={(e) => setRelationshipIntent(e.target.value as RelationshipIntent)} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand">
+                {DATING_INTENTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
             </label>
           </div>
