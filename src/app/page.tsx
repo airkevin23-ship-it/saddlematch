@@ -40,35 +40,35 @@ export default async function LandingPage() {
 
   return (
     <main className="min-h-screen flex flex-col bg-cream text-ink">
-      <header className="flex items-center justify-between px-6 py-5 max-w-5xl mx-auto w-full">
-        <span className="flex items-center gap-1.5 font-extrabold text-xl tracking-tight">
+      <header className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 max-w-5xl mx-auto w-full">
+        <span className="flex items-center gap-1.5 font-extrabold text-lg sm:text-xl tracking-tight">
           <HorseshoeIcon className="w-5 h-5 text-brand" />
           {APP_NAME}
         </span>
-        <nav className="flex items-center gap-5 text-sm font-medium">
+        <nav className="flex items-center gap-3 sm:gap-5 text-sm font-medium">
           <Link href="/login" className="text-ink-soft hover:text-ink transition-colors">
             Log in
           </Link>
           <Link
             href="/signup"
-            className="bg-ink text-cream px-5 py-2.5 rounded-full font-semibold hover:bg-brand transition-colors"
+            className="bg-ink text-cream px-4 sm:px-5 py-2.5 rounded-full font-semibold hover:bg-brand transition-colors"
           >
             Sign up
           </Link>
         </nav>
       </header>
 
-      <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-16">
+      <section className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 py-10 sm:py-16">
         <p className="flex items-center justify-center gap-2 text-sm uppercase tracking-widest text-brand font-bold mb-4">
           <WesternStarIcon className="w-4 h-4" />
           {TAGLINE}
           <WesternStarIcon className="w-4 h-4" />
         </p>
-        <h1 className="text-4xl sm:text-6xl font-extrabold max-w-3xl leading-[1.05] tracking-tight">
+        <h1 className="text-3xl sm:text-6xl font-extrabold max-w-3xl leading-[1.08] tracking-tight">
           Dating apps run out of people. <br className="hidden sm:block" />
           Your city shouldn&rsquo;t.
         </h1>
-        <p className="mt-6 max-w-xl text-ink-soft text-lg">
+        <p className="mt-5 sm:mt-6 max-w-xl text-ink-soft text-base sm:text-lg leading-relaxed">
           {APP_NAME} is a dating app built only for {CITIES.map((c) => c.name).join(", ")}
           &nbsp;— for people who share a love of country music, rodeos, rural
           life, and real Texas connection. Prompt-based profiles instead of a
@@ -76,16 +76,16 @@ export default async function LandingPage() {
           endless swiping, and AI to help you write better and break the ice.
         </p>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
+        <div className="mt-7 grid w-full max-w-sm grid-cols-1 gap-3 sm:max-w-none sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
           <Link
             href="/signup"
-            className="bg-brand hover:bg-brand-dark text-white px-7 py-3.5 rounded-full font-bold shadow-lg shadow-brand/25 transition-colors"
+            className="bg-brand hover:bg-brand-dark text-white px-7 py-3.5 rounded-full font-bold shadow-lg shadow-brand/25 transition-colors min-h-12"
           >
             Get started free
           </Link>
           <Link
             href="#pricing"
-            className="border-2 border-ink/15 hover:border-ink/40 px-7 py-3.5 rounded-full font-bold transition-colors"
+            className="border-2 border-ink/15 hover:border-ink/40 px-7 py-3.5 rounded-full font-bold transition-colors min-h-12"
           >
             See pricing
           </Link>
@@ -110,10 +110,10 @@ export default async function LandingPage() {
           <p className="text-xs uppercase tracking-widest font-bold text-ink-faint mb-6">
             What using it feels like
           </p>
-          <div className="grid sm:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-3 gap-8 sm:gap-6">
             {/* Mockup 1 — a profile built on prompts */}
             <div className="text-left">
-              <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] overflow-hidden max-w-[280px] mx-auto sm:mx-0">
+              <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] overflow-hidden max-w-[320px] mx-auto sm:max-w-[280px] sm:mx-0">
                 <div className="aspect-[4/5] bg-line overflow-hidden">
                   <img
                     src="/maddie-profile.png"
@@ -140,7 +140,7 @@ export default async function LandingPage() {
 
             {/* Mockup 2 — daily curated picks */}
             <div className="text-left">
-              <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] p-4 max-w-[280px] mx-auto sm:mx-0">
+              <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] p-4 max-w-[320px] mx-auto sm:max-w-[280px] sm:mx-0">
                 <p className="text-[11px] text-ink-soft text-center font-medium tracking-wide uppercase mb-3">
                   8 of 8 in today&rsquo;s roundup
                 </p>
@@ -175,7 +175,7 @@ export default async function LandingPage() {
 
             {/* Mockup 3 — like a specific answer, becomes the opener */}
             <div className="text-left">
-              <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] p-4 max-w-[280px] mx-auto sm:mx-0">
+              <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] p-4 max-w-[320px] mx-auto sm:max-w-[280px] sm:mx-0">
                 <div className="rounded-xl border border-line bg-cream p-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -212,7 +212,7 @@ export default async function LandingPage() {
           </Link>
         </div>
 
-        <div className="mt-16 w-full max-w-2xl">
+        <div className="mt-12 sm:mt-16 w-full max-w-2xl">
           <p className="text-xs uppercase tracking-widest font-bold text-ink-faint mb-4">
             New in these cities — be one of the first
           </p>
@@ -236,7 +236,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      <section id="pricing" className="px-6 py-20 border-t border-line">
+      <section id="pricing" className="px-4 sm:px-6 py-14 sm:py-20 border-t border-line">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl font-extrabold mb-2 tracking-tight">Free to match. Paid to get help.</h2>
           <p className="text-ink-soft mb-2">
@@ -247,7 +247,7 @@ export default async function LandingPage() {
             common, and start better conversations. You stay in control of every
             decision and message.
           </p>
-          <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.04] p-8 inline-block">
+          <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.04] p-6 sm:p-8 w-full sm:w-auto">
             <p className="flex items-center justify-center gap-1.5 font-extrabold text-lg mb-1">
               <WesternStarIcon className="w-4 h-4 text-brand" />
               {APP_NAME} Plus
@@ -265,7 +265,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      <section className="px-6 py-20 border-t border-line bg-card">
+      <section className="px-4 sm:px-6 py-14 sm:py-20 border-t border-line bg-card">
         <div className="max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-widest font-bold text-brand text-center mb-3">
             Good to know
@@ -296,7 +296,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      <footer className="px-6 py-8 text-center text-sm text-ink-faint border-t border-line space-x-4">
+      <footer className="px-4 sm:px-6 py-8 text-center text-sm text-ink-faint border-t border-line space-x-3 leading-8">
         <span className="inline-flex items-center gap-1.5">
           <HorseshoeIcon className="w-3.5 h-3.5" />
           {APP_NAME} — Houston · Austin · Dallas · San Antonio
