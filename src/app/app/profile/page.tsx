@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { CITIES, PROMPT_BANK } from "@/lib/constants";
 import type { Profile, Prompt } from "@/types/db";
@@ -206,6 +207,10 @@ export default function ProfilePage() {
   return (
     <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink">
       <h1 className="text-xl font-extrabold mb-6 tracking-tight">Edit profile</h1>
+
+      <Link href="/app/preferences" className="mb-5 flex min-h-14 items-center justify-between rounded-2xl border border-line bg-card px-4 font-bold text-ink hover:border-brand">
+        <span>Dating preferences</span><span className="text-brand">Edit</span>
+      </Link>
 
       <div className="space-y-5">
         <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">

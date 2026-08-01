@@ -22,6 +22,7 @@ export interface Profile {
   min_age: number;
   max_age: number;
   relationship_intent: "long_term" | "short_term" | "open_to_either";
+  preference_details?: Record<string, string>;
   city_id: number;
   bio: string;
   interests: string[];
