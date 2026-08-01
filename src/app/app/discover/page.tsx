@@ -229,7 +229,7 @@ export default function DiscoverPage() {
             over an endless deck.
           </p>
           <button
-            onClick={loadQueue}
+            onClick={() => loadQueue()}
             className="mt-4 text-brand hover:text-brand-dark font-semibold text-sm"
           >
             Refresh
