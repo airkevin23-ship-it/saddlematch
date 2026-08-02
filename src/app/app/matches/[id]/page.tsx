@@ -17,6 +17,7 @@ export default function MatchThreadPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [body, setBody] = useState("");
   const [matchReason, setMatchReason] = useState<string | null>(null);
+  const [sharedTraits, setSharedTraits] = useState<string[] | null>(null);
   const [reasonLoading, setReasonLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[] | null>(null);
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
@@ -32,13 +33,14 @@ export default function MatchThreadPage() {
 
     const { data: match } = await supabase
       .from("matches")
-      .select("id, user_a, user_b, match_reason")
+      .select("id, user_a, user_b, match_reason, match_shared_traits")
       .eq("id", matchId)
       .single();
 
     if (!match) return;
 
     setMatchReason(match.match_reason);
+    setSharedTraits(match.match_shared_traits);
 
     const otherId = match.user_a === user.id ? match.user_b : match.user_a;
     const { data: other } = await supabase
@@ -139,7 +141,11 @@ export default function MatchThreadPage() {
     if (res.status === 402) {
       setUpgradeNeeded(true);
     } else if (res.ok) {
-      setMatchReason(data.reason);
+      if (data.shared?.length > 0) {
+        setSharedTraits(data.shared);
+      } else {
+        setMatchReason(data.reason);
+      }
     }
     setReasonLoading(false);
   }
@@ -198,7 +204,16 @@ export default function MatchThreadPage() {
           <p className="text-xs text-ink-soft mt-1">{safetyMessage}</p>
         )}
 
-        {matchReason ? (
+        {sharedTraits && sharedTraits.length > 0 ? (
+          <div className="mt-1 rounded-lg bg-brand-soft/60 px-2.5 py-2">
+            <p className="text-[11px] font-bold uppercase tracking-wide text-brand-dark">You both</p>
+            <ul className="mt-1 space-y-0.5">
+              {sharedTraits.map((trait, i) => (
+                <li key={i} className="text-sm text-brand-dark">✓ {trait}</li>
+              ))}
+            </ul>
+          </div>
+        ) : matchReason ? (
           <p className="text-sm text-brand-dark mt-1">{matchReason}</p>
         ) : (
           <button
