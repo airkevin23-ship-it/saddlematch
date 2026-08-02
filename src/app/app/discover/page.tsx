@@ -79,6 +79,7 @@ export default function DiscoverPage() {
   const [sending, setSending] = useState(false);
 
   const [previewReason, setPreviewReason] = useState<string | null>(null);
+  const [previewShared, setPreviewShared] = useState<string[] | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [safetyBusy, setSafetyBusy] = useState(false);
@@ -96,6 +97,7 @@ export default function DiscoverPage() {
     setOpenPromptIndex(null);
     setComment("");
     setPreviewReason(null);
+    setPreviewShared(null);
 
     try {
       const params = new URLSearchParams();
@@ -127,6 +129,7 @@ export default function DiscoverPage() {
     setOpenPromptIndex(null);
     setComment("");
     setPreviewReason(null);
+    setPreviewShared(null);
     setPreviewError(null);
   }
 
@@ -199,7 +202,11 @@ export default function DiscoverPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Couldn't generate that right now.");
-      setPreviewReason(data.reason);
+      if (data.shared?.length > 0) {
+        setPreviewShared(data.shared);
+      } else {
+        setPreviewReason(data.reason);
+      }
     } catch (err) {
       setPreviewError(err instanceof Error ? err.message : "Couldn't generate that right now.");
     } finally {
@@ -442,7 +449,16 @@ export default function DiscoverPage() {
 
             {/* AI compatibility preview — Coffee Meets Bagel style, shown before deciding */}
             <div className="mt-4">
-              {previewReason ? (
+              {previewShared && previewShared.length > 0 ? (
+                <div className="rounded-xl bg-brand-soft border border-brand/20 px-3 py-2.5">
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-brand-dark">You both</p>
+                  <ul className="mt-1 space-y-0.5">
+                    {previewShared.map((trait, i) => (
+                      <li key={i} className="text-sm text-brand-dark">✓ {trait}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : previewReason ? (
                 <p className="text-sm text-brand-dark bg-brand-soft border border-brand/20 rounded-xl px-3 py-2">
                   ✨ {previewReason}
                 </p>
