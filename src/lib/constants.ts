@@ -15,7 +15,7 @@ export const SUBSCRIPTION_INTRO_PERIOD = "for your first 3 months";
 export const PLUS_FEATURES: string[] = [
   "AI profile feedback and rewrites",
   "Better conversation starters",
-  "\u201cWhat you have in common\u201d match insights",
+  "“What you have in common” match insights",
   "More daily curated matches",
   "See who liked your profile",
 ];
@@ -43,4 +43,23 @@ export const PROMPT_BANK: string[] = [
   "Dating me is like…",
   "My friends would describe me as…",
   "Overshare something…",
+];
+
+// Shared western-lifestyle interest chips shown on the profile editor and onboarding.
+export const INTEREST_CHIPS: string[] = [
+  "Two-Stepping",
+  "Live Music",
+  "BBQ",
+  "Rodeo",
+  "Horseback Riding",
+  "Country Dancing",
+  "Craft Beer",
+  "Lake Days",
+  "Hiking",
+  "Hunting & Fishing",
+  "Tailgating",
+  "Boots & Denim",
+  "Concerts",
+  "Truck Life",
+  "Backyard Cookouts",
 ];
