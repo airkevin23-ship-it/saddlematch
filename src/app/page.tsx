@@ -128,7 +128,7 @@ let openCityIds = new Set<number>();
         {/* Hero photo — real Austin dance hall, sets the scene before anything else */}
         <div className="mt-10 w-full max-w-3xl overflow-hidden rounded-3xl shadow-xl shadow-black/[0.08]">
           <img
-            src="/austin-dance-hall.jpg"
+            src="/Gemini_Generated_Image_8jog9s8jog9s8jog (1).png"
             alt="Couples two-stepping on the dance floor at an Austin honky-tonk"
             className="w-full h-auto object-cover"
           />
