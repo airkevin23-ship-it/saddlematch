@@ -27,7 +27,38 @@ export default async function LandingPage() {
   // A city is only described as open when the database explicitly marks it
   // open. That prevents a new visitor from expecting an active local dating
   // pool before the community has actually launched there.
-  let openCityIds = new Set<number>();
+  const INTEREST_TAGS = [
+  "Two-stepping",
+  "Hiking",
+  "Kayaking",
+  "Live music",
+  "Rodeos",
+  "Trail rides",
+];
+
+const DATE_SPOT_SHOWDOWNS = [
+  {
+    title: "Two-step face-off",
+    a: "White Horse",
+    b: "Sagebrush",
+    note: "Both have a live band most nights, so pick whichever crowd looks more fun when you walk in.",
+  },
+  {
+    title: "Trail date",
+    a: "Lady Bird Lake Hike-and-Bike Trail",
+    b: "Barton Creek Greenbelt",
+    note: "Flat and social vs. shaded and a little wild. Either way, wear real shoes.",
+  },
+  {
+    title: "Paddle date",
+    a: "Rowing Dock kayaks",
+    b: "Congress bridge bat watch",
+    note: "Paddle out at sunset for the bats - it is touristy and it works every time.",
+  },
+];
+
+export default async function LandingPage() {
+let openCityIds = new Set<number>();
   try {
     const supabase = await createClient();
     const { data } = await supabase.from("cities").select("id, is_open");
@@ -69,15 +100,15 @@ export default async function LandingPage() {
           <WesternStarIcon className="w-4 h-4" />
         </p>
         <h1 className="text-3xl sm:text-6xl font-extrabold max-w-3xl leading-[1.08] tracking-tight">
-          Dating apps run out of people. <br className="hidden sm:block" />
-          Your city shouldn&rsquo;t.
+          Join Austin&rsquo;s Newest <br className="hidden sm:block" />
+          Country Dating Community
         </h1>
         <p className="mt-5 sm:mt-6 max-w-xl text-ink-soft text-base sm:text-lg leading-relaxed">
-          {APP_NAME} is a dating app built only for {CITIES.map((c) => c.name).join(", ")}
-          &nbsp;— for people who share a love of country music, rodeos, rural
-          life, and real Texas connection. Prompt-based profiles instead of a
-          blank bio, a small curated batch of matches each day instead of
-          endless swiping, and AI to help you write better and break the ice.
+          {APP_NAME} is a dating app built for people who love country music,
+          two-stepping, and real Texas connection — starting right here in
+          Austin. Prompt-based profiles instead of a blank bio, a small
+          curated batch of matches each day instead of endless swiping, and
+          AI to help you write better and break the ice.
         </p>
 
         <div className="mt-7 grid w-full max-w-sm grid-cols-1 gap-3 sm:max-w-none sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
@@ -85,7 +116,7 @@ export default async function LandingPage() {
             href="/signup"
             className="bg-brand hover:bg-brand-dark text-white px-7 py-3.5 rounded-full font-bold shadow-lg shadow-brand/25 transition-colors min-h-12"
           >
-            Get started free
+            Claim Your Space in Austin Now
           </Link>
           <Link
             href="#pricing"
@@ -93,6 +124,15 @@ export default async function LandingPage() {
           >
             See pricing
           </Link>
+        </div>
+
+        {/* Hero photo — real Austin dance hall, sets the scene before anything else */}
+        <div className="mt-10 w-full max-w-3xl overflow-hidden rounded-3xl shadow-xl shadow-black/[0.08]">
+          <img
+            src="/austin-dance-hall.jpg"
+            alt="Couples two-stepping on the dance floor at an Austin honky-tonk"
+            className="w-full h-auto object-cover"
+          />
         </div>
 
         {/* Safety / trust row — dating users look for this before anything else */}
@@ -214,6 +254,47 @@ export default async function LandingPage() {
           >
             How SaddleMatch safety works
           </Link>
+        </div>
+
+        {/* Interest tags — personalizes the pitch beyond "just a dating app" */}
+        <div className="mt-14 sm:mt-16 w-full max-w-2xl">
+          <p className="text-xs uppercase tracking-widest font-bold text-ink-faint mb-4 text-center">
+            Tell us what you&rsquo;re into
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
+            {INTEREST_TAGS.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-line bg-card px-4 py-2 text-sm font-semibold text-ink-soft"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-ink-soft text-center max-w-md mx-auto">
+            Add these — and more — to your profile so matches know what you actually want to do on a Saturday.
+          </p>
+        </div>
+
+        {/* Date Spot Showdowns — local flavor, static content, no voting mechanic */}
+        <div className="mt-14 sm:mt-16 w-full max-w-4xl">
+          <p className="text-xs uppercase tracking-widest font-bold text-ink-faint mb-2 text-center">
+            Austin date spot showdowns
+          </p>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-center mb-8">
+            No wrong answer. Just go.
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-5">
+            {DATE_SPOT_SHOWDOWNS.map((s) => (
+              <div key={s.title} className="rounded-2xl border border-line bg-card p-5 text-left">
+                <p className="text-xs font-bold uppercase tracking-wide text-brand mb-2">{s.title}</p>
+                <p className="text-sm font-bold">
+                  {s.a} <span className="text-ink-faint font-normal">vs.</span> {s.b}
+                </p>
+                <p className="text-xs text-ink-soft mt-2 leading-relaxed">{s.note}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-12 sm:mt-16 w-full max-w-2xl">
