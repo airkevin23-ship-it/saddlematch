@@ -96,9 +96,8 @@ export default async function LandingPage() {
           Austin&rsquo;s Country Lifestyle
         </h1>
         <p className="mt-5 sm:mt-6 max-w-xl text-ink-soft text-base sm:text-lg leading-relaxed">
-          Meet people who love two-stepping, live music, rodeos, and real
-          Texas connections. One thoughtful match a day, meaningful profiles,
-          and AI that helps you start better conversations.
+          Less swiping. More real conversations with people who actually
+          share your lifestyle.
         </p>
 
         <div className="mt-7 w-full max-w-sm sm:max-w-none flex justify-center">
@@ -110,10 +109,14 @@ export default async function LandingPage() {
           </Link>
         </div>
 
+        <p className="mt-3 text-xs text-ink-soft max-w-sm">
+          Every profile is reviewed to help keep the community authentic.
+        </p>
+
         {/* Direct answers to the three questions a first-time visitor has before tapping */}
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs font-semibold text-ink-soft">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs font-semibold text-ink-soft">
           <span>✅ Free to join</span>
-          <span>✅ Austin only (for now)</span>
+          <span>✅ Austin Founding Members</span>
           <span>✅ Takes about 2 minutes</span>
         </div>
 
@@ -131,25 +134,8 @@ export default async function LandingPage() {
           ))}
         </div>
 
-        {/* Why SaddleMatch — kept short and scannable since this is the app's own first screen, not a marketing site */}
-        <div className="mt-12 sm:mt-14 w-full max-w-3xl">
-          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mb-6">
-            Dating, without the endless swiping
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-left">
-            {DIFFERENTIATORS.map((item) => (
-              <div key={item.title} className="rounded-2xl border border-line bg-card p-4">
-                <p className="text-2xl mb-2" aria-hidden="true">
-                  {item.icon}
-                </p>
-                <p className="font-bold text-sm">{item.title}</p>
-                <p className="text-xs text-ink-soft mt-1 leading-relaxed">{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Product preview — show, don't just tell */}
+        {/* Product preview — show, don't just tell. Moved above the feature cards
+            so a visitor sees a real person before reading a features list. */}
         <div className="mt-14 w-full max-w-4xl">
           <p className="text-xs uppercase tracking-widest font-bold text-ink-faint mb-6">
             What using it feels like
@@ -256,6 +242,30 @@ export default async function LandingPage() {
           </Link>
         </div>
 
+        {/* Why SaddleMatch — kept short and scannable since this is the app's own first screen, not a marketing site */}
+        <div className="mt-12 sm:mt-14 w-full max-w-3xl">
+          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mb-3">
+            Dating, without the endless swiping
+          </h2>
+          <p className="text-sm text-ink-soft max-w-xl mb-6">
+            On most dating apps, you&rsquo;ll swipe through hundreds of
+            profiles. On SaddleMatch, you receive one thoughtful introduction
+            each day based on shared interests and meaningful profile
+            prompts.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-left">
+            {DIFFERENTIATORS.map((item) => (
+              <div key={item.title} className="rounded-2xl border border-line bg-card p-4">
+                <p className="text-2xl mb-2" aria-hidden="true">
+                  {item.icon}
+                </p>
+                <p className="font-bold text-sm">{item.title}</p>
+                <p className="text-xs text-ink-soft mt-1 leading-relaxed">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="mt-12 sm:mt-16 w-full max-w-2xl">
           <p className="text-xs uppercase tracking-widest font-bold text-ink-faint mb-4">
             New in these cities — be one of the first
@@ -276,35 +286,6 @@ export default async function LandingPage() {
                 </Link>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      <section id="pricing" className="px-4 sm:px-6 py-14 sm:py-20 border-t border-line">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-extrabold mb-2 tracking-tight">Free to match. Paid to get help.</h2>
-          <p className="text-ink-soft mb-2">
-            Browsing, swiping, and matching are always free.
-          </p>
-          <p className="text-ink-soft mb-8 max-w-lg mx-auto">
-            AI helps you write a stronger profile, understand what you have in
-            common, and start better conversations. You stay in control of every
-            decision and message.
-          </p>
-          <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.04] p-6 sm:p-8 w-full sm:w-auto">
-            <p className="flex items-center justify-center gap-1.5 font-extrabold text-lg mb-1">
-              <WesternStarIcon className="w-4 h-4 text-brand" />
-              {APP_NAME} Plus
-            </p>
-            <p className="text-4xl font-extrabold text-brand">{SUBSCRIPTION_INTRO_PRICE_LABEL}</p>
-            <p className="text-ink-soft mt-1 text-sm">
-              {SUBSCRIPTION_INTRO_PERIOD}, then {SUBSCRIPTION_PRICE_LABEL}. Cancel anytime.
-            </p>
-            <ul className="text-left mt-6 space-y-2 text-sm text-ink">
-              {PLUS_FEATURES.map((f) => (
-                <li key={f}>✓ {f}</li>
-              ))}
-            </ul>
           </div>
         </div>
       </section>
@@ -336,6 +317,35 @@ export default async function LandingPage() {
                 No. AI can offer a profile idea, a conversation starter, or a shared-interest note. You choose what to use, and SaddleMatch never sends a message or makes a dating decision for you.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" className="px-4 sm:px-6 py-14 sm:py-20 border-t border-line">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl font-extrabold mb-2 tracking-tight">Free to match. Paid to get help.</h2>
+          <p className="text-ink-soft mb-2">
+            Browsing, swiping, and matching are always free.
+          </p>
+          <p className="text-ink-soft mb-8 max-w-lg mx-auto">
+            AI helps you write a stronger profile, understand what you have in
+            common, and start better conversations. You stay in control of every
+            decision and message.
+          </p>
+          <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.04] p-6 sm:p-8 w-full sm:w-auto">
+            <p className="flex items-center justify-center gap-1.5 font-extrabold text-lg mb-1">
+              <WesternStarIcon className="w-4 h-4 text-brand" />
+              {APP_NAME} Plus
+            </p>
+            <p className="text-4xl font-extrabold text-brand">{SUBSCRIPTION_INTRO_PRICE_LABEL}</p>
+            <p className="text-ink-soft mt-1 text-sm">
+              {SUBSCRIPTION_INTRO_PERIOD}, then {SUBSCRIPTION_PRICE_LABEL}. Cancel anytime.
+            </p>
+            <ul className="text-left mt-6 space-y-2 text-sm text-ink">
+              {PLUS_FEATURES.map((f) => (
+                <li key={f}>✓ {f}</li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
