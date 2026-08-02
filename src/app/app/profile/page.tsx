@@ -263,11 +263,19 @@ export default function ProfilePage() {
   else missing.push("answer at least 2 prompts");
   if (profile.bio.trim().length > 0) score += 20;
   else missing.push("add a tagline");
+  const starsFilled = Math.round(score / 20);
 
   return (
     <div className="max-w-md mx-auto px-6 pt-10 pb-28 bg-cream min-h-screen text-ink">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-extrabold tracking-tight">{profile.display_name} <span className="text-brand">· {score}%</span></h1>
+        <div>
+          <h1 className="text-xl font-extrabold tracking-tight">{profile.display_name}</h1>
+          <div className="mt-0.5 flex items-center gap-1.5" aria-label={`Profile strength: ${score}%`}>
+            <span className="text-sm text-brand" aria-hidden="true">{"★".repeat(starsFilled)}</span>
+            <span className="text-sm text-ink-faint" aria-hidden="true">{"☆".repeat(5 - starsFilled)}</span>
+            <span className="text-xs text-ink-faint">{score}%</span>
+          </div>
+        </div>
         <Link href="/app/discover" className="text-sm font-semibold text-ink-soft">Done</Link>
       </div>
 
@@ -354,6 +362,132 @@ export default function ProfilePage() {
           {mediaSaving && <p className="mt-3 text-xs font-medium text-brand">Uploading your media…</p>}
         </section>
 
+        <div>
+          <label className="text-sm text-ink-soft block mb-1 font-medium">
+            Display name
+          </label>
+          <input
+            value={profile.display_name}
+            onChange={(e) =>
+              setProfile({ ...profile, display_name: e.target.value })
+            }
+            className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
+          />
+        </div>
+
+        <div>
+          <label className="text-sm text-ink-soft block mb-1 font-medium">City</label>
+          <select
+            value={profile.city_id}
+            onChange={(e) =>
+              setProfile({ ...profile, city_id: Number(e.target.value) })
+            }
+            className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
+          >
+            {CITIES.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <section className="space-y-3">
+          <div>
+            <label className="text-sm text-ink-soft block font-medium">Interests</label>
+            <p className="text-xs text-ink-faint">Tap chips to add, or type a custom one and press Enter.</p>
+          </div>
+          <div className="flex flex-wrap gap-2.5">
+            {INTEREST_CHIPS.map((interest) => {
+              const isSelected = selectedInterests.includes(interest);
+              return (
+                <button
+                  key={interest}
+                  type="button"
+                  onClick={() => toggleInterest(interest)}
+                  className={`min-h-11 px-4 py-2 rounded-full text-sm font-semibold border transition ${
+                    isSelected
+                      ? "bg-brand text-white border-brand"
+                      : "bg-cream text-ink-soft border-line hover:border-line-strong"
+                  }`}
+                >
+                  {isSelected ? "✓ " : "+ "}{interest}
+                </button>
+              );
+            })}
+            {selectedInterests
+              .filter((interest) => !INTEREST_CHIPS.includes(interest))
+              .map((interest) => (
+                <button
+                  key={interest}
+                  type="button"
+                  onClick={() => toggleInterest(interest)}
+                  className="min-h-11 px-4 py-2 rounded-full text-sm font-semibold border bg-brand text-white border-brand"
+                >
+                  ✓ {interest}
+                </button>
+              ))}
+          </div>
+          <input
+            type="text"
+            placeholder="Add a custom interest (press Enter)"
+            value={customInterest}
+            onChange={(e) => setCustomInterest(e.target.value)}
+            onKeyDown={addCustomInterest}
+            className="w-full rounded-xl bg-card border border-line px-4 py-2.5 text-sm outline-none focus:border-brand transition-colors"
+          />
+        </section>
+
+        <div>
+          <label className="text-sm text-ink-soft block mb-1 font-medium">
+            What&rsquo;s one thing someone should know about you?
+          </label>
+          <input
+            value={profile.bio}
+            onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+            placeholder="Describe yourself in one sentence"
+            className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
+          />
+        </div>
+
+        <div className="pt-4 border-t border-line">
+          <p className="text-sm font-bold mb-3">Your 3 prompts</p>
+          {prompts.map((p, i) => (
+            <div key={i} className="mb-4 rounded-2xl border border-line bg-cream p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-ink-faint uppercase tracking-wide">Prompt {i + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => handleAiPrompt(i)}
+                  disabled={aiLoadingIndex !== null}
+                  className="text-xs text-brand hover:text-brand-dark font-semibold disabled:opacity-50"
+                >
+                  {aiLoadingIndex === i ? "Writing…" : "✨ Need ideas?"}
+                </button>
+              </div>
+              <select
+                value={p.question}
+                onChange={(e) => updatePromptQuestion(i, e.target.value)}
+                className="w-full rounded-xl bg-card border border-line px-3 py-2 text-sm font-semibold outline-none focus:border-brand transition-colors"
+              >
+                {PROMPT_BANK.map((q) => (
+                  <option key={q} value={q} disabled={usedQuestions.has(q) && q !== p.question}>
+                    {q}
+                  </option>
+                ))}
+              </select>
+              <textarea
+                rows={2}
+                maxLength={150}
+                placeholder="Type your answer here…"
+                value={p.answer}
+                onChange={(e) => updatePromptAnswer(i, e.target.value)}
+                className="w-full rounded-xl bg-card border border-line px-4 py-3 text-sm outline-none focus:border-brand transition-colors resize-none"
+              />
+            </div>
+          ))}
+        </div>
+
         <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
           <h2 className="font-bold">Intro video <span className="text-ink-faint font-medium">(optional)</span></h2>
           <p className="text-xs text-ink-soft mt-1">A short, authentic video helps people get to know you. Up to 50 MB. Keep it respectful and do not include minors or private contact details.</p>
@@ -398,8 +532,8 @@ export default function ProfilePage() {
         </section>
 
         <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
-          <div className="flex items-center justify-between"><h2 className="font-bold">About you</h2><span className="text-xs text-ink-faint">Visible controls</span></div>
-          <p className="mt-1 text-xs text-ink-soft">Choose what to share on your public profile. You can change this anytime.</p>
+          <div className="flex items-center justify-between"><h2 className="font-bold">Complete your profile</h2><span className="text-xs text-ink-faint">Optional</span></div>
+          <p className="mt-1 text-xs text-ink-soft">A few more questions to help you get better matches. Skip for now and come back anytime — nothing here is required to start matching.</p>
           <div className="mt-3">
             {DETAIL_FIELDS.map(([key, label, options]) => (
               <div key={key} className="border-b border-line py-3 last:border-0">
@@ -426,93 +560,6 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        <div>
-          <label className="text-sm text-ink-soft block mb-1 font-medium">
-            Display name
-          </label>
-          <input
-            value={profile.display_name}
-            onChange={(e) =>
-              setProfile({ ...profile, display_name: e.target.value })
-            }
-            className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
-          />
-        </div>
-
-        <div>
-          <label className="text-sm text-ink-soft block mb-1 font-medium">City</label>
-          <select
-            value={profile.city_id}
-            onChange={(e) =>
-              setProfile({ ...profile, city_id: Number(e.target.value) })
-            }
-            className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
-          >
-            {CITIES.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <section className="space-y-3">
-          <div>
-            <label className="text-sm text-ink-soft block font-medium">Interests</label>
-            <p className="text-xs text-ink-faint">Tap chips to add, or type a custom one and press Enter.</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {INTEREST_CHIPS.map((interest) => {
-              const isSelected = selectedInterests.includes(interest);
-              return (
-                <button
-                  key={interest}
-                  type="button"
-                  onClick={() => toggleInterest(interest)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${
-                    isSelected
-                      ? "bg-brand text-white border-brand"
-                      : "bg-cream text-ink-soft border-line hover:border-line-strong"
-                  }`}
-                >
-                  {isSelected ? "✓ " : "+ "}{interest}
-                </button>
-              );
-            })}
-            {selectedInterests
-              .filter((interest) => !INTEREST_CHIPS.includes(interest))
-              .map((interest) => (
-                <button
-                  key={interest}
-                  type="button"
-                  onClick={() => toggleInterest(interest)}
-                  className="px-3 py-1.5 rounded-full text-xs font-semibold border bg-brand text-white border-brand"
-                >
-                  ✓ {interest}
-                </button>
-              ))}
-          </div>
-          <input
-            type="text"
-            placeholder="Add a custom interest (press Enter)"
-            value={customInterest}
-            onChange={(e) => setCustomInterest(e.target.value)}
-            onKeyDown={addCustomInterest}
-            className="w-full rounded-xl bg-card border border-line px-4 py-2.5 text-sm outline-none focus:border-brand transition-colors"
-          />
-        </section>
-
-        <div>
-          <label className="text-sm text-ink-soft block mb-1 font-medium">
-            One-line tagline (optional)
-          </label>
-          <input
-            value={profile.bio}
-            onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-            className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
-          />
-        </div>
-
         <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
           <h2 className="font-bold">Dating preferences</h2>
           <p className="mt-1 text-xs text-ink-soft">These set your normal daily-match range.</p>
@@ -522,44 +569,6 @@ export default function ProfilePage() {
           </div>
           <label className="mt-3 block text-sm text-ink-soft">I&rsquo;m looking for<select value={relationshipIntent} onChange={(e) => setRelationshipIntent(e.target.value as RelationshipIntent)} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand">{DATING_INTENTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
         </section>
-
-        <div className="pt-4 border-t border-line">
-          <p className="text-sm font-bold mb-3">Your 3 prompts</p>
-          {prompts.map((p, i) => (
-            <div key={i} className="mb-4 rounded-2xl border border-line bg-cream p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-ink-faint uppercase tracking-wide">Prompt {i + 1}</span>
-                <button
-                  type="button"
-                  onClick={() => handleAiPrompt(i)}
-                  disabled={aiLoadingIndex !== null}
-                  className="text-xs text-brand hover:text-brand-dark font-semibold disabled:opacity-50"
-                >
-                  {aiLoadingIndex === i ? "Writing…" : "✨ AI Assist (Plus)"}
-                </button>
-              </div>
-              <select
-                value={p.question}
-                onChange={(e) => updatePromptQuestion(i, e.target.value)}
-                className="w-full rounded-xl bg-card border border-line px-3 py-2 text-sm font-semibold outline-none focus:border-brand transition-colors"
-              >
-                {PROMPT_BANK.map((q) => (
-                  <option key={q} value={q} disabled={usedQuestions.has(q) && q !== p.question}>
-                    {q}
-                  </option>
-                ))}
-              </select>
-              <textarea
-                rows={2}
-                maxLength={150}
-                placeholder="Type your answer here…"
-                value={p.answer}
-                onChange={(e) => updatePromptAnswer(i, e.target.value)}
-                className="w-full rounded-xl bg-card border border-line px-4 py-3 text-sm outline-none focus:border-brand transition-colors resize-none"
-              />
-            </div>
-          ))}
-        </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
@@ -603,7 +612,7 @@ export default function ProfilePage() {
             disabled={saving}
             className="rounded-xl bg-brand px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-dark disabled:opacity-50"
           >
-            {saving ? "Saving…" : saved ? "Saved ✓" : "Save changes"}
+            {saving ? "Saving…" : saved ? "Saved ✓" : "Save & Continue"}
           </button>
         </div>
       </div>
