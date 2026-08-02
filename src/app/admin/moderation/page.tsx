@@ -52,12 +52,12 @@ export default async function ModerationPage() {
 
   return (
         <main className="mx-auto min-h-screen max-w-3xl bg-cream px-5 py-10 text-ink sm:px-8">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand">SaddleMatch safety</p>p>
-              <h1 className="mt-2 text-3xl font-extrabold">Report moderation</h1>h1>
-              <p className="mt-2 text-sm leading-relaxed text-ink-soft">Review open reports carefully. Dismissing restores visibility; actioning keeps a profile hidden from Discover.</p>p>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand">SaddleMatch safety</p>
+              <h1 className="mt-2 text-3xl font-extrabold">Report moderation</h1>
+              <p className="mt-2 text-sm leading-relaxed text-ink-soft">Review open reports carefully. Dismissing restores visibility; actioning keeps a profile hidden from Discover.</p>
               <div className="mt-7 space-y-4">
                 {reportGroups.length === 0 ? (
-                    <section className="rounded-2xl border border-line bg-card p-5 text-sm text-ink-soft">There are no open reports to review.</section>section>
+                    <section className="rounded-2xl border border-line bg-card p-5 text-sm text-ink-soft">There are no open reports to review.</section>
                   ) : (
                     reportGroups.map(([reportedId, groupReports]) => {
                                   const profile = profilesById.get(reportedId);
@@ -66,30 +66,29 @@ export default async function ModerationPage() {
                                                   <section key={reportedId} className="rounded-2xl border border-line bg-card p-5 shadow-sm">
                                                                   <div className="flex items-start justify-between gap-3">
                                                                                     <div>
-                                                                                                        <h2 className="font-bold">{profile?.display_name ?? "Member"}</h2>h2>
-                                                                                                        <p className="mt-1 text-xs font-semibold text-ink-soft">{groupReports.length} report{groupReports.length > 1 ? "s" : ""}</p>p>
-                                                                                      </div>div>
-                                                                                    <span className={`rounded-full px-2 py-1 text-xs font-bold ${isQuarantined ? "bg-red-50 text-red-700" : "bg-brand-soft text-brand-dark"}`}>{isQuarantined ? "Quarantined" : "Visible"}</span>span>
-                                                                  </div>div>
+                                                                                                        <h2 className="font-bold">{profile?.display_name ?? "Member"}</h2>
+                                                                                                        <p className="mt-1 text-xs font-semibold text-ink-soft">{groupReports.length} report{groupReports.length > 1 ? "s" : ""}</p>
+                                                                                      </div>
+                                                                                    <span className={`rounded-full px-2 py-1 text-xs font-bold ${isQuarantined ? "bg-red-50 text-red-700" : "bg-brand-soft text-brand-dark"}`}>{isQuarantined ? "Quarantined" : "Visible"}</span>
+                                                                  </div>
                                                                   <div className="mt-3 space-y-2">
                                                                     {groupReports.map((report) => (
                                                                         <div key={report.id} className="rounded-xl bg-cream px-3 py-2 text-sm text-ink-soft">
-                                                                                              <p><span className="font-semibold text-ink">Reason:</span>span> {report.reason}</p>p>
-                                                                          {report.details ? <p className="mt-1">{report.details}</p>p> : null}
-                                                                                              <p className="mt-1 text-xs text-ink-soft">Reported by {profilesById.get(report.reporter_id)?.display_name ?? "a member"}</p>p>
-                                                                        </div>div>
+                                                                                              <p><span className="font-semibold text-ink">Reason:</span> {report.reason}</p>
+                                                                          {report.details ? <p className="mt-1">{report.details}</p> : null}
+                                                                                              <p className="mt-1 text-xs text-ink-soft">Reported by {profilesById.get(report.reporter_id)?.display_name ?? "a member"}</p>
+                                                                        </div>
                                                                       ))}
-                                                                  </div>div>
+                                                                  </div>
                                                                   <div className="mt-4 grid grid-cols-2 gap-3">
-                                                                                    <form action={dismissReports.bind(null, reportedId)}><button className="min-h-11 w-full rounded-xl border border-line bg-white px-3 text-sm font-bold text-ink-soft hover:bg-cream">Dismiss &amp; restore</button>button></form>form>
-                                                                                    <form action={actionReport.bind(null, reportedId)}><button className="min-h-11 w-full rounded-xl bg-red-600 px-3 text-sm font-bold text-white hover:bg-red-700">Action &amp; keep hidden</button>button></form>form>
-                                                                  </div>div>
-                                                  </section>section>
+                                                                                    <form action={dismissReports.bind(null, reportedId)}><button className="min-h-11 w-full rounded-xl border border-line bg-white px-3 text-sm font-bold text-ink-soft hover:bg-cream">Dismiss &amp; restore</button></form>
+                                                                                    <form action={actionReport.bind(null, reportedId)}><button className="min-h-11 w-full rounded-xl bg-red-600 px-3 text-sm font-bold text-white hover:bg-red-700">Action &amp; keep hidden</button></form>
+                                                                  </div>
+                                      </section>
                                                 );
                     })
                   )}
-              </div>div>
-        </main>main>
+              </div>
+        </main>
       );
 }
-</main>
