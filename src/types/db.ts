@@ -52,6 +52,7 @@ export interface PublicProfile {
   intro_video_url?: string | null;
   prompts: Prompt[];
   is_active: boolean;
+  relationship_intent: RelationshipIntent;
   is_demo: boolean;
   created_at: string;
 }
