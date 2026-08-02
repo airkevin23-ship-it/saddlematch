@@ -57,7 +57,6 @@ const DATE_SPOT_SHOWDOWNS = [
   },
 ];
 
-export default async function LandingPage() {
 let openCityIds = new Set<number>();
   try {
     const supabase = await createClient();
