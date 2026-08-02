@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { CITIES, PROMPT_BANK } from "@/lib/constants";
+import { CITIES, PROMPT_BANK, INTEREST_CHIPS } from "@/lib/constants";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 
 const DETAIL_FIELDS = [
@@ -37,7 +37,8 @@ export default function ProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [interestsInput, setInterestsInput] = useState("");
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [customInterest, setCustomInterest] = useState("");
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [minAge, setMinAge] = useState(18);
   const [maxAge, setMaxAge] = useState(99);
@@ -72,7 +73,7 @@ export default function ProfilePage() {
         const savedDetails = ((data.preference_details as unknown as { profile?: { values?: Partial<Details>; visibility?: Partial<Record<DetailKey, boolean>> } } | undefined)?.profile ?? {});
         setDetails({ ...EMPTY_DETAILS, ...(savedDetails.values ?? {}) });
         setVisibility({ ...EMPTY_VISIBILITY, ...(savedDetails.visibility ?? {}) });
-        setInterestsInput((data.interests ?? []).join(", "));
+        setSelectedInterests(data.interests ?? []);
         setPrompts(
           data.prompts && data.prompts.length === 3
             ? data.prompts
@@ -85,6 +86,21 @@ export default function ProfilePage() {
       }
     })();
   }, [supabase]);
+
+  function toggleInterest(interest: string) {
+    setSelectedInterests((prev) =>
+      prev.includes(interest) ? prev.filter((i) => i !== interest) : [...prev, interest]
+    );
+  }
+
+  function addCustomInterest(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter" && customInterest.trim()) {
+      e.preventDefault();
+      const value = customInterest.trim();
+      setSelectedInterests((prev) => (prev.includes(value) ? prev : [...prev, value]));
+      setCustomInterest("");
+    }
+  }
 
   function updatePromptQuestion(i: number, question: string) {
     setPrompts((prev) => prev.map((p, idx) => (idx === i ? { ...p, question } : p)));
@@ -112,7 +128,7 @@ export default function ProfilePage() {
         body: JSON.stringify({
           question: prompts[i].question,
           city: city?.name,
-          interests: interestsInput.split(",").map((s) => s.trim()).filter(Boolean),
+          interests: selectedInterests,
           notes: profile.bio,
         }),
       });
@@ -138,7 +154,7 @@ export default function ProfilePage() {
         display_name: profile.display_name,
         bio: profile.bio,
         city_id: profile.city_id,
-        interests: interestsInput.split(",").map((s) => s.trim()).filter(Boolean),
+        interests: selectedInterests,
         prompts,
         min_age: minAge,
         max_age: maxAge,
@@ -236,12 +252,37 @@ export default function ProfilePage() {
     return <div className="px-6 py-10 text-ink-soft bg-cream min-h-screen">Loading…</div>;
   }
 
-  const completedItems = [profile.photo_urls.length > 0, Boolean(profile.bio), prompts.some((prompt) => Boolean(prompt.answer.trim())), profile.interests.length > 0, Boolean(profile.intro_video_url), Object.values(details).some((value) => value !== "Not answered yet" && value !== "Prefer not to say")].filter(Boolean).length;
-  const completionScore = Math.round((completedItems / 6) * 100);
+  const answeredPrompts = prompts.filter((p) => p.answer.trim().length > 0).length;
+  const missing: string[] = [];
+  let score = 20;
+  if (profile.photo_urls.length > 0) score += 20;
+  else missing.push("add a photo");
+  if (selectedInterests.length >= 3) score += 20;
+  else missing.push("add at least 3 interests");
+  if (answeredPrompts >= 2) score += 20;
+  else missing.push("answer at least 2 prompts");
+  if (profile.bio.trim().length > 0) score += 20;
+  else missing.push("add a tagline");
 
   return (
-    <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink">
-      <div className="mb-6 flex items-center justify-between"><h1 className="text-xl font-extrabold tracking-tight">{profile.display_name} <span className="text-brand">· {completionScore}%</span></h1><Link href="/app/discover" className="text-sm font-semibold text-ink-soft">Done</Link></div>
+    <div className="max-w-md mx-auto px-6 pt-10 pb-28 bg-cream min-h-screen text-ink">
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-xl font-extrabold tracking-tight">{profile.display_name} <span className="text-brand">· {score}%</span></h1>
+        <Link href="/app/discover" className="text-sm font-semibold text-ink-soft">Done</Link>
+      </div>
+
+      <div className="mb-6 space-y-2 rounded-xl border border-brand/20 bg-brand-soft/60 p-4">
+        {missing.length > 0 && (
+          <p className="text-xs text-brand-dark flex items-start gap-1.5">
+            <span aria-hidden="true">💡</span>
+            <span><span className="font-semibold">Next step to reach 100%:</span> Add {missing.join(" and ")}.</span>
+          </p>
+        )}
+        <div className="h-2 w-full overflow-hidden rounded-full bg-white/70">
+          <div className="h-full bg-brand transition-all duration-300" style={{ width: `${score}%` }} />
+        </div>
+      </div>
+
       <div className="mb-6 grid grid-cols-2 border-b border-line"><button type="button" onClick={() => setProfileTab("edit")} className={`min-h-12 border-b-4 text-base font-bold ${profileTab === "edit" ? "border-ink text-ink" : "border-transparent text-ink-faint"}`}>Edit</button><button type="button" onClick={() => setProfileTab("view")} className={`min-h-12 border-b-4 text-base font-bold ${profileTab === "view" ? "border-ink text-ink" : "border-transparent text-ink-faint"}`}>View</button></div>
       {profileTab === "view" && <section className="mb-6 space-y-4">{profile.photo_urls[0] && <div className="aspect-[4/5] overflow-hidden rounded-3xl bg-line">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={profile.photo_urls[0]} alt="Profile preview" className="h-full w-full object-cover" /></div>}<div className="rounded-2xl border border-line bg-card p-5"><h2 className="text-2xl font-extrabold">{profile.display_name}</h2>{profile.bio && <p className="mt-2 leading-relaxed text-ink-soft">{profile.bio}</p>}</div><div className="rounded-2xl border border-line bg-card px-4">{DETAIL_FIELDS.filter(([key]) => visibility[key]).map(([key, label]) => <div key={key} className="border-b border-line py-4 last:border-0"><p className="font-bold">{label}</p><p className="mt-1 text-ink-soft">{details[key]}</p></div>)}<div className="py-4"><p className="font-bold">Dating intentions</p><p className="mt-1 text-ink-soft">{DATING_INTENTIONS.find((option) => option.value === relationshipIntent)?.label ?? "Open to exploring"}</p></div></div></section>}
 
@@ -359,7 +400,30 @@ export default function ProfilePage() {
         <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
           <div className="flex items-center justify-between"><h2 className="font-bold">About you</h2><span className="text-xs text-ink-faint">Visible controls</span></div>
           <p className="mt-1 text-xs text-ink-soft">Choose what to share on your public profile. You can change this anytime.</p>
-          <div className="mt-3">{DETAIL_FIELDS.map(([key, label, options]) => <div key={key} className="border-b border-line py-3 last:border-0"><div className="flex items-center justify-between gap-3"><label className="min-w-0 flex-1"><span className="block text-sm font-bold">{label}</span><select value={details[key]} onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))} className="mt-1 w-full bg-transparent text-base text-ink-soft outline-none">{options.map((option) => <option key={option}>{option}</option>)}</select></label><button type="button" onClick={() => setVisibility((current) => ({ ...current, [key]: !current[key] }))} className={`min-h-9 rounded-lg px-2 text-xs font-bold ${visibility[key] ? "bg-brand-soft text-brand-dark" : "bg-line text-ink-faint"}`}>{visibility[key] ? "Visible" : "Hidden"}</button></div></div>)}</div>
+          <div className="mt-3">
+            {DETAIL_FIELDS.map(([key, label, options]) => (
+              <div key={key} className="border-b border-line py-3 last:border-0">
+                <div className="flex items-center justify-between gap-3">
+                  <label className="min-w-0 flex-1">
+                    <span className="block text-sm font-bold">{label}</span>
+                    <select value={details[key]} onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))} className="mt-1 w-full bg-transparent text-base text-ink-soft outline-none">
+                      {options.map((option) => <option key={option}>{option}</option>)}
+                    </select>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setVisibility((current) => ({ ...current, [key]: !current[key] }))}
+                    className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors"
+                    style={{ backgroundColor: visibility[key] ? "var(--color-brand, #b45309)" : "var(--color-line, #e5e5e5)" }}
+                    aria-pressed={visibility[key]}
+                    aria-label={`${visibility[key] ? "Hide" : "Show"} ${label} on your public profile`}
+                  >
+                    <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${visibility[key] ? "translate-x-5" : "translate-x-0.5"}`} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         <div>
@@ -392,16 +456,51 @@ export default function ProfilePage() {
           </select>
         </div>
 
-        <div>
-          <label className="text-sm text-ink-soft block mb-1 font-medium">
-            Interests (comma-separated)
-          </label>
+        <section className="space-y-3">
+          <div>
+            <label className="text-sm text-ink-soft block font-medium">Interests</label>
+            <p className="text-xs text-ink-faint">Tap chips to add, or type a custom one and press Enter.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {INTEREST_CHIPS.map((interest) => {
+              const isSelected = selectedInterests.includes(interest);
+              return (
+                <button
+                  key={interest}
+                  type="button"
+                  onClick={() => toggleInterest(interest)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${
+                    isSelected
+                      ? "bg-brand text-white border-brand"
+                      : "bg-cream text-ink-soft border-line hover:border-line-strong"
+                  }`}
+                >
+                  {isSelected ? "✓ " : "+ "}{interest}
+                </button>
+              );
+            })}
+            {selectedInterests
+              .filter((interest) => !INTEREST_CHIPS.includes(interest))
+              .map((interest) => (
+                <button
+                  key={interest}
+                  type="button"
+                  onClick={() => toggleInterest(interest)}
+                  className="px-3 py-1.5 rounded-full text-xs font-semibold border bg-brand text-white border-brand"
+                >
+                  ✓ {interest}
+                </button>
+              ))}
+          </div>
           <input
-            value={interestsInput}
-            onChange={(e) => setInterestsInput(e.target.value)}
-            className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
+            type="text"
+            placeholder="Add a custom interest (press Enter)"
+            value={customInterest}
+            onChange={(e) => setCustomInterest(e.target.value)}
+            onKeyDown={addCustomInterest}
+            className="w-full rounded-xl bg-card border border-line px-4 py-2.5 text-sm outline-none focus:border-brand transition-colors"
           />
-        </div>
+        </section>
 
         <div>
           <label className="text-sm text-ink-soft block mb-1 font-medium">
@@ -427,11 +526,22 @@ export default function ProfilePage() {
         <div className="pt-4 border-t border-line">
           <p className="text-sm font-bold mb-3">Your 3 prompts</p>
           {prompts.map((p, i) => (
-            <div key={i} className="mb-5">
+            <div key={i} className="mb-4 rounded-2xl border border-line bg-cream p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-ink-faint uppercase tracking-wide">Prompt {i + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => handleAiPrompt(i)}
+                  disabled={aiLoadingIndex !== null}
+                  className="text-xs text-brand hover:text-brand-dark font-semibold disabled:opacity-50"
+                >
+                  {aiLoadingIndex === i ? "Writing…" : "✨ AI Assist (Plus)"}
+                </button>
+              </div>
               <select
                 value={p.question}
                 onChange={(e) => updatePromptQuestion(i, e.target.value)}
-                className="w-full rounded-xl bg-card border border-line px-3 py-2 text-sm outline-none focus:border-brand mb-1 transition-colors"
+                className="w-full rounded-xl bg-card border border-line px-3 py-2 text-sm font-semibold outline-none focus:border-brand transition-colors"
               >
                 {PROMPT_BANK.map((q) => (
                   <option key={q} value={q} disabled={usedQuestions.has(q) && q !== p.question}>
@@ -442,30 +552,16 @@ export default function ProfilePage() {
               <textarea
                 rows={2}
                 maxLength={150}
+                placeholder="Type your answer here…"
                 value={p.answer}
                 onChange={(e) => updatePromptAnswer(i, e.target.value)}
-                className="w-full rounded-xl bg-card border border-line px-4 py-3 text-sm outline-none focus:border-brand transition-colors"
+                className="w-full rounded-xl bg-card border border-line px-4 py-3 text-sm outline-none focus:border-brand transition-colors resize-none"
               />
-              <button
-                onClick={() => handleAiPrompt(i)}
-                disabled={aiLoadingIndex !== null}
-                className="mt-1 text-xs text-brand hover:text-brand-dark font-semibold disabled:opacity-50"
-              >
-                {aiLoadingIndex === i ? "Writing…" : "✨ Help me answer (AI, Plus)"}
-              </button>
             </div>
           ))}
         </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
-
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="w-full bg-brand hover:bg-brand-dark disabled:opacity-50 text-white py-3 rounded-xl font-bold transition-colors"
-        >
-          {saving ? "Saving…" : saved ? "Saved ✓" : "Save changes"}
-        </button>
 
         <div className="mt-10 pt-6 border-t border-line">
           <p className="text-sm font-bold text-ink-soft mb-1">Danger zone</p>
@@ -495,6 +591,19 @@ export default function ProfilePage() {
             className="text-sm text-red-600 hover:text-red-700 font-semibold disabled:opacity-50"
           >
             {deleting ? "Deleting…" : "Delete my account"}
+          </button>
+        </div>
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-line bg-cream/95 p-4 backdrop-blur-md shadow-lg">
+        <div className="mx-auto flex max-w-md items-center justify-between">
+          <span className="text-xs text-ink-soft">{saved ? "Saved ✓" : "Unsaved changes are not lost—save when ready"}</span>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="rounded-xl bg-brand px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-dark disabled:opacity-50"
+          >
+            {saving ? "Saving…" : saved ? "Saved ✓" : "Save changes"}
           </button>
         </div>
       </div>
