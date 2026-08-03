@@ -71,7 +71,7 @@ export default function WelcomePage() {
         <p className="text-ink-soft leading-relaxed">{screen.body}</p>
 
         {step === 1 && (
-          <div className="mt-8 rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] overflow-hidden w-full max-w-[260px]">
+          <div className="mt-8 rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] overflow-hidden w-full max-w-[320px]">
             <div className="aspect-[4/5] bg-line overflow-hidden">
               <img
                 src="/maddie-profile.png"
