@@ -55,7 +55,10 @@ export default function WelcomePage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col bg-cream text-ink px-6 py-8">
+    // Phone-width column, same as the landing page and the signed-in app, so
+    // the whole sign-up path looks like one continuous mobile app.
+    <main className="flex min-h-screen justify-center bg-line/40 text-ink">
+      <div className="flex min-h-screen w-full max-w-[480px] flex-col bg-cream px-6 py-8 shadow-[0_0_60px_rgba(27,25,23,0.10)]">
       <button
         onClick={handleBack}
         className="text-sm text-ink-faint hover:text-ink-soft font-medium self-start min-h-11 -ml-1 px-1"
@@ -108,6 +111,7 @@ export default function WelcomePage() {
       >
         {isLast ? "Get Started" : "Continue"}
       </button>
+      </div>
     </main>
   );
 }
