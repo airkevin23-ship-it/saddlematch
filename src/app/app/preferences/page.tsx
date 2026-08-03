@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { AREA_SECTIONS, AREA_SECTION_LABELS, type AreaSection } from "@/lib/constants";
@@ -117,6 +118,7 @@ function PreferenceRow({ icon, label, value, options, openLabel, onChange }: { i
 
 export default function PreferencesPage() {
   const supabase = createClient();
+  const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [genders, setGenders] = useState<Gender[]>([]);
   const [minAge, setMinAge] = useState(18);
@@ -197,9 +199,19 @@ export default function PreferencesPage() {
       preference_details: { ...otherDetails, ...details, areas } as unknown as Record<string, string>,
       updated_at: new Date().toISOString(),
     }).eq("id", profile.id);
-    setMessage(error ? "Couldn't save your preferences. Try again." : "Preferences saved.");
+    if (error) {
+      setMessage("Couldn't save your preferences. Try again.");
+      setSaving(false);
+      return;
+    }
+
+    setDirty(false);
     setSaving(false);
-    if (!error) setDirty(false);
+
+    // Preferences is a close-when-done screen — the header only offers ×.
+    // Saving should take you back the same way the × does, otherwise the
+    // button looks like it did nothing.
+    router.push("/app/profile");
   }
 
   if (!profile) return <div className="min-h-screen bg-cream px-6 py-10 text-ink-soft">Loading preferences...</div>;
@@ -274,7 +286,7 @@ export default function PreferencesPage() {
           </div>
         </section>
         <p className="mt-6 text-center text-sm leading-relaxed text-ink-soft">These preferences help us curate your daily match. You can change them anytime.</p>
-        {message && <p className="mt-4 text-center text-sm font-semibold text-brand">{message}</p>}
+        {message && <p className="mt-4 text-center text-sm font-semibold text-red-600">{message}</p>}
         <button onClick={save} disabled={saving || !dirty} className="mt-3 min-h-12 w-full rounded-xl bg-brand font-bold text-white disabled:opacity-40">{saving ? "Saving..." : dirty ? "Save preferences" : "No changes to save"}</button>
       </main>
     </div>
