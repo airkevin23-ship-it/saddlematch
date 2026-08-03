@@ -261,7 +261,6 @@ export default function DiscoverPage() {
   }
 
   const current = candidates[index];
-  const remaining = candidates.length - index;
 
   return (
     <div className="max-w-xl mx-auto px-4 sm:px-6 py-6 sm:py-10 bg-cream min-h-screen text-ink">
@@ -295,10 +294,7 @@ export default function DiscoverPage() {
       {!loading && !error && candidates.length > 0 && (
         <div className="mb-5 flex items-center justify-between px-1">
           <p className="text-xs font-bold tracking-[0.16em] uppercase text-brand">Today&rsquo;s roundup</p>
-          <div className="flex items-center gap-3">
-            <button onClick={() => setFiltersOpen((open) => !open)} className="min-h-10 rounded-lg px-2 text-xs font-bold text-ink-soft hover:bg-card hover:text-ink">Filters</button>
-            <p className="text-xs text-ink-soft font-medium">{remaining} left</p>
-          </div>
+          <button onClick={() => setFiltersOpen((open) => !open)} className="min-h-10 rounded-lg px-2 text-xs font-bold text-ink-soft hover:bg-card hover:text-ink">Filters</button>
         </div>
       )}
 
@@ -363,7 +359,9 @@ export default function DiscoverPage() {
               )}
               <button
                 onClick={() => setOpenPromptIndex(openPromptIndex === "photo" ? null : "photo")}
-                className="absolute bottom-3 right-3 flex h-12 w-12 items-center justify-center rounded-full bg-ink text-xl text-white shadow-lg hover:bg-brand transition-colors"
+                className={`absolute right-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-ink text-xl text-white shadow-lg ring-4 ring-card transition-colors hover:bg-brand ${
+                  photoIndex === (current.photo_urls?.length || 1) - 1 ? "-bottom-6" : "bottom-3"
+                }`}
                 aria-label={`Like photo ${photoIndex + 1}`}
               >
                 {openPromptIndex === "photo" ? "♥" : "♡"}
