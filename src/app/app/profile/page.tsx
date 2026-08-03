@@ -151,11 +151,23 @@ export default function ProfilePage() {
 
     if (error) {
       setError(error.message);
-    } else {
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      setSaving(false);
+      return;
     }
+
+    setSaved(true);
     setSaving(false);
+    setTimeout(() => setSaved(false), 2000);
+
+    // Saving from the editor should hand you back to your profile. Leaving
+    // someone parked at the bottom of a long form, with only a 2-second label
+    // change on a footer they have scrolled past, reads as "nothing happened".
+    if (completionScore >= 100) {
+      router.push("/app/discover");
+      return;
+    }
+    setProfileTab("view");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function uploadMedia(file: File, kind: "photo" | "video") {
@@ -555,8 +567,6 @@ export default function ProfilePage() {
           ))}
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
-
         <div className="mt-10 pt-6 border-t border-line">
           <p className="text-sm font-bold text-ink-soft mb-1">Danger zone</p>
           <p className="text-xs text-ink-faint mb-3">
@@ -591,6 +601,7 @@ export default function ProfilePage() {
 
       <div className="fixed inset-x-0 bottom-16 sm:bottom-0 z-40 border-t border-line bg-card/95 backdrop-blur px-6 py-3 sm:py-4">
         <div className="max-w-md mx-auto">
+          {error && <p className="mb-2 text-center text-sm font-semibold text-red-600">{error}</p>}
           <button
             onClick={handleSave}
             disabled={saving}
