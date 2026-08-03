@@ -58,7 +58,7 @@ export default function WelcomePage() {
     // Phone-width column, same as the landing page and the signed-in app, so
     // the whole sign-up path looks like one continuous mobile app.
     <main className="flex min-h-screen justify-center bg-line/40 text-ink">
-      <div className="flex min-h-screen w-full max-w-[480px] flex-col bg-cream px-6 py-8 shadow-[0_0_60px_rgba(27,25,23,0.10)]">
+      <div className="flex h-screen w-full max-w-[480px] flex-col bg-cream px-6 py-6 shadow-[0_0_60px_rgba(27,25,23,0.10)]">
       <button
         onClick={handleBack}
         className="text-sm text-ink-faint hover:text-ink-soft font-medium self-start min-h-11 -ml-1 px-1"
@@ -67,15 +67,15 @@ export default function WelcomePage() {
       </button>
 
       <div className="mx-auto flex w-full min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto text-center max-w-sm">
-        <span className="text-5xl mb-6" aria-hidden="true">
+        <span className="mb-4 text-5xl" aria-hidden="true">
           {screen.emoji}
         </span>
         <h1 className="text-2xl font-extrabold tracking-tight mb-3">{screen.title}</h1>
         <p className="text-ink-soft leading-relaxed">{screen.body}</p>
 
         {step === 1 && (
-          <div className="mt-6 w-full max-w-[260px] shrink-0 overflow-hidden rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06]">
-            <div className="h-[34vh] max-h-[340px] min-h-[150px] overflow-hidden bg-line">
+          <div className="mt-4 w-full max-w-[260px] shrink-0 overflow-hidden rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06]">
+            <div className="h-[26vh] max-h-[280px] min-h-[130px] overflow-hidden bg-line">
               <img
                 src="/maddie-profile.png"
                 alt="Maddie enjoying an Austin evening"
