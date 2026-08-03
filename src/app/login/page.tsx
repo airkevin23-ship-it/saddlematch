@@ -162,7 +162,9 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 bg-cream text-ink">
+    // Phone-width column so log in matches the rest of the flow.
+    <main className="flex min-h-screen justify-center bg-line/40 text-ink">
+      <div className="flex min-h-screen w-full max-w-[480px] items-center justify-center bg-cream px-6 shadow-[0_0_60px_rgba(27,25,23,0.10)]">
       <div className="w-full max-w-sm">
         <Link href="/" className="text-sm text-ink-soft hover:text-ink transition-colors">
           ← {APP_NAME}
@@ -317,6 +319,7 @@ export default function LoginPage() {
             Sign up
           </Link>
         </p>
+      </div>
       </div>
     </main>
   );
