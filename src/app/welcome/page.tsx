@@ -66,7 +66,7 @@ export default function WelcomePage() {
         ← Back
       </button>
 
-      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-sm mx-auto w-full">
+      <div className="mx-auto flex w-full min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto text-center max-w-sm">
         <span className="text-5xl mb-6" aria-hidden="true">
           {screen.emoji}
         </span>
@@ -74,8 +74,8 @@ export default function WelcomePage() {
         <p className="text-ink-soft leading-relaxed">{screen.body}</p>
 
         {step === 1 && (
-          <div className="mt-8 rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] overflow-hidden w-full max-w-[320px]">
-            <div className="aspect-[4/5] bg-line overflow-hidden">
+          <div className="mt-6 w-full max-w-[260px] shrink-0 overflow-hidden rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06]">
+            <div className="h-[34vh] max-h-[340px] min-h-[150px] overflow-hidden bg-line">
               <img
                 src="/maddie-profile.png"
                 alt="Maddie enjoying an Austin evening"
