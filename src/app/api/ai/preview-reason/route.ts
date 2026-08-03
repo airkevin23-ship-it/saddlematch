@@ -2,9 +2,21 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveSubscription } from "@/lib/subscription";
 import { getAnthropicClient, AI_MODEL } from "@/lib/anthropic";
+import { CITIES } from "@/lib/constants";
+import {
+  computeCommonGround,
+  commonGroundChips,
+  hasMeaningfulCommonGround,
+  buildPhrasingPrompt,
+} from "@/lib/compatibility";
 
-// Coffee Meets Bagel style: a short "why you two might click" blurb
-// shown BEFORE deciding to like/pass, not after matching.
+// Common Ground shown BEFORE deciding to like/pass.
+//
+// The overlap itself is computed in plain code and returned to everyone —
+// it costs nothing, so gating it would be gating arithmetic. Plus members
+// additionally get the AI-phrased version, where the model only rephrases
+// the list we already computed. Free users therefore never trigger an
+// Anthropic call from this route.
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -15,14 +27,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const subscribed = await hasActiveSubscription(user.id);
-  if (!subscribed) {
-    return NextResponse.json(
-      { error: "This is a Plus feature. Upgrade to see AI compatibility notes." },
-      { status: 402 }
-    );
-  }
-
   const { candidateId } = await request.json();
   if (!candidateId) {
     return NextResponse.json({ error: "candidateId is required" }, { status: 400 });
@@ -30,7 +34,9 @@ export async function POST(request: Request) {
 
   const { data: profiles } = await supabase
     .from("public_profiles")
-    .select("id, display_name, bio, interests, prompts")
+    .select(
+      "id, display_name, city_id, interests, relationship_intent, prompts, visible_details"
+    )
     .in("id", [user.id, candidateId]);
 
   const me = profiles?.find((p) => p.id === user.id);
@@ -40,22 +46,41 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
 
+  const cityName =
+    me?.city_id != null && me.city_id === other.city_id
+      ? CITIES.find((city) => city.id === other.city_id)?.name ?? null
+      : null;
+
+  const ground = computeCommonGround(me ?? {}, other, { cityName });
+  const chips = commonGroundChips(ground);
+
+  // Nothing real to point at — say so rather than inventing warmth.
+  if (!hasMeaningfulCommonGround(ground)) {
+    return NextResponse.json({
+      commonGround: [],
+      summary: "",
+      reason: null,
+      aiPhrased: false,
+    });
+  }
+
+  const subscribed = await hasActiveSubscription(user.id);
+  if (!subscribed) {
+    return NextResponse.json({
+      commonGround: chips,
+      summary: ground.summary,
+      reason: null,
+      aiPhrased: false,
+      upgradeHint: "Upgrade to Plus for AI-written match insights.",
+    });
+  }
+
   try {
     const anthropic = getAnthropicClient();
     const message = await anthropic.messages.create({
       model: AI_MODEL,
-      max_tokens: 200,
-      messages: [
-        {
-          role: "user",
-          content: `Two people are looking at each other's dating profiles on a Texas app, before deciding to like or pass. Write one short, upbeat sentence (under 200 characters) suggesting why they might click, based on specifics — not generic flattery.
-
-Person A — ${me?.display_name}: interests: ${(me?.interests || []).join(", ") || "n/a"}; prompts: ${JSON.stringify(me?.prompts || [])}
-Person B — ${other.display_name}: interests: ${(other.interests || []).join(", ") || "n/a"}; prompts: ${JSON.stringify(other.prompts || [])}
-
-Return only the sentence, no preamble.`,
-        },
-      ],
+      max_tokens: 300,
+      messages: [{ role: "user", content: buildPhrasingPrompt(ground.items) }],
     });
 
     const text = message.content
@@ -64,12 +89,41 @@ Return only the sentence, no preamble.`,
       .join("\n")
       .trim();
 
-    return NextResponse.json({ reason: text });
+    let phrases: string[] = [];
+    try {
+      const parsed = JSON.parse(text);
+      if (Array.isArray(parsed)) {
+        phrases = parsed.filter((p): p is string => typeof p === "string");
+      }
+    } catch {
+      phrases = [];
+    }
+
+    // The model must return one phrase per item. If it didn't, fall back to
+    // the computed chips instead of showing a mismatched list.
+    if (phrases.length !== ground.items.length) {
+      return NextResponse.json({
+        commonGround: chips,
+        summary: ground.summary,
+        reason: null,
+        aiPhrased: false,
+      });
+    }
+
+    return NextResponse.json({
+      commonGround: phrases,
+      summary: ground.summary,
+      reason: ground.summary,
+      aiPhrased: true,
+    });
   } catch (err) {
-    console.error("AI preview-reason generation failed", err);
-    return NextResponse.json(
-      { error: "AI reasoning is temporarily unavailable." },
-      { status: 502 }
-    );
+    console.error("AI preview-reason phrasing failed", err);
+    // Never fail the request over the AI — the real overlap still stands.
+    return NextResponse.json({
+      commonGround: chips,
+      summary: ground.summary,
+      reason: null,
+      aiPhrased: false,
+    });
   }
 }
