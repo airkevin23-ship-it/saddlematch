@@ -31,40 +31,24 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream">
-      <header className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-line bg-cream/90 backdrop-blur">
-        <Link href="/" aria-label="SaddleMatch home" className="flex items-center gap-1.5 font-extrabold text-lg tracking-tight text-ink">
-          <HorseshoeIcon className="w-5 h-5 text-brand" />
-          {APP_NAME}
-        </Link>
-        <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-ink-soft">
-          <Link href="/app/discover" className="hover:text-ink transition-colors">
-            Discover
+    // SaddleMatch is a phone app. On anything wider than a handset we letterbox
+    // it into a phone-width column rather than stretching profile cards across a
+    // 2000px monitor, so it reads as an app on every screen.
+    <div className="flex min-h-screen justify-center bg-line/40">
+      <div className="relative flex min-h-screen w-full max-w-[480px] flex-col bg-cream shadow-[0_0_60px_rgba(27,25,23,0.10)]">
+        <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-cream/90 px-4 py-3 backdrop-blur">
+          <Link href="/" aria-label="SaddleMatch home" className="flex items-center gap-1.5 text-lg font-extrabold tracking-tight text-ink">
+            <HorseshoeIcon className="h-5 w-5 text-brand" />
+            {APP_NAME}
           </Link>
-          <Link href="/app/matches" className="hover:text-ink transition-colors">
-            Matches
-          </Link>
-          <Link href="/app/profile" className="hover:text-ink transition-colors">
-            Profile
-          </Link>
-          <Link
-            href="/app/upgrade"
-            className="text-brand hover:text-brand-dark font-semibold"
-          >
-            Plus
-          </Link>
-          <SignOutButton />
-          <span className="flex items-center gap-1 border-l border-line pl-3">
+          <div className="flex items-center gap-1">
             <HeaderActions />
-          </span>
-        </nav>
-        <div className="flex items-center gap-1 sm:hidden">
-          <HeaderActions />
-          <SignOutButton />
-        </div>
-      </header>
-      <main className="flex-1 pb-20 sm:pb-0">{children}</main>
-      <BottomNav avatarUrl={profile?.photo_urls?.[0] ?? null} />
+            <SignOutButton />
+          </div>
+        </header>
+        <main className="flex-1 pb-24">{children}</main>
+        <BottomNav avatarUrl={profile?.photo_urls?.[0] ?? null} />
+      </div>
     </div>
   );
 }
