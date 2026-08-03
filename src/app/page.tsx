@@ -34,6 +34,9 @@ export default function LandingPage() {
           Meet people who love two-stepping, live music, rodeos, and real
           Texas connections.
         </p>
+        <p className="mt-2 max-w-sm text-ink text-base font-bold leading-relaxed">
+          One thoughtful match every day. No endless swiping.
+        </p>
 
         <Link
           href="/welcome"
