@@ -84,15 +84,15 @@ export function groupedNeighbourhoods(query = ""): { section: AreaSection; items
 export const APP_NAME = "SaddleMatch";
 export const TAGLINE = "Dating for the Western Lifestyle";
 export const LAUNCH_CITY = "Austin";
-export const SUBSCRIPTION_PRICE_LABEL = "$9.99/mo";
-export const SUBSCRIPTION_INTRO_PRICE_LABEL = "$4.99/mo";
+export const SUBSCRIPTION_PRICE_LABEL = "$9.99/month";
+export const SUBSCRIPTION_INTRO_PRICE_LABEL = "$4.99/month";
 export const SUBSCRIPTION_INTRO_PERIOD = "for your first 3 months";
 export const PLUS_FEATURES: string[] = [
-  "AI profile feedback and rewrites",
-  "Better conversation starters",
-  "“What you have in common” match insights",
-  "More daily curated matches",
-  "See who liked your profile",
+  "AI profile coach",
+  "AI conversation help",
+  "Better match insights",
+  "See who liked you",
+  "More curated matches",
 ];
 
 // How many new candidates get curated into a user's queue each day
