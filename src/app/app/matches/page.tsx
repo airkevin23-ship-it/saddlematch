@@ -65,9 +65,17 @@ export default function MatchesPage() {
       {loading && <p className="text-ink-soft">Loading…</p>}
 
       {!loading && matches.length === 0 && (
-        <p className="text-ink-soft text-sm">
-          No matches yet — check today&rsquo;s roundup on Discover.
-        </p>
+        <div className="rounded-2xl border border-line bg-card p-6 text-center">
+          <p className="text-base font-bold leading-relaxed text-ink">
+            Your first match is waiting in today&rsquo;s roundup.
+          </p>
+          <Link
+            href="/app/discover"
+            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-6 text-sm font-bold text-white transition-colors hover:bg-brand-dark"
+          >
+            Go to Discover
+          </Link>
+        </div>
       )}
 
       <div className="space-y-3">
