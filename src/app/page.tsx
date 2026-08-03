@@ -9,12 +9,19 @@ import { APP_NAME, TAGLINE } from "@/lib/constants";
 // think about anything except that one decision.
 export default function LandingPage() {
   return (
-    <main className="min-h-screen flex flex-col bg-cream text-ink">
-      <header className="px-4 sm:px-6 py-4 sm:py-5 max-w-5xl mx-auto w-full">
+    // Same phone-width column as the signed-in app, so the first screen a
+    // visitor sees already looks like the app they are about to sign up for.
+    //
+    // Tailwind's sm:/md: prefixes key off the viewport, not this column, so a
+    // "sm:text-5xl" would still fire on a monitor and blow the headline out of
+    // a 480px column. Everything inside is sized for a phone, no breakpoints.
+    <main className="flex min-h-screen justify-center bg-line/40 text-ink">
+      <div className="flex min-h-screen w-full max-w-[480px] flex-col bg-cream shadow-[0_0_60px_rgba(27,25,23,0.10)]">
+      <header className="w-full px-4 py-4">
         <Link
           href="/"
           aria-label="SaddleMatch home"
-          className="flex w-fit min-h-11 items-center gap-1.5 rounded-lg font-extrabold text-lg sm:text-xl tracking-tight focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+          className="flex w-fit min-h-11 items-center gap-1.5 rounded-lg text-lg font-extrabold tracking-tight focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
         >
           <HorseshoeIcon className="w-5 h-5 text-brand" />
           {APP_NAME}
@@ -27,7 +34,7 @@ export default function LandingPage() {
           {TAGLINE}
           <WesternStarIcon className="w-4 h-4" />
         </p>
-        <h1 className="text-3xl sm:text-5xl font-extrabold max-w-2xl leading-[1.1] tracking-tight">
+        <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight">
           Finally, a Dating App Built for Austin&rsquo;s Country Lifestyle
         </h1>
         <p className="mt-5 max-w-sm text-ink-soft text-base leading-relaxed">
@@ -53,7 +60,7 @@ export default function LandingPage() {
         </p>
       </section>
 
-      <footer className="px-4 sm:px-6 py-6 text-center text-xs text-ink-faint border-t border-line space-x-3">
+      <footer className="space-x-3 border-t border-line px-4 py-6 text-center text-xs text-ink-faint">
         <Link href="/terms" className="hover:text-ink-soft underline">
           Terms
         </Link>
@@ -64,6 +71,7 @@ export default function LandingPage() {
           Safety
         </Link>
       </footer>
+      </div>
     </main>
   );
 }
