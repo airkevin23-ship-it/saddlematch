@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { CITIES, PROMPT_BANK } from "@/lib/constants";
+import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 
 const DETAIL_FIELDS = [
@@ -477,22 +478,11 @@ export default function ProfilePage() {
           />
         </div>
 
-        <div>
-          <label className="text-sm text-ink-soft block mb-1 font-medium">City</label>
-          <select
-            value={profile.city_id}
-            onChange={(e) =>
-              setProfile({ ...profile, city_id: Number(e.target.value) })
-            }
-            className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
-          >
-            {CITIES.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <NeighbourhoodSelect
+          value={profile.city_id}
+          onChange={(id) => setProfile({ ...profile, city_id: id })}
+          label="Neighbourhood"
+        />
 
         <div>
           <label className="text-sm text-ink-soft block mb-1 font-medium">
