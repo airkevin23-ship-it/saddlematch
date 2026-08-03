@@ -54,50 +54,57 @@ export default function UpgradePage() {
   const isActive = status === "active" || status === "trialing";
 
   return (
-    <div className="max-w-md mx-auto px-6 py-16 text-center bg-cream min-h-screen text-ink">
+    <div className="mx-auto min-h-screen max-w-md bg-cream px-6 py-12 text-ink">
       {searchParams.get("success") && (
-        <p className="mb-6 text-sm text-green-700 font-medium">
+        <p className="mb-6 text-center text-sm font-semibold text-green-700">
           You&rsquo;re on Plus! It may take a few seconds to activate.
         </p>
       )}
       {searchParams.get("canceled") && (
-        <p className="mb-6 text-sm text-ink-soft">Checkout canceled.</p>
+        <p className="mb-6 text-center text-sm text-ink-soft">Checkout canceled.</p>
       )}
 
-      <h1 className="text-2xl font-extrabold mb-2 tracking-tight">
-        {isActive ? `You're on ${APP_NAME} Plus` : `Upgrade to ${APP_NAME} Plus`}
-      </h1>
-      <p className="text-ink-soft mb-8">
-        {isActive
-          ? `Thanks for supporting ${APP_NAME}. All AI features are unlocked.`
-          : "Unlock AI profile feedback, better conversation starters, and match insights."}
-      </p>
-
-      <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.04] p-8">
-        {!isActive && (
-          <p className="text-4xl font-extrabold text-brand">{SUBSCRIPTION_INTRO_PRICE_LABEL}</p>
-        )}
-        {isActive && (
-          <p className="text-4xl font-extrabold text-brand">{SUBSCRIPTION_PRICE_LABEL}</p>
-        )}
-        <p className="text-ink-soft mt-1 mb-6 text-sm">
+      <div className="text-center">
+        <span className="text-4xl" aria-hidden="true">✨</span>
+        <h1 className="mt-3 text-3xl font-extrabold tracking-tight">{APP_NAME} Plus</h1>
+        <p className="mx-auto mt-3 max-w-xs text-base leading-relaxed text-ink-soft">
           {isActive
-            ? "Cancel anytime"
+            ? `Thanks for backing ${APP_NAME}. Everything below is unlocked.`
+            : "Become better at dating\u2014not just swiping."}
+        </p>
+      </div>
+
+      <ul className="mt-9 space-y-3.5">
+        {PLUS_FEATURES.map((feature) => (
+          <li key={feature} className="flex items-center gap-3">
+            <span
+              className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-soft text-xs font-bold text-brand-dark"
+              aria-hidden="true"
+            >
+              ✓
+            </span>
+            <span className="text-base font-medium leading-snug">{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-10">
+        <p className="text-center text-4xl font-extrabold tracking-tight">
+          {isActive ? SUBSCRIPTION_PRICE_LABEL : SUBSCRIPTION_INTRO_PRICE_LABEL}
+        </p>
+        {/* The intro price is a limited offer, so the ongoing price has to be
+            on the same screen as the number people actually read. */}
+        <p className="mt-1.5 text-center text-xs leading-relaxed text-ink-soft">
+          {isActive
+            ? "Cancel anytime."
             : `${SUBSCRIPTION_INTRO_PERIOD}, then ${SUBSCRIPTION_PRICE_LABEL}. Cancel anytime.`}
         </p>
-        {!isActive && (
-          <ul className="text-left mb-6 space-y-2 text-sm text-ink">
-            {PLUS_FEATURES.map((f) => (
-              <li key={f}>✓ {f}</li>
-            ))}
-          </ul>
-        )}
 
         {isActive ? (
           <button
             onClick={handleManage}
             disabled={portalLoading}
-            className="w-full border-2 border-ink/15 hover:border-ink/40 py-3 rounded-xl font-bold disabled:opacity-50 transition-colors"
+            className="mt-6 min-h-13 w-full rounded-full border-2 border-line-strong py-3.5 font-bold transition-colors hover:border-ink disabled:opacity-50"
           >
             {portalLoading ? "Loading…" : "Manage subscription"}
           </button>
@@ -105,9 +112,9 @@ export default function UpgradePage() {
           <button
             onClick={handleUpgrade}
             disabled={loading}
-            className="w-full bg-brand hover:bg-brand-dark disabled:opacity-50 text-white py-3 rounded-xl font-bold transition-colors"
+            className="mt-6 min-h-13 w-full rounded-full bg-brand py-3.5 font-bold text-white shadow-lg shadow-brand/25 transition-colors hover:bg-brand-dark disabled:opacity-50"
           >
-            {loading ? "Redirecting…" : "Upgrade now"}
+            {loading ? "Redirecting…" : "Upgrade"}
           </button>
         )}
       </div>
