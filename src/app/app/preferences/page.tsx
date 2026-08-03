@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { AREA_SECTIONS, AREA_SECTION_LABELS, type AreaSection } from "@/lib/constants";
 import type { Gender, Profile, RelationshipIntent } from "@/types/db";
 
 const GENDERS: { value: Gender; label: string }[] = [
@@ -24,7 +25,6 @@ const DATING_INTENTIONS: { value: RelationshipIntent; label: string }[] = [
 ];
 
 const OPTIONS = {
-  distance: ["Within 25 miles", "Within 50 miles", "Within 100 miles", "Anywhere in Texas"],
   children: ["Open to all", "Has children", "Doesn't have children", "Wants children", "Doesn't want children"],
   familyPlans: ["Open to all", "Wants a family", "Open to a family", "Doesn't want children"],
   smoking: ["Open to all", "Never", "Sometimes", "Regularly"],
@@ -43,7 +43,6 @@ const OPTIONS = {
 type DetailKey = keyof typeof OPTIONS;
 type Details = Record<DetailKey, string>;
 const DETAIL_LABELS: Record<DetailKey, string> = {
-  distance: "Maximum distance",
   children: "Children",
   familyPlans: "Family plans",
   smoking: "Smoking",
@@ -59,7 +58,6 @@ const DETAIL_LABELS: Record<DetailKey, string> = {
   westernLifestyle: "Western Lifestyle",
 };
 const DETAIL_ICONS: Record<DetailKey, string> = {
-  distance: "📍",
   children: "👶",
   familyPlans: "👨‍👩‍👧",
   smoking: "🚬",
@@ -129,6 +127,7 @@ export default function PreferencesPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
+  const [areas, setAreas] = useState<AreaSection[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -142,7 +141,8 @@ export default function PreferencesPage() {
       setMaxAge(data.max_age ?? 99);
       setIntent(data.relationship_intent ?? "open_to_either");
       const savedPreferences = (data.preference_details ?? {}) as Record<string, unknown>;
-      const { profile: _profileDetails, location: _locationDetails, ...savedFilters } = savedPreferences;
+      const { profile: _profileDetails, location: _locationDetails, areas: savedAreas, distance: _legacyDistance, ...savedFilters } = savedPreferences;
+      setAreas(Array.isArray(savedAreas) ? (savedAreas as AreaSection[]) : []);
       setOtherDetails({
         ...(_profileDetails ? { profile: _profileDetails } : {}),
         ...(_locationDetails ? { location: _locationDetails } : {}),
@@ -154,6 +154,11 @@ export default function PreferencesPage() {
 
   function toggleGender(gender: Gender) {
     setGenders((current) => current.includes(gender) ? current.filter((item) => item !== gender) : [...current, gender]);
+    setDirty(true);
+  }
+
+  function toggleArea(section: AreaSection) {
+    setAreas((current) => current.includes(section) ? current.filter((item) => item !== section) : [...current, section]);
     setDirty(true);
   }
 
@@ -189,7 +194,7 @@ export default function PreferencesPage() {
       min_age: minAge,
       max_age: maxAge,
       relationship_intent: intent,
-      preference_details: { ...otherDetails, ...details } as Record<string, string>,
+      preference_details: { ...otherDetails, ...details, areas } as unknown as Record<string, string>,
       updated_at: new Date().toISOString(),
     }).eq("id", profile.id);
     setMessage(error ? "Couldn't save your preferences. Try again." : "Preferences saved.");
@@ -243,7 +248,13 @@ export default function PreferencesPage() {
                 </label>
               </div>
             </div>
-            <PreferenceRow icon={DETAIL_ICONS.distance} label="Maximum distance" value={details.distance} options={OPTIONS.distance} onChange={(value) => changeDetail("distance", value)} />
+            <div className="border-b border-line py-4">
+              <p className="flex items-center gap-2 font-bold"><span aria-hidden="true">📍</span>Areas I&apos;d travel to</p>
+              <p className="mt-1 text-xs leading-relaxed text-ink-soft">Austin traffic is real. Pick the areas you&apos;d actually drive to for a date. Leave them all off to see the whole metro.</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {AREA_SECTIONS.map((section) => <button key={section} type="button" onClick={() => toggleArea(section)} className={`min-h-10 rounded-full border px-3 text-left text-sm font-semibold ${areas.includes(section) ? "border-brand bg-brand text-white" : "border-line text-ink-soft"}`}>{AREA_SECTION_LABELS[section]}</button>)}
+              </div>
+            </div>
             <div className="grid grid-cols-2 gap-3 py-4">
               <label className="text-sm font-bold">🎂 Minimum age<input type="number" min="18" max="99" value={minAge} onChange={(event) => changeMinAge(Number(event.target.value))} className="mt-2 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base font-normal outline-none focus:border-brand" /></label>
               <label className="text-sm font-bold">🎂 Maximum age<input type="number" min="18" max="99" value={maxAge} onChange={(event) => changeMaxAge(Number(event.target.value))} className="mt-2 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base font-normal outline-none focus:border-brand" /></label>
