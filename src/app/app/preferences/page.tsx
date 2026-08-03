@@ -58,17 +58,39 @@ const DETAIL_LABELS: Record<DetailKey, string> = {
   education: "Education",
   westernLifestyle: "Western Lifestyle",
 };
+const DETAIL_ICONS: Record<DetailKey, string> = {
+  distance: "📍",
+  children: "👶",
+  familyPlans: "👨‍👩‍👧",
+  smoking: "🚬",
+  drinking: "🍺",
+  marijuana: "🌿",
+  religion: "🙏",
+  politics: "🗳️",
+  height: "📏",
+  relationshipType: "❤️",
+  ethnicity: "🌍",
+  languages: "🗣️",
+  education: "🎓",
+  westernLifestyle: "🤠",
+};
 const defaults: Details = Object.fromEntries(
   Object.entries(OPTIONS).map(([key, values]) => [key, values[0]])
 ) as Details;
 
-function PreferenceRow({ label, value, options, onChange }: { label: string; value: string; options: readonly string[]; onChange: (value: string) => void }) {
+function PreferenceRow({ icon, label, value, options, onChange }: { icon: string; label: string; value: string; options: readonly string[]; onChange: (value: string) => void }) {
   return (
-    <label className="block border-b border-line py-4 last:border-b-0">
-      <span className="font-bold">{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="mt-1 w-full appearance-none bg-transparent text-lg text-ink-soft outline-none">
-        {options.map((option) => <option key={option} value={option}>{option}</option>)}
-      </select>
+    <label className="flex cursor-pointer items-center justify-between gap-3 border-b border-line py-4 last:border-b-0">
+      <span className="flex items-center gap-2 font-bold">
+        <span aria-hidden="true">{icon}</span>
+        {label}
+      </span>
+      <span className="flex items-center gap-1 text-ink-soft">
+        <select value={value} onChange={(event) => onChange(event.target.value)} className="appearance-none bg-transparent text-right text-base outline-none">
+          {options.map((option) => <option key={option} value={option}>{option}</option>)}
+        </select>
+        <span aria-hidden="true" className="text-ink-faint">›</span>
+      </span>
     </label>
   );
 }
@@ -84,6 +106,7 @@ export default function PreferencesPage() {
   const [otherDetails, setOtherDetails] = useState<Record<string, unknown>>({});
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -103,11 +126,33 @@ export default function PreferencesPage() {
         ...(_locationDetails ? { location: _locationDetails } : {}),
       });
       setDetails({ ...defaults, ...savedFilters } as Details);
+      setDirty(false);
     })();
   }, [supabase]);
 
   function toggleGender(gender: Gender) {
     setGenders((current) => current.includes(gender) ? current.filter((item) => item !== gender) : [...current, gender]);
+    setDirty(true);
+  }
+
+  function changeMinAge(value: number) {
+    setMinAge(value);
+    setDirty(true);
+  }
+
+  function changeMaxAge(value: number) {
+    setMaxAge(value);
+    setDirty(true);
+  }
+
+  function changeIntent(value: RelationshipIntent) {
+    setIntent(value);
+    setDirty(true);
+  }
+
+  function changeDetail(key: DetailKey, value: string) {
+    setDetails((current) => ({ ...current, [key]: value }));
+    setDirty(true);
   }
 
   async function save() {
@@ -127,11 +172,11 @@ export default function PreferencesPage() {
     }).eq("id", profile.id);
     setMessage(error ? "Couldn't save your preferences. Try again." : "Preferences saved.");
     setSaving(false);
+    if (!error) setDirty(false);
   }
 
   if (!profile) return <div className="min-h-screen bg-cream px-6 py-10 text-ink-soft">Loading preferences...</div>;
 
-  const changeDetail = (key: DetailKey, value: string) => setDetails((current) => ({ ...current, [key]: value }));
   return (
     <div className="min-h-screen bg-cream pb-28 text-ink">
       <header className="sticky top-0 z-10 flex min-h-16 items-center border-b border-line bg-cream/95 px-4 backdrop-blur">
@@ -141,33 +186,56 @@ export default function PreferencesPage() {
       <main className="mx-auto max-w-xl px-4 py-5">
         <div className="rounded-2xl border border-line bg-card p-4">
           <h2 className="text-xl font-extrabold">Keep your options open</h2>
-          <p className="mt-2 text-sm leading-relaxed text-ink-soft">Set your ideal preferences. Choose Open to all whenever you want a broader mix without changing your core priorities.</p>
+          <p className="mt-2 text-sm leading-relaxed text-ink-soft">Set the qualities you&apos;re looking for. Leave anything as &ldquo;Open to all&rdquo; to see more potential matches.</p>
         </div>
         <section className="mt-7">
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-ink-faint">Member preferences</p>
           <div className="mt-2 rounded-2xl border border-line bg-card px-4">
             <div className="border-b border-line py-4">
-              <p className="font-bold">I&apos;m interested in</p>
+              <p className="flex items-center gap-2 font-bold"><span aria-hidden="true">👥</span>I&apos;m interested in</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {GENDERS.map((gender) => <button key={gender.value} type="button" onClick={() => toggleGender(gender.value)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold ${genders.includes(gender.value) ? "border-brand bg-brand text-white" : "border-line text-ink-soft"}`}>{gender.label}</button>)}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3 border-b border-line py-4">
-              <label className="text-sm font-bold">Minimum age<input type="number" min="18" max="99" value={minAge} onChange={(event) => setMinAge(Number(event.target.value))} className="mt-2 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base font-normal outline-none focus:border-brand" /></label>
-              <label className="text-sm font-bold">Maximum age<input type="number" min="18" max="99" value={maxAge} onChange={(event) => setMaxAge(Number(event.target.value))} className="mt-2 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base font-normal outline-none focus:border-brand" /></label>
+              <label className="text-sm font-bold">🎂 Minimum age<input type="number" min="18" max="99" value={minAge} onChange={(event) => changeMinAge(Number(event.target.value))} className="mt-2 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base font-normal outline-none focus:border-brand" /></label>
+              <label className="text-sm font-bold">🎂 Maximum age<input type="number" min="18" max="99" value={maxAge} onChange={(event) => changeMaxAge(Number(event.target.value))} className="mt-2 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base font-normal outline-none focus:border-brand" /></label>
             </div>
-            <PreferenceRow label="Maximum distance" value={details.distance} options={OPTIONS.distance} onChange={(value) => changeDetail("distance", value)} />
-            <label className="block py-4"><span className="font-bold">Dating intention</span><select value={intent} onChange={(event) => setIntent(event.target.value as RelationshipIntent)} className="mt-1 w-full appearance-none bg-transparent text-lg text-ink-soft outline-none">{DATING_INTENTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
+            <PreferenceRow icon={DETAIL_ICONS.distance} label="Maximum distance" value={details.distance} options={OPTIONS.distance} onChange={(value) => changeDetail("distance", value)} />
+            <label className="flex cursor-pointer items-center justify-between gap-3 py-4">
+              <span className="flex items-center gap-2 font-bold"><span aria-hidden="true">🎯</span>Dating intention</span>
+              <span className="flex items-center gap-1 text-ink-soft">
+                <select value={intent} onChange={(event) => changeIntent(event.target.value as RelationshipIntent)} className="appearance-none bg-transparent text-right text-base outline-none">
+                  {DATING_INTENTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                </select>
+                <span aria-hidden="true" className="text-ink-faint">›</span>
+              </span>
+            </label>
+          </div>
+        </section>
+        <section className="mt-7">
+          <div className="rounded-2xl border-2 border-brand/30 bg-brand-soft/40 p-4">
+            <p className="flex items-center gap-2 text-lg font-extrabold">
+              <span aria-hidden="true">🤠</span>Western Lifestyle Compatibility
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-ink-soft">This is what makes SaddleMatch different. Tell us how you live so we can find someone who gets it.</p>
+            <label className="mt-3 flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-line bg-card px-3 py-3">
+              <select value={details.westernLifestyle} onChange={(event) => changeDetail("westernLifestyle", event.target.value)} className="w-full appearance-none bg-transparent text-base font-semibold outline-none">
+                {OPTIONS.westernLifestyle.map((option) => <option key={option} value={option}>{option}</option>)}
+              </select>
+              <span aria-hidden="true" className="text-ink-faint">›</span>
+            </label>
           </div>
         </section>
         <section className="mt-7">
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-ink-faint">More preferences</p>
           <div className="mt-2 rounded-2xl border border-line bg-card px-4">
-            {(Object.keys(OPTIONS).filter((key) => key !== "distance") as DetailKey[]).map((key) => <PreferenceRow key={key} label={DETAIL_LABELS[key]} value={details[key]} options={OPTIONS[key]} onChange={(value) => changeDetail(key, value)} />)}
+            {(Object.keys(OPTIONS).filter((key) => key !== "distance" && key !== "westernLifestyle") as DetailKey[]).map((key) => <PreferenceRow key={key} icon={DETAIL_ICONS[key]} label={DETAIL_LABELS[key]} value={details[key]} options={OPTIONS[key]} onChange={(value) => changeDetail(key, value)} />)}
           </div>
         </section>
+        <p className="mt-6 text-center text-sm leading-relaxed text-ink-soft">These preferences help us curate your daily match. You can change them anytime.</p>
         {message && <p className="mt-4 text-center text-sm font-semibold text-brand">{message}</p>}
-        <button onClick={save} disabled={saving} className="mt-6 min-h-12 w-full rounded-xl bg-brand font-bold text-white disabled:opacity-50">{saving ? "Saving..." : "Save preferences"}</button>
+        <button onClick={save} disabled={saving || !dirty} className="mt-3 min-h-12 w-full rounded-xl bg-brand font-bold text-white disabled:opacity-40">{saving ? "Saving..." : dirty ? "Save preferences" : "No changes to save"}</button>
       </main>
     </div>
   );
