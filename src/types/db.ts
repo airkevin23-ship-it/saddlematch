@@ -51,9 +51,15 @@ export interface PublicProfile {
   photo_urls: string[];
   intro_video_url?: string | null;
   prompts: Prompt[];
-  is_active: boolean;
   relationship_intent: RelationshipIntent;
+  is_active: boolean;
   is_demo: boolean;
+  is_quarantined?: boolean;
+  // Only the profile detail fields this member chose to make visible.
+  // The view builds it from preference_details -> 'profile', keeping
+  // each field's own visibility toggle, so anything hidden never
+  // reaches another member's browser. Used by Common Ground.
+  visible_details?: Record<string, string> | null;
   created_at: string;
 }
 
