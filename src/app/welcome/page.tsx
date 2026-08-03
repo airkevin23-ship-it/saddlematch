@@ -9,7 +9,12 @@ import { useRouter } from "next/navigation";
 // homepage (one match a day, prompt-based profiles, AI help, the Austin
 // community angle) now lives — a curious visitor still sees it, just one
 // idea at a time instead of all at once before they've decided anything.
-const SCREENS = [
+const SCREENS: { emoji: string; title: string; body: string; showCard?: boolean }[] = [
+  {
+    emoji: "🤠",
+    title: "Built for Austin",
+    body: "Two-stepping. Rodeos. Live music. Real people.",
+  },
   {
     emoji: "❤️",
     title: "One Match Every Day",
@@ -19,6 +24,7 @@ const SCREENS = [
     emoji: "💬",
     title: "Personality Before Photos",
     body: "Prompt-based profiles help you know the person before you swipe.",
+    showCard: true,
   },
   {
     emoji: "🤖",
@@ -26,9 +32,9 @@ const SCREENS = [
     body: "Never wonder what to say first.",
   },
   {
-    emoji: "🤠",
-    title: "Built for Austin",
-    body: "Two-stepping. Rodeos. Live music. Real people.",
+    emoji: "📬",
+    title: "Your First Match Arrives Tomorrow",
+    body: "We’ll send one thoughtful match each day.\nNo endless swiping.\nNo pressure.\nTake your time.",
   },
 ];
 
@@ -71,9 +77,9 @@ export default function WelcomePage() {
           {screen.emoji}
         </span>
         <h1 className="text-2xl font-extrabold tracking-tight mb-3">{screen.title}</h1>
-        <p className="text-ink-soft leading-relaxed">{screen.body}</p>
+        <p className="whitespace-pre-line leading-relaxed text-ink-soft">{screen.body}</p>
 
-        {step === 1 && (
+        {screen.showCard && (
           <div className="mt-4 w-full max-w-[260px] shrink-0 overflow-hidden rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06]">
             <div className="h-[26vh] max-h-[280px] min-h-[130px] overflow-hidden bg-line">
               <img
@@ -109,7 +115,7 @@ export default function WelcomePage() {
         onClick={handleContinue}
         className="w-full bg-brand hover:bg-brand-dark text-white py-3.5 rounded-full font-bold transition-colors min-h-12"
       >
-        {isLast ? "Get Started" : "Continue"}
+        {isLast ? "Create My Free Profile" : "Continue"}
       </button>
       </div>
     </main>
