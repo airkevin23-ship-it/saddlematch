@@ -159,7 +159,7 @@ export function BottomNav({
             </span>
           )}
         </span>
-        <span className={`text-[11px] ${profileActive ? "font-bold" : "font-semibold"}`}>You</span>
+        <span className={`text-[11px] ${profileActive ? "font-bold" : "font-semibold"}`}>Profile</span>
       </Link>
     </nav>
   );
