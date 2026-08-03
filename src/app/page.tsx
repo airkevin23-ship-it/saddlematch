@@ -1,360 +1,56 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import {
-  CactusIcon,
-  CowboyHatIcon,
-  HorseshoeIcon,
-  WesternStarIcon,
-} from "@/components/western-icons";
-import {
-  APP_NAME,
-  CITIES,
-  PLUS_FEATURES,
-  SUBSCRIPTION_INTRO_PERIOD,
-  SUBSCRIPTION_INTRO_PRICE_LABEL,
-  SUBSCRIPTION_PRICE_LABEL,
-  TAGLINE,
-} from "@/lib/constants";
+import { HorseshoeIcon, WesternStarIcon } from "@/components/western-icons";
+import { APP_NAME, TAGLINE } from "@/lib/constants";
 
-const TRUST_ITEMS = [
-  { icon: "🔞", label: "18+ community" },
-  { icon: "🚫", label: "Block & report tools" },
-  { icon: "🔒", label: "Private profile controls" },
-  { icon: "📍", label: "Built for real local connections" },
-];
-
-const DIFFERENTIATORS = [
-  {
-    icon: "❤️",
-    title: "One Match a Day",
-    body: "Focus on one quality introduction instead of endless swiping.",
-  },
-  {
-    icon: "🤖",
-    title: "AI Conversation Help",
-    body: "Get thoughtful conversation starters based on real profile prompts.",
-  },
-  {
-    icon: "💬",
-    title: "Personality First",
-    body: "Learn about someone before judging a photo.",
-  },
-  {
-    icon: "🤠",
-    title: "Built for Austin's Country Community",
-    body: "Two-stepping, rodeos, trail rides, and live music.",
-  },
-];
-
-export default async function LandingPage() {
-  // A city is only described as open when the database explicitly marks it
-  // open. That prevents a new visitor from expecting an active local dating
-  // pool before the community has actually launched there.
-  let openCityIds = new Set<number>();
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase.from("cities").select("id, is_open");
-    if (data) {
-      openCityIds = new Set(data.filter((c) => c.is_open).map((c) => c.id));
-    }
-  } catch {
-    // Fall back to "all open" — see comment above.
-  }
-
+// Deliberately minimal: this page has exactly one job — convince the right
+// person to tap "Create My Free Profile." Everything else (pricing, FAQ,
+// city list, product previews) has moved into the /welcome onboarding flow
+// or lives after signup, so a first-time visitor never has to scroll or
+// think about anything except that one decision.
+export default function LandingPage() {
   return (
     <main className="min-h-screen flex flex-col bg-cream text-ink">
-      <header className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 max-w-5xl mx-auto w-full">
+      <header className="px-4 sm:px-6 py-4 sm:py-5 max-w-5xl mx-auto w-full">
         <Link
           href="/"
           aria-label="SaddleMatch home"
-          className="flex min-h-11 items-center gap-1.5 rounded-lg font-extrabold text-lg sm:text-xl tracking-tight focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+          className="flex w-fit min-h-11 items-center gap-1.5 rounded-lg font-extrabold text-lg sm:text-xl tracking-tight focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
         >
           <HorseshoeIcon className="w-5 h-5 text-brand" />
           {APP_NAME}
         </Link>
-        <nav className="flex items-center gap-3 sm:gap-5 text-sm font-medium">
-          <Link href="/login" className="text-ink-soft hover:text-ink transition-colors">
-            Log in
-          </Link>
-          <Link
-            href="/signup"
-            className="bg-ink text-cream px-4 sm:px-5 py-2.5 rounded-full font-semibold hover:bg-brand transition-colors"
-          >
-            Sign up
-          </Link>
-        </nav>
       </header>
 
-      <section className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 py-10 sm:py-16">
+      <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10">
         <p className="flex items-center justify-center gap-2 text-sm uppercase tracking-widest text-brand font-bold mb-4">
           <WesternStarIcon className="w-4 h-4" />
           {TAGLINE}
           <WesternStarIcon className="w-4 h-4" />
         </p>
-        <h1 className="text-3xl sm:text-6xl font-extrabold max-w-3xl leading-[1.08] tracking-tight">
-          Finally, a Dating App Built for <br className="hidden sm:block" />
-          Austin&rsquo;s Country Lifestyle
+        <h1 className="text-3xl sm:text-5xl font-extrabold max-w-2xl leading-[1.1] tracking-tight">
+          Finally, a Dating App Built for Austin&rsquo;s Country Lifestyle
         </h1>
-        <p className="mt-5 sm:mt-6 max-w-xl text-ink-soft text-base sm:text-lg leading-relaxed">
-          Less swiping. More real conversations with people who actually
-          share your lifestyle.
+        <p className="mt-5 max-w-sm text-ink-soft text-base leading-relaxed">
+          Meet people who love two-stepping, live music, rodeos, and real
+          Texas connections.
         </p>
 
-        <div className="mt-7 w-full max-w-sm sm:max-w-none flex justify-center">
-          <Link
-            href="/signup"
-            className="bg-brand hover:bg-brand-dark text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-brand/25 transition-colors min-h-12"
-          >
-            Create My Free Profile
-          </Link>
-        </div>
+        <Link
+          href="/welcome"
+          className="mt-8 inline-flex items-center justify-center bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-full font-bold shadow-lg shadow-brand/25 transition-colors min-h-12 w-full max-w-xs"
+        >
+          Create My Free Profile
+        </Link>
 
-        <p className="mt-3 text-xs text-ink-soft max-w-sm">
-          Every profile is reviewed to help keep the community authentic.
+        <p className="mt-5 text-sm text-ink-soft">
+          Already have an account?{" "}
+          <Link href="/login" className="text-brand hover:text-brand-dark font-semibold">
+            Log in
+          </Link>
         </p>
-
-        {/* Direct answers to the three questions a first-time visitor has before tapping */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs font-semibold text-ink-soft">
-          <span>✅ Free to join</span>
-          <span>✅ Austin Founding Members</span>
-          <span>✅ Takes about 2 minutes</span>
-        </div>
-
-        {/* Safety / trust row — dating users look for this before anything else */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 max-w-2xl">
-          <CactusIcon className="w-4 h-4 text-ink-faint" aria-hidden="true" />
-          {TRUST_ITEMS.map((item) => (
-            <span
-              key={item.label}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-soft"
-            >
-              <span aria-hidden="true">{item.icon}</span>
-              {item.label}
-            </span>
-          ))}
-        </div>
-
-        {/* Product preview — show, don't just tell. Moved above the feature cards
-            so a visitor sees a real person before reading a features list. */}
-        <div className="mt-14 w-full max-w-4xl">
-          <p className="text-xs uppercase tracking-widest font-bold text-ink-faint mb-6">
-            What using it feels like
-          </p>
-          <div className="grid sm:grid-cols-3 gap-8 sm:gap-6">
-            {/* Mockup 1 — a profile built on prompts */}
-            <div className="text-left">
-              <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] overflow-hidden max-w-[320px] mx-auto sm:max-w-[280px] sm:mx-0">
-                <div className="aspect-[4/5] bg-line overflow-hidden">
-                  <img
-                    src="/maddie-profile.png"
-                    alt="Maddie enjoying an Austin evening"
-                    className="h-full w-full object-cover object-center"
-                  />
-                </div>
-                <div className="p-4">
-                  <p className="font-extrabold text-sm">Maddie, 27</p>
-                  <p className="text-xs text-ink-soft mb-3">Austin</p>
-                  <div className="rounded-xl border border-line bg-cream p-3">
-                    <p className="text-[11px] text-ink-soft font-medium">
-                      Best local spot for a first date…
-                    </p>
-                    <p className="text-xs mt-1">Nickel City, for pool and good queso.</p>
-                  </div>
-                </div>
-              </div>
-              <p className="text-sm font-bold mt-4">Answer prompts, not a blank box</p>
-              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                3 specific prompts instead of a bio you stare at forever.
-              </p>
-            </div>
-
-            {/* Mockup 2 — daily curated picks */}
-            <div className="text-left">
-              <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] p-4 max-w-[320px] mx-auto sm:max-w-[280px] sm:mx-0">
-                <p className="text-[11px] text-ink-soft text-center font-medium tracking-wide uppercase mb-3">
-                  8 of 8 in today&rsquo;s roundup
-                </p>
-                <div className="space-y-2">
-                  {[
-                    { name: "Jordan, 29", city: "Houston", image: "/jordan-profile.png" },
-                    { name: "Casey, 26", city: "Dallas", image: "/casey-profile.png" },
-                    { name: "Priya, 28", city: "San Antonio", image: "/maddie-profile.png" },
-                  ].map((p) => (
-                    <div
-                      key={p.name}
-                      className="flex items-center gap-2 rounded-xl border border-line bg-cream px-3 py-2"
-                    >
-                      <img
-                        src={p.image}
-                        alt=""
-                        className="w-8 h-8 rounded-full object-cover shrink-0"
-                      />
-                      <div>
-                        <p className="text-xs font-semibold leading-tight">{p.name}</p>
-                        <p className="text-[10px] text-ink-soft leading-tight">{p.city}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <p className="text-sm font-bold mt-4">Today&rsquo;s roundup, once a day</p>
-              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                Curated daily matches, not an infinite deck to burn through.
-              </p>
-            </div>
-
-            {/* Mockup 3 — like a specific answer, becomes the opener */}
-            <div className="text-left">
-              <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] p-4 max-w-[320px] mx-auto sm:max-w-[280px] sm:mx-0">
-                <div className="rounded-xl border border-line bg-cream p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-[11px] text-ink-soft font-medium">
-                        Two truths and a lie…
-                      </p>
-                      <p className="text-xs mt-1">
-                        I&rsquo;ve met 3 astronauts. I hate queso. I once won a chili
-                        cook-off.
-                      </p>
-                    </div>
-                    <span className="text-brand text-base shrink-0">♥</span>
-                  </div>
-                  <div className="mt-2 rounded-lg bg-card border border-line px-2.5 py-1.5 text-[11px] text-ink-soft">
-                    queso hate is a dealbreaker for me lol
-                  </div>
-                </div>
-                <div className="mt-2 w-full bg-brand text-white text-center text-xs font-bold py-2 rounded-lg">
-                  Send like
-                </div>
-              </div>
-              <p className="text-sm font-bold mt-4">Like a specific answer</p>
-              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                Comment on what you liked — it becomes your opening message.
-              </p>
-            </div>
-          </div>
-
-          <Link
-            href="/safety"
-            className="mt-4 text-xs font-semibold text-ink-soft underline decoration-line-strong underline-offset-4 hover:text-ink"
-          >
-            How SaddleMatch safety works
-          </Link>
-        </div>
-
-        {/* Why SaddleMatch — kept short and scannable since this is the app's own first screen, not a marketing site */}
-        <div className="mt-12 sm:mt-14 w-full max-w-3xl">
-          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mb-3">
-            Dating, without the endless swiping
-          </h2>
-          <p className="text-sm text-ink-soft max-w-xl mb-6">
-            On most dating apps, you&rsquo;ll swipe through hundreds of
-            profiles. On SaddleMatch, you receive one thoughtful introduction
-            each day based on shared interests and meaningful profile
-            prompts.
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-left">
-            {DIFFERENTIATORS.map((item) => (
-              <div key={item.title} className="rounded-2xl border border-line bg-card p-4">
-                <p className="text-2xl mb-2" aria-hidden="true">
-                  {item.icon}
-                </p>
-                <p className="font-bold text-sm">{item.title}</p>
-                <p className="text-xs text-ink-soft mt-1 leading-relaxed">{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-12 sm:mt-16 w-full max-w-2xl">
-          <p className="text-xs uppercase tracking-widest font-bold text-ink-faint mb-4">
-            New in these cities — be one of the first
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {CITIES.map((city) => {
-              const isOpen = openCityIds.has(city.id);
-              return (
-                <Link
-                  key={city.slug}
-                  href={isOpen ? "/signup" : `/waitlist?city=${city.slug}`}
-                  className="rounded-2xl border border-line bg-card shadow-sm shadow-black/[0.03] py-6 block hover:border-line-strong transition-colors"
-                >
-                  <p className="font-bold">{city.name}</p>
-                  <p className="text-[10px] text-brand font-bold uppercase tracking-wide mt-1">
-                    {isOpen ? "Founding member" : "Join waitlist"}
-                  </p>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
       </section>
 
-      <section className="px-4 sm:px-6 py-14 sm:py-20 border-t border-line bg-card">
-        <div className="max-w-2xl mx-auto">
-          <p className="text-xs uppercase tracking-widest font-bold text-brand text-center mb-3">
-            Good to know
-          </p>
-          <h2 className="text-2xl font-extrabold tracking-tight text-center mb-10">
-            SaddleMatch FAQ
-          </h2>
-          <div className="space-y-5">
-            <div className="rounded-2xl border border-line bg-cream p-5">
-              <h3 className="font-bold">Is SaddleMatch free?</h3>
-              <p className="text-sm text-ink-soft mt-2 leading-relaxed">
-                Yes. Creating a profile, seeing daily matches, liking profiles, and matching are free. Plus adds optional AI help and extra features.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-line bg-cream p-5">
-              <h3 className="font-bold">Where is SaddleMatch available?</h3>
-              <p className="text-sm text-ink-soft mt-2 leading-relaxed">
-                We are building one Texas city at a time. Join the waitlist for your city and we will let you know when the local community opens.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-line bg-cream p-5">
-              <h3 className="font-bold">Does AI write or send messages for me?</h3>
-              <p className="text-sm text-ink-soft mt-2 leading-relaxed">
-                No. AI can offer a profile idea, a conversation starter, or a shared-interest note. You choose what to use, and SaddleMatch never sends a message or makes a dating decision for you.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="pricing" className="px-4 sm:px-6 py-14 sm:py-20 border-t border-line">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-extrabold mb-2 tracking-tight">Free to match. Paid to get help.</h2>
-          <p className="text-ink-soft mb-2">
-            Browsing, swiping, and matching are always free.
-          </p>
-          <p className="text-ink-soft mb-8 max-w-lg mx-auto">
-            AI helps you write a stronger profile, understand what you have in
-            common, and start better conversations. You stay in control of every
-            decision and message.
-          </p>
-          <div className="rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.04] p-6 sm:p-8 w-full sm:w-auto">
-            <p className="flex items-center justify-center gap-1.5 font-extrabold text-lg mb-1">
-              <WesternStarIcon className="w-4 h-4 text-brand" />
-              {APP_NAME} Plus
-            </p>
-            <p className="text-4xl font-extrabold text-brand">{SUBSCRIPTION_INTRO_PRICE_LABEL}</p>
-            <p className="text-ink-soft mt-1 text-sm">
-              {SUBSCRIPTION_INTRO_PERIOD}, then {SUBSCRIPTION_PRICE_LABEL}. Cancel anytime.
-            </p>
-            <ul className="text-left mt-6 space-y-2 text-sm text-ink">
-              {PLUS_FEATURES.map((f) => (
-                <li key={f}>✓ {f}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <footer className="px-4 sm:px-6 py-8 text-center text-sm text-ink-faint border-t border-line space-x-3 leading-8">
-        <span className="inline-flex items-center gap-1.5">
-          <HorseshoeIcon className="w-3.5 h-3.5" />
-          {APP_NAME} — Houston · Austin · Dallas · San Antonio
-        </span>
+      <footer className="px-4 sm:px-6 py-6 text-center text-xs text-ink-faint border-t border-line space-x-3">
         <Link href="/terms" className="hover:text-ink-soft underline">
           Terms
         </Link>
