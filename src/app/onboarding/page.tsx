@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { APP_NAME, CITIES, PROMPT_BANK } from "@/lib/constants";
+import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import type { Gender, Prompt, RelationshipIntent } from "@/types/db";
 
 const GENDERS: { value: Gender; label: string }[] = [
@@ -20,7 +21,7 @@ const EMPTY_PROMPTS: Prompt[] = [
 ];
 
 const STEP_COUNT = 5;
-const STEP_LABELS = ["Photo", "About you", "City", "Interests", "Prompts"];
+const STEP_LABELS = ["Photo", "About you", "Area", "Interests", "Prompts"];
 
 // One thing at a time, Hinge-style, instead of one long form. Legal and
 // matching essentials (birthdate, gender, who you're interested in) get
@@ -350,19 +351,16 @@ export default function OnboardingPage() {
           <div className="text-center">
             <h1 className="text-2xl font-extrabold tracking-tight mb-2">Where are you based?</h1>
             <p className="text-ink-soft leading-relaxed mb-6">
-              This sets who shows up in your daily matches.
+              SaddleMatch is Austin-only for now. Pick the area you call home &mdash;
+              it sets who shows up in your daily matches.
             </p>
-            <select
-              value={cityId}
-              onChange={(e) => setCityId(Number(e.target.value))}
-              className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
-            >
-              {CITIES.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            <div className="text-left">
+              <NeighbourhoodSelect
+                value={cityId}
+                onChange={setCityId}
+                label="Your neighbourhood"
+              />
+            </div>
           </div>
         )}
 
