@@ -1,0 +1,113 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+// Pre-signup value-prop flow, shown after someone taps "Create My Free
+// Profile" on the homepage and before the actual signup form. Each screen
+// makes one point. This is where the stuff that used to live on the
+// homepage (one match a day, prompt-based profiles, AI help, the Austin
+// community angle) now lives — a curious visitor still sees it, just one
+// idea at a time instead of all at once before they've decided anything.
+const SCREENS = [
+  {
+    emoji: "❤️",
+    title: "One Match Every Day",
+    body: "Stop endlessly swiping. We introduce one thoughtful match each day.",
+  },
+  {
+    emoji: "💬",
+    title: "Personality Before Photos",
+    body: "Prompt-based profiles help you know the person before you swipe.",
+  },
+  {
+    emoji: "🤖",
+    title: "AI Helps Break the Ice",
+    body: "Never wonder what to say first.",
+  },
+  {
+    emoji: "🤠",
+    title: "Built for Austin",
+    body: "Two-stepping. Rodeos. Live music. Real people.",
+  },
+];
+
+export default function WelcomePage() {
+  const router = useRouter();
+  const [step, setStep] = useState(0);
+  const isLast = step === SCREENS.length - 1;
+  const screen = SCREENS[step];
+
+  function handleContinue() {
+    if (isLast) {
+      router.push("/signup");
+    } else {
+      setStep((s) => s + 1);
+    }
+  }
+
+  function handleBack() {
+    if (step === 0) {
+      router.back();
+    } else {
+      setStep((s) => s - 1);
+    }
+  }
+
+  return (
+    <main className="min-h-screen flex flex-col bg-cream text-ink px-6 py-8">
+      <button
+        onClick={handleBack}
+        className="text-sm text-ink-faint hover:text-ink-soft font-medium self-start min-h-11 -ml-1 px-1"
+      >
+        ← Back
+      </button>
+
+      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-sm mx-auto w-full">
+        <span className="text-5xl mb-6" aria-hidden="true">
+          {screen.emoji}
+        </span>
+        <h1 className="text-2xl font-extrabold tracking-tight mb-3">{screen.title}</h1>
+        <p className="text-ink-soft leading-relaxed">{screen.body}</p>
+
+        {step === 1 && (
+          <div className="mt-8 rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06] overflow-hidden w-full max-w-[260px]">
+            <div className="aspect-[4/5] bg-line overflow-hidden">
+              <img
+                src="/maddie-profile.png"
+                alt="Maddie enjoying an Austin evening"
+                className="h-full w-full object-cover object-center"
+              />
+            </div>
+            <div className="p-4 text-left">
+              <p className="font-extrabold text-sm">Maddie, 27</p>
+              <ul className="mt-2 space-y-1 text-xs text-ink-soft">
+                <li>❤️ Loves two-stepping</li>
+                <li>🌮 Favorite BBQ: the Salt Lick</li>
+                <li>🐴 Weekend trail rides</li>
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center justify-center gap-2 mb-6" aria-hidden="true">
+        {SCREENS.map((_, i) => (
+          <span
+            key={i}
+            className={`h-1.5 rounded-full transition-all ${
+              i === step ? "w-6 bg-brand" : "w-1.5 bg-line-strong"
+            }`}
+          />
+        ))}
+      </div>
+
+      <button
+        onClick={handleContinue}
+        className="w-full bg-brand hover:bg-brand-dark text-white py-3.5 rounded-full font-bold transition-colors min-h-12"
+      >
+        {isLast ? "Get Started" : "Continue"}
+      </button>
+    </main>
+  );
+}
