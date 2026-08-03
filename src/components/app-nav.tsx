@@ -4,7 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { WesternStarIcon } from "@/components/western-icons";
 
-// Persistent app chrome: the same top bar and bottom tab bar on every screen.
+// Persistent app chrome: the same top bar and bottom tab bar on every screen,
+// at every width. SaddleMatch is a phone app, so the tab bar is never hidden
+// behind a desktop breakpoint — it just stays pinned to the phone-width column
+// the whole app is letterboxed into.
 //
 // The thing that makes a tab bar feel like an app rather than a list of links
 // is the current-page indicator. Without it you can tap a tab and not be sure
@@ -109,7 +112,7 @@ export function BottomNav({
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-line bg-card/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur shadow-[0_-8px_24px_rgba(27,25,23,0.06)] sm:hidden"
+      className="fixed bottom-0 left-1/2 z-30 grid w-full max-w-[480px] -translate-x-1/2 grid-cols-4 border-t border-line bg-card/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur shadow-[0_-8px_24px_rgba(27,25,23,0.06)]"
     >
       {TABS.map(({ href, label, Icon }) => {
         const active = isActive(href);
