@@ -90,6 +90,7 @@ export default function DiscoverPage() {
   const [filterMinAge, setFilterMinAge] = useState(18);
   const [filterMaxAge, setFilterMaxAge] = useState(99);
   const [filterGenders, setFilterGenders] = useState<string[]>([]);
+  const [filteredEmpty, setFilteredEmpty] = useState(false);
 
   async function loadQueue(useFilters = false) {
     setLoading(true);
@@ -110,6 +111,14 @@ export default function DiscoverPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Couldn't load today's roundup.");
       const nextCandidates = data.candidates ?? [];
+      if (useFilters && nextCandidates.length === 0) {
+        setCandidates([]);
+        setShowingSamples(false);
+        setFilteredEmpty(true);
+        setIndex(0);
+        return;
+      }
+      setFilteredEmpty(false);
       setCandidates(nextCandidates.length ? nextCandidates : SAMPLE_PROFILES);
       setShowingSamples(nextCandidates.length === 0);
       setIndex(0);
@@ -322,7 +331,37 @@ export default function DiscoverPage() {
       {loading && <p className="text-ink-soft text-center">Rounding up today&rsquo;s picks…</p>}
       {error && <p className="text-red-600 text-center">{error}</p>}
 
-      {!loading && !error && !current && (
+      {!loading && !error && !current && filteredEmpty && (
+        <div className="py-16 text-center">
+          <p className="text-lg font-bold">No one matches those filters</p>
+          <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-soft">
+            Nobody in today&rsquo;s roundup fits what you set. Austin is still a
+            small community here, so widening usually helps.
+          </p>
+          <div className="mt-5 flex flex-col items-center gap-2">
+            <button
+              onClick={() => {
+                setFilterMinAge(18);
+                setFilterMaxAge(99);
+                setFilterGenders([]);
+                setFiltersOpen(false);
+                loadQueue();
+              }}
+              className="min-h-11 rounded-full bg-brand px-6 text-sm font-bold text-white hover:bg-brand-dark"
+            >
+              Clear filters
+            </button>
+            <button
+              onClick={() => setFiltersOpen(true)}
+              className="min-h-11 px-4 text-sm font-semibold text-ink-soft hover:text-ink"
+            >
+              Adjust filters
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && !current && !filteredEmpty && (
         <div className="text-center py-20">
           <p className="text-lg font-bold mb-1">You&rsquo;re all caught up</p>
           <p className="text-ink-soft text-sm">
