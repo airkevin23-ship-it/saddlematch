@@ -236,16 +236,6 @@ export default function PreferencesPage() {
                 {GENDERS.map((gender) => <button key={gender.value} type="button" onClick={() => toggleGender(gender.value)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold ${genders.includes(gender.value) ? "border-brand bg-brand text-white" : "border-line text-ink-soft"}`}>{gender.label}</button>)}
               </div>
             </div>
-            <label className="flex cursor-pointer items-center justify-between gap-3 border-b border-line py-4">
-              <span className="flex items-center gap-2 font-bold"><span aria-hidden="true">🎯</span>Dating intention</span>
-              <span className="flex items-center gap-1 text-ink-soft">
-                <select value={intent} onChange={(event) => changeIntent(event.target.value as RelationshipIntent)} className="appearance-none bg-transparent text-right text-base outline-none">
-                  {DATING_INTENTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                </select>
-                <span aria-hidden="true" className="text-ink-faint">›</span>
-              </span>
-            </label>
-            {CORE_KEYS.map((key) => <PreferenceRow key={key} icon={DETAIL_ICONS[key]} label={DETAIL_LABELS[key]} value={details[key]} options={OPTIONS[key]} openLabel={OPEN_LABELS[key]} onChange={(value) => changeDetail(key, value)} />)}
             <div className="border-b border-line py-4">
               <div className="rounded-xl border-2 border-brand/30 bg-brand-soft/40 p-3">
                 <p className="flex items-center gap-2 font-bold">
@@ -260,6 +250,16 @@ export default function PreferencesPage() {
                 </label>
               </div>
             </div>
+            <label className="flex cursor-pointer items-center justify-between gap-3 border-b border-line py-4">
+              <span className="flex items-center gap-2 font-bold"><span aria-hidden="true">🎯</span>Dating intention</span>
+              <span className="flex items-center gap-1 text-ink-soft">
+                <select value={intent} onChange={(event) => changeIntent(event.target.value as RelationshipIntent)} className="appearance-none bg-transparent text-right text-base outline-none">
+                  {DATING_INTENTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                </select>
+                <span aria-hidden="true" className="text-ink-faint">›</span>
+              </span>
+            </label>
+            {CORE_KEYS.map((key) => <PreferenceRow key={key} icon={DETAIL_ICONS[key]} label={DETAIL_LABELS[key]} value={details[key]} options={OPTIONS[key]} openLabel={OPEN_LABELS[key]} onChange={(value) => changeDetail(key, value)} />)}
             <div className="border-b border-line py-4">
               <p className="flex items-center gap-2 font-bold"><span aria-hidden="true">📍</span>Areas I&apos;d travel to</p>
               <p className="mt-1 text-xs leading-relaxed text-ink-soft">Austin traffic is real. Pick the areas you&apos;d actually drive to for a date. Leave them all off to see the whole metro.</p>
