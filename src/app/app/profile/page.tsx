@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { CITIES, PROMPT_BANK } from "@/lib/constants";
+import { CowboyHatIcon } from "@/components/western-icons";
 import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 
@@ -37,7 +38,6 @@ export default function ProfilePage() {
   const supabase = createClient();
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [deleting, setDeleting] = useState(false);
   const [interestsInput, setInterestsInput] = useState("");
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [minAge, setMinAge] = useState(18);
@@ -49,6 +49,7 @@ export default function ProfilePage() {
   const [aiLoadingIndex, setAiLoadingIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [profileTab, setProfileTab] = useState<"edit" | "view">("view");
+  const [celebrate, setCelebrate] = useState(false);
   const [details, setDetails] = useState<Details>(EMPTY_DETAILS);
   const [visibility, setVisibility] = useState<Record<DetailKey, boolean>>(EMPTY_VISIBILITY);
 
@@ -163,7 +164,7 @@ export default function ProfilePage() {
     // someone parked at the bottom of a long form, with only a 2-second label
     // change on a footer they have scrolled past, reads as "nothing happened".
     if (completionScore >= 100) {
-      router.push("/app/discover");
+      setCelebrate(true);
       return;
     }
     setProfileTab("view");
@@ -251,15 +252,18 @@ export default function ProfilePage() {
 
   const trimmedInterests = interestsInput.split(",").map((s) => s.trim()).filter(Boolean);
   const checklist = [
-    { label: "Add a profile photo", done: profile.photo_urls.length > 0 },
-    { label: "Answer a prompt", done: prompts.some((p) => p.answer.trim().length > 0) },
-    { label: "Set your dating intentions", done: Boolean(relationshipIntent) },
-    { label: "Add at least 3 interests", done: trimmedInterests.length >= 3 },
-    { label: "Add a tagline", done: Boolean(profile.bio && profile.bio.trim()) },
+    { label: "Photo", done: profile.photo_urls.length > 0 },
+    { label: "Prompts", done: prompts.some((p) => p.answer.trim().length > 0) },
+    { label: "Intentions", done: Boolean(relationshipIntent) },
+    { label: "Interests", done: trimmedInterests.length >= 3 },
+    { label: "Tagline", done: Boolean(profile.bio && profile.bio.trim()) },
   ];
   const completedCount = checklist.filter((item) => item.done).length;
   const completionScore = Math.round((completedCount / checklist.length) * 100);
-  const primaryPrompt = prompts.find((p) => p.answer.trim().length > 0);
+  const answeredPrompts = prompts.filter((p) => p.answer.trim().length > 0);
+  const age = profile.birthdate
+    ? Math.floor((Date.now() - new Date(profile.birthdate).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+    : null;
   const cityName = CITIES.find((c) => c.id === profile.city_id)?.name;
   const intentionLabel = DATING_INTENTIONS.find((option) => option.value === relationshipIntent)?.label ?? "Open to exploring";
   const saveLabel = saving
@@ -272,24 +276,50 @@ export default function ProfilePage() {
     ? "Complete Profile"
     : "Save & Continue";
 
+  if (celebrate) {
+    return (
+      <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-8 pb-28 text-center text-ink">
+        <span className="text-6xl" aria-hidden="true">🌵</span>
+        <h1 className="mt-6 text-3xl font-extrabold tracking-tight">You&rsquo;re ready.</h1>
+        <p className="mt-4 text-base leading-relaxed text-ink-soft">
+          We&rsquo;ll start looking for your first match.
+        </p>
+        <p className="mt-1 text-base leading-relaxed text-ink-soft">
+          See you in tomorrow&rsquo;s roundup.
+        </p>
+        <Link
+          href="/app/discover"
+          className="mt-9 inline-flex min-h-12 w-full max-w-xs items-center justify-center rounded-full bg-brand px-6 font-bold text-white shadow-lg shadow-brand/25 transition-colors hover:bg-brand-dark"
+        >
+          Go to Discover
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-md mx-auto px-6 pt-8 pb-40 sm:pb-28 bg-cream min-h-screen text-ink">
+    <div className="max-w-md mx-auto px-6 pt-8 pb-40 bg-cream min-h-screen text-ink">
       <div className="mb-5 flex items-center justify-between">
         <h1 className="text-xl font-extrabold tracking-tight">Your profile</h1>
         <Link href="/app/discover" className="text-sm font-semibold text-ink-soft">Done</Link>
       </div>
 
       {completionScore < 100 && (
-        <div className="mb-6 rounded-2xl border border-brand/20 bg-brand-soft/40 p-4">
-          <p className="text-sm font-bold text-ink">Complete your profile to get more quality matches.</p>
-          <ul className="mt-3 space-y-1.5">
-            {checklist.map((item) => (
-              <li key={item.label} className="flex items-center gap-2 text-sm">
-                <span aria-hidden="true">{item.done ? "✅" : "⬜"}</span>
-                <span className={item.done ? "text-ink-soft line-through" : "text-ink font-medium"}>{item.label}</span>
-              </li>
-            ))}
-          </ul>
+        <div className="mb-5 flex items-center gap-3.5 rounded-2xl border border-brand/20 bg-brand-soft/40 px-4 py-3">
+          <span className="shrink-0 text-2xl font-extrabold leading-none text-brand">{completionScore}%</span>
+          <div className="min-w-0">
+            <p className="text-sm font-bold leading-tight">Complete your profile</p>
+            <div className="mt-1.5 flex flex-wrap gap-x-2.5 gap-y-1">
+              {checklist.map((item) => (
+                <span
+                  key={item.label}
+                  className={`text-[11px] leading-none ${item.done ? "text-ink-faint" : "font-semibold text-ink"}`}
+                >
+                  {item.done ? "✓" : "○"} {item.label}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
@@ -315,60 +345,62 @@ export default function ProfilePage() {
       </div>
 
       {profileTab === "view" && (
-        <section className="mb-8 space-y-5">
-          {profile.photo_urls[0] && (
-            <div className="aspect-[4/5] overflow-hidden rounded-3xl bg-line">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={profile.photo_urls[0]} alt="Profile preview" className="h-full w-full object-cover" />
+        <section className="mb-8">
+          {/* Same shell, spacing and type scale as the Discover card, so
+              "Preview" really is what another member sees. */}
+          <div className="overflow-hidden rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06]">
+            <div className="flex aspect-[4/5] items-center justify-center bg-line text-ink-faint">
+              {profile.photo_urls[0] ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={profile.photo_urls[0]} alt="Profile preview" className="h-full w-full object-cover" />
+              ) : (
+                <CowboyHatIcon className="h-14 w-14" />
+              )}
             </div>
-          )}
 
-          <div>
-            <p className="text-2xl font-extrabold">{profile.display_name}</p>
-            {cityName && <p className="text-ink-soft">{cityName}</p>}
-          </div>
+            <div className="p-5">
+              <h2 className="text-2xl font-extrabold tracking-tight">
+                {profile.display_name}{age ? `, ${age}` : ""}
+              </h2>
+              {profile.bio && profile.bio.trim() && (
+                <p className="mt-1 text-base leading-relaxed text-ink-soft">{profile.bio}</p>
+              )}
 
-          {primaryPrompt && (
-            <div className="rounded-3xl border border-line bg-card p-6 sm:p-8">
-              <p className="text-xs font-bold uppercase tracking-wide text-brand mb-3">{primaryPrompt.question}</p>
-              <p className="text-xl font-bold leading-snug">{primaryPrompt.answer}</p>
-            </div>
-          )}
-
-          {profile.bio && profile.bio.trim() && (
-            <p className="text-lg text-ink-soft italic leading-relaxed">&ldquo;{profile.bio}&rdquo;</p>
-          )}
-
-          {profile.interests.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {profile.interests.map((interest) => (
-                <span key={interest} className="rounded-full bg-card border border-line px-3 py-1.5 text-sm font-medium text-ink">
-                  {interest}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <div className="rounded-2xl border border-line bg-card px-4">
-            <div className="py-4 border-b border-line last:border-0">
-              <p className="text-xs font-bold text-ink-faint uppercase tracking-wide">Dating intentions</p>
-              <p className="mt-1 font-semibold">{intentionLabel}</p>
-            </div>
-            {DETAIL_FIELDS.filter(([key]) => visibility[key]).map(([key, label]) => (
-              <div key={key} className="py-4 border-b border-line last:border-0">
-                <p className="text-xs font-bold text-ink-faint uppercase tracking-wide">{label}</p>
-                <p className="mt-1 font-semibold">{details[key]}</p>
+              <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+                <div className="rounded-xl bg-cream px-3 py-2.5"><span className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Based in</span><span className="font-semibold">{cityName ?? "Austin"}</span></div>
+                <div className="rounded-xl bg-cream px-3 py-2.5"><span className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Looking for</span><span className="font-semibold">{intentionLabel}</span></div>
               </div>
-            ))}
-          </div>
 
-          <div className="pt-2 space-y-1 border-t border-line">
-            <Link href="/app/preferences" className="flex min-h-12 items-center justify-between text-sm font-semibold text-ink-soft hover:text-ink">
-              <span>Edit Preferences</span><span className="text-brand">→</span>
-            </Link>
-            <Link href="/app/settings" className="flex min-h-12 items-center justify-between text-sm font-semibold text-ink-soft hover:text-ink">
-              <span>Safety &amp; Privacy</span><span className="text-brand">→</span>
-            </Link>
+              {trimmedInterests.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {trimmedInterests.map((interest) => (
+                    <span key={interest} className="rounded-full bg-line px-2.5 py-1 text-xs font-medium text-ink-soft">{interest}</span>
+                  ))}
+                </div>
+              )}
+
+              {answeredPrompts.length > 0 && (
+                <div className="mt-5 space-y-3">
+                  {answeredPrompts.map((p, i) => (
+                    <div key={i} className="rounded-2xl border border-line bg-cream p-4">
+                      <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{p.question}</p>
+                      <p className="mt-2 text-base font-medium leading-relaxed">{p.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {DETAIL_FIELDS.filter(([key]) => visibility[key]).length > 0 && (
+                <div className="mt-5 rounded-2xl border border-line bg-cream px-4">
+                  {DETAIL_FIELDS.filter(([key]) => visibility[key]).map(([key, label]) => (
+                    <div key={key} className="border-b border-line py-3 last:border-0">
+                      <p className="text-[10px] font-bold uppercase tracking-wide text-ink-faint">{label}</p>
+                      <p className="mt-0.5 font-semibold">{details[key]}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </section>
       )}
@@ -567,36 +599,6 @@ export default function ProfilePage() {
           ))}
         </div>
 
-        <div className="mt-10 pt-6 border-t border-line">
-          <p className="text-sm font-bold text-ink-soft mb-1">Danger zone</p>
-          <p className="text-xs text-ink-faint mb-3">
-            Permanently deletes your profile, matches, messages, and
-            subscription. This can&rsquo;t be undone.
-          </p>
-          <button
-            onClick={async () => {
-              if (
-                !confirm(
-                  "Delete your account? This permanently removes your profile, matches, and messages and can't be undone."
-                )
-              ) {
-                return;
-              }
-              setDeleting(true);
-              const res = await fetch("/api/account/delete", { method: "POST" });
-              if (res.ok) {
-                router.push("/");
-              } else {
-                setDeleting(false);
-                setError("Couldn't delete your account. Try again.");
-              }
-            }}
-            disabled={deleting}
-            className="text-sm text-red-600 hover:text-red-700 font-semibold disabled:opacity-50"
-          >
-            {deleting ? "Deleting…" : "Delete my account"}
-          </button>
-        </div>
       </div>
 
       <div className="fixed bottom-[4.5rem] left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t border-line bg-card/95 px-6 py-3 backdrop-blur">
