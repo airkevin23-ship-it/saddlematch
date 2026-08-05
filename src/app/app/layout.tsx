@@ -31,11 +31,14 @@ export default async function AppLayout({
   }
 
   return (
-    // SaddleMatch is a phone app. On anything wider than a handset we letterbox
-    // it into a phone-width column rather than stretching profile cards across a
-    // 2000px monitor, so it reads as an app on every screen.
-    <div className="flex min-h-screen justify-center bg-line/40">
-      <div className="relative flex min-h-screen w-full max-w-[480px] flex-col bg-cream shadow-[0_0_60px_rgba(27,25,23,0.10)]">
+    // Full-bleed on phones. The previous version letterboxed the app into a
+    // 480px column against a contrasting background, which looked like a phone
+    // mock-up on a desktop but wasted the screen on an actual handset and would
+    // be actively wrong inside a native shell. The width is still capped on
+    // large screens so cards do not stretch across a monitor, but the backdrop
+    // now matches the app so there are no visible side bars.
+    <div className="min-h-screen bg-cream">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-screen-sm flex-col bg-cream">
         <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-cream/90 px-4 py-3 backdrop-blur">
           <Link href="/" aria-label="SaddleMatch home" className="flex items-center gap-1.5 text-lg font-extrabold tracking-tight text-ink">
             <HorseshoeIcon className="h-5 w-5 text-brand" />
