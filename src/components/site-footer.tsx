@@ -3,7 +3,7 @@ import { APP_NAME } from "@/lib/constants";
 
 // Every legal page we publish has to actually be reachable. Stripe and the App
 // Store both check that these are linked, not just that the URLs resolve, so this
-// footer is the single place the four of them live.
+// footer is the single place they live, along with a working contact address.
 
 const LINKS = [
   { href: "/terms", label: "Terms of Service" },
@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/guidelines", label: "Community Guidelines" },
   { href: "/acceptable-use", label: "Acceptable Use Policy" },
   { href: "/safety", label: "Safety" },
+  { href: "mailto:kswwllc@gmail.com", label: "Contact" },
 ];
 
 export default function SiteFooter({ inApp = false }: { inApp?: boolean }) {
