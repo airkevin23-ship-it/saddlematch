@@ -601,7 +601,7 @@ export default function ProfilePage() {
 
       </div>
 
-      <div className="fixed bottom-[4.5rem] left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t border-line bg-card/95 px-6 py-3 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-[4.5rem] z-40 mx-auto w-full max-w-md border-t border-line bg-card/95 px-6 py-3 backdrop-blur">
         <div className="mx-auto max-w-md">
           {error && <p className="mb-2 text-center text-sm font-semibold text-red-600">{error}</p>}
           <button
