@@ -15,8 +15,8 @@ export default function LandingPage() {
     // Tailwind's sm:/md: prefixes key off the viewport, not this column, so a
     // "sm:text-5xl" would still fire on a monitor and blow the headline out of
     // a 480px column. Everything inside is sized for a phone, no breakpoints.
-    <main className="flex min-h-screen justify-center bg-line/40 text-ink">
-      <div className="flex min-h-screen w-full max-w-[480px] flex-col bg-cream shadow-[0_0_60px_rgba(27,25,23,0.10)]">
+    <main className="flex min-h-screen flex-col bg-cream text-ink">
+      <div className="mx-auto flex min-h-screen w-full max-w-screen-sm flex-col bg-cream">
       <header className="w-full px-4 py-4">
         <Link
           href="/"
