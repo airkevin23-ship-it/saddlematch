@@ -113,7 +113,7 @@ export function BottomNav({
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed inset-x-0 bottom-0 z-30 mx-auto grid w-full max-w-screen-sm grid-cols-4 border-t border-line bg-card/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur shadow-[0_-8px_24px_rgba(27,25,23,0.06)]"
+      className="fixed inset-x-0 bottom-0 z-30 mx-auto grid w-full max-w-md grid-cols-4 border-t border-line bg-card/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur shadow-[0_-8px_24px_rgba(27,25,23,0.06)]"
     >
       {TABS.map(({ href, label, Icon }) => {
         const active = isActive(href);
