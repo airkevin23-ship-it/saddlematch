@@ -55,8 +55,8 @@ export default function SignupPage() {
 
   if (sent) {
     return (
-      <main className="flex min-h-screen justify-center bg-line/40 text-ink">
-        <div className="flex min-h-screen w-full max-w-[480px] items-center justify-center bg-cream px-6 text-center shadow-[0_0_60px_rgba(27,25,23,0.10)]">
+      <main className="flex min-h-screen flex-col bg-cream text-ink">
+        <div className="mx-auto flex min-h-screen w-full max-w-md items-center justify-center bg-cream px-6 text-center">
         <div>
           <h1 className="text-2xl font-extrabold mb-2 tracking-tight">Check your email</h1>
           <p className="text-ink-soft">
@@ -71,8 +71,8 @@ export default function SignupPage() {
 
   return (
     // Phone-width column so the sign-up form matches the app it leads into.
-    <main className="flex min-h-screen justify-center bg-line/40 text-ink">
-      <div className="flex min-h-screen w-full max-w-[480px] items-center justify-center bg-cream px-6 shadow-[0_0_60px_rgba(27,25,23,0.10)]">
+    <main className="flex min-h-screen flex-col bg-cream text-ink">
+      <div className="mx-auto flex min-h-screen w-full max-w-md items-center justify-center bg-cream px-6">
       <div className="w-full max-w-sm">
         <Link href="/" className="text-sm text-ink-soft hover:text-ink transition-colors">
           ← {APP_NAME}
