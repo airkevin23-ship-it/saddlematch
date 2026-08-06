@@ -14,7 +14,7 @@ import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-between overflow-hidden border-x border-amber-900/10 bg-[#FFFDF9] font-sans text-[#2C1810] shadow-2xl">
+    <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-between border-x border-amber-900/10 bg-[#FFFDF9] font-sans text-[#2C1810] shadow-2xl">
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-amber-900/10 bg-[#FFFDF9]/90 px-5 py-3.5 backdrop-blur-md">
         <span className="text-xl font-bold tracking-tight text-[#D92B4B]">SaddleMatch</span>
         <Link
