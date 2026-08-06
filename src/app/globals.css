@@ -39,3 +39,51 @@ select,
 textarea {
   touch-action: manipulation;
 }
+
+/* ---------------------------------------------------------------
+   Mobile app behaviour
+   ---------------------------------------------------------------
+   These rules are most of what separates "web page in a browser"
+   from "app". They apply identically inside a Capacitor WebView
+   later, since that renders this same stylesheet. */
+
+/* `vh` on mobile measures the viewport *behind* the URL bar, so a
+   bottom-pinned bar sits underneath it until the user scrolls. `dvh`
+   tracks the actually-visible height. Overriding the two utilities
+   here fixes every screen at once instead of editing 22 files. */
+@supports (height: 100dvh) {
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+
+  .h-screen {
+    height: 100dvh;
+  }
+}
+
+/* Kills the rubber-band bounce past the top of the page, which reads
+   as "web page" the instant a thumb hits it. */
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
+/* iOS Safari force-zooms the page whenever a focused input has a font
+   size under 16px, and it does not zoom back out afterwards. It fires
+   mid-signup, which is the worst moment to break the layout. The max()
+   keeps any deliberately larger size intact. */
+input,
+select,
+textarea {
+  font-size: max(16px, 1em);
+}
+
+/* App chrome should not be selectable — long-pressing a tab label and
+   getting a text-selection handle is a giveaway. Content stays
+   selectable so people can still copy a bio or a message. */
+nav a,
+nav button,
+header button {
+  -webkit-user-select: none;
+  user-select: none;
+}
