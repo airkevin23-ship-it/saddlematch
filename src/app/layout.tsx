@@ -6,7 +6,7 @@ import SiteFooter from "@/components/site-footer";
 export const metadata: Metadata = {
   title: "SaddleMatch — Dating for the Western Lifestyle",
   description:
-    "Meet people who share your love of country music, rodeos, rural life, and real Texas connection — a dating app built for Houston, Austin, Dallas, and San Antonio.",
+    "Meet people who share your love of country music, rodeos, rural life, and real Texas connection — a dating app built for Austin, Texas.",
   verification: {
     google: "Z3Av3uQVkE7i5PEZX3V-PagHve9JEdGUJNM3kLYVbeQ",
   },
