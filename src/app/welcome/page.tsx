@@ -63,8 +63,8 @@ export default function WelcomePage() {
   return (
     // Phone-width column, same as the landing page and the signed-in app, so
     // the whole sign-up path looks like one continuous mobile app.
-    <main className="flex min-h-screen justify-center bg-line/40 text-ink">
-      <div className="flex h-screen w-full max-w-[480px] flex-col bg-cream px-6 py-6 shadow-[0_0_60px_rgba(27,25,23,0.10)]">
+    <main className="flex min-h-screen flex-col bg-cream text-ink">
+      <div className="mx-auto flex h-screen w-full max-w-md flex-col bg-cream px-6 py-6">
       <button
         onClick={handleBack}
         className="text-sm text-ink-faint hover:text-ink-soft font-medium self-start min-h-11 -ml-1 px-1"
