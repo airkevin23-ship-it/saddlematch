@@ -1,12 +1,38 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { APP_NAME, TAGLINE } from "@/lib/constants";
 import SiteFooter from "@/components/site-footer";
+
+// Home-screen behaviour sits alongside the usual SEO metadata. Together
+// with src/app/manifest.ts, this is what lets someone add SaddleMatch to
+// their home screen and have it open full screen — no address bar, no
+// tabs — rather than reopening in the browser.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Lets content reach into the notch and home-indicator areas so the app
+  // fills the glass. Pages opt back out with env(safe-area-inset-*) padding,
+  // which the bottom tab bar already does.
+  viewportFit: "cover",
+  // Tints the phone status bar and browser chrome cream, instead of leaving
+  // a white band sitting above the header.
+  themeColor: "#fff8f3",
+};
 
 export const metadata: Metadata = {
   title: "SaddleMatch — Dating for the Western Lifestyle",
   description:
     "Meet people who share your love of country music, rodeos, rural life, and real Texas connection — a dating app built for Austin, Texas.",
+  appleWebApp: {
+    // The flag iOS reads to launch the installed icon without Safari chrome.
+    capable: true,
+    title: "SaddleMatch",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: "/saddlematch-logo.png",
+    apple: "/saddlematch-logo.png",
+  },
   verification: {
     google: "Z3Av3uQVkE7i5PEZX3V-PagHve9JEdGUJNM3kLYVbeQ",
   },
