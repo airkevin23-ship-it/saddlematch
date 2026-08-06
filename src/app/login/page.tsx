@@ -164,7 +164,7 @@ export default function LoginPage() {
   return (
     // Phone-width column so log in matches the rest of the flow.
     <main className="flex min-h-screen flex-col bg-cream text-ink">
-      <div className="mx-auto flex min-h-screen w-full max-w-screen-sm items-center justify-center bg-cream px-6">
+      <div className="mx-auto flex min-h-screen w-full max-w-md items-center justify-center bg-cream px-6">
       <div className="w-full max-w-sm">
         <Link href="/" className="text-sm text-ink-soft hover:text-ink transition-colors">
           ← {APP_NAME}
