@@ -1,77 +1,82 @@
 import Link from "next/link";
-import { HorseshoeIcon, WesternStarIcon } from "@/components/western-icons";
-import { APP_NAME, TAGLINE } from "@/lib/constants";
 
-// Deliberately minimal: this page has exactly one job — convince the right
-// person to tap "Create My Free Profile." Everything else (pricing, FAQ,
-// city list, product previews) has moved into the /welcome onboarding flow
-// or lives after signup, so a first-time visitor never has to scroll or
-// think about anything except that one decision.
+// Single-screen mobile landing. Everything above the fold, one action.
+//
+// The width cap lives on this element rather than on an outer wrapper with its
+// own background colour. At 448px it is narrower than any modern phone, so on a
+// real device the page runs edge to edge with no cream bars down the sides. On
+// desktop the same cap reads as a phone frame instead of a stretched web page.
+//
+// Legal links are deliberately not repeated in the sticky bar: the global
+// SiteFooter in the root layout already carries Terms, Privacy, Community
+// Guidelines, Acceptable Use, Safety and Contact, which is the set Stripe and
+// App Store review actually check for.
+
 export default function LandingPage() {
   return (
-    // Same phone-width column as the signed-in app, so the first screen a
-    // visitor sees already looks like the app they are about to sign up for.
-    //
-    // Tailwind's sm:/md: prefixes key off the viewport, not this column, so a
-    // "sm:text-5xl" would still fire on a monitor and blow the headline out of
-    // a 480px column. Everything inside is sized for a phone, no breakpoints.
-    <main className="flex min-h-screen flex-col bg-cream text-ink">
-      <div className="mx-auto flex min-h-screen w-full max-w-screen-sm flex-col bg-cream">
-      <header className="w-full px-4 py-4">
+    <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-between overflow-hidden border-x border-amber-900/10 bg-[#FFFDF9] font-sans text-[#2C1810] shadow-2xl">
+      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-amber-900/10 bg-[#FFFDF9]/90 px-5 py-3.5 backdrop-blur-md">
+        <span className="text-xl font-bold tracking-tight text-[#D92B4B]">SaddleMatch</span>
         <Link
-          href="/"
-          aria-label="SaddleMatch home"
-          className="flex w-fit min-h-11 items-center gap-1.5 rounded-lg text-lg font-extrabold tracking-tight focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+          href="/login"
+          className="rounded-full border border-[#D92B4B]/20 px-3 py-1.5 text-sm font-semibold text-[#D92B4B] transition-opacity hover:opacity-80"
         >
-          <HorseshoeIcon className="w-5 h-5 text-brand" />
-          {APP_NAME}
+          Log in
         </Link>
       </header>
 
-      <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10">
-        <p className="flex items-center justify-center gap-2 text-sm uppercase tracking-widest text-brand font-bold mb-4">
-          <WesternStarIcon className="w-4 h-4" />
-          {TAGLINE}
-          <WesternStarIcon className="w-4 h-4" />
-        </p>
-        <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight">
-          Finally, a Dating App Built for Austin&rsquo;s Country Lifestyle
+      <main className="flex flex-1 flex-col items-center justify-center px-6 pb-28 pt-6 text-center">
+        <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#D92B4B]/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-[#D92B4B]">
+          <span aria-hidden="true">☆</span> Dating for the western lifestyle{" "}
+          <span aria-hidden="true">☆</span>
+        </div>
+
+        <h1 className="mb-3 text-3xl font-extrabold leading-tight tracking-tight text-[#1A0C08]">
+          Built for Austin&rsquo;s Country Lifestyle
         </h1>
-        <p className="mt-5 max-w-sm text-ink-soft text-base leading-relaxed">
-          Meet people who love two-stepping, live music, rodeos, and real
-          Texas connections.
-        </p>
-        <p className="mt-2 max-w-sm text-ink text-base font-bold leading-relaxed">
-          One thoughtful match every day. No endless swiping.
+        <p className="mb-6 max-w-xs text-sm leading-relaxed text-stone-600">
+          Meet local singles who love two-stepping, live country music, rodeos,
+          and real Texas connections.
         </p>
 
+        <div className="relative mb-4 w-full overflow-hidden rounded-2xl border border-amber-900/10 bg-white p-4 text-left shadow-xl">
+          <div className="absolute right-3 top-3 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-900">
+            Today&rsquo;s match
+          </div>
+          <div className="mb-3 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-stone-200 text-xl font-bold text-stone-500">
+              <span aria-hidden="true">🤠</span>
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-stone-900">Austin, TX</h2>
+              <p className="text-xs text-stone-500">Two-stepper &middot; Live music fan</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-1.5 text-xs">
+            {["Broken Spoke", "Two-step intermediate", "Country gold"].map((tag) => (
+              <span
+                key={tag}
+                className="rounded-md bg-stone-100 px-2.5 py-1 font-medium text-stone-700"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-xs font-semibold italic text-stone-500">
+          One thoughtful match every day. No endless swiping.
+        </p>
+      </main>
+
+      <div className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md border-t border-amber-900/10 bg-white/95 p-4 backdrop-blur-md">
         <Link
-          href="/welcome"
-          className="mt-8 inline-flex items-center justify-center bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-full font-bold shadow-lg shadow-brand/25 transition-colors min-h-12 w-full max-w-xs"
+          href="/signup"
+          className="block w-full rounded-xl bg-[#D92B4B] px-6 py-3.5 text-center text-base font-bold text-white shadow-lg shadow-[#D92B4B]/25 transition-all hover:bg-[#C0223F] active:scale-[0.98]"
         >
           Create My Free Profile
         </Link>
-
-        <p className="mt-5 text-sm text-ink-soft">
-          Already have an account?{" "}
-          <Link href="/login" className="text-brand hover:text-brand-dark font-semibold">
-            Log in
-          </Link>
-        </p>
-      </section>
-
-      <footer className="space-x-3 border-t border-line px-4 py-6 text-center text-xs text-ink-faint">
-        <Link href="/terms" className="hover:text-ink-soft underline">
-          Terms
-        </Link>
-        <Link href="/privacy" className="hover:text-ink-soft underline">
-          Privacy
-        </Link>
-        <Link href="/safety" className="hover:text-ink-soft underline">
-          Safety
-        </Link>
-      </footer>
       </div>
-    </main>
+    </div>
   );
 }
