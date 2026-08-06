@@ -38,7 +38,7 @@ export default async function AppLayout({
     // large screens so cards do not stretch across a monitor, but the backdrop
     // now matches the app so there are no visible side bars.
     <div className="min-h-screen bg-cream">
-      <div className="relative mx-auto flex min-h-screen w-full max-w-screen-sm flex-col bg-cream">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col bg-cream">
         <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-cream/90 px-4 py-3 backdrop-blur">
           <Link href="/" aria-label="SaddleMatch home" className="flex items-center gap-1.5 text-lg font-extrabold tracking-tight text-ink">
             <HorseshoeIcon className="h-5 w-5 text-brand" />
