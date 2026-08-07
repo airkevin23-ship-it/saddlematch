@@ -332,7 +332,7 @@ export default function DiscoverPage() {
       {error && <p className="text-red-600 text-center">{error}</p>}
 
       {!loading && !error && !current && filteredEmpty && (
-        <div className="py-16 text-center">
+        <div className="flex min-h-[55vh] flex-col items-center justify-center px-6 text-center">
           <p className="text-lg font-bold">No one matches those filters</p>
           <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-soft">
             Nobody in today&rsquo;s roundup fits what you set. Austin is still a
@@ -362,7 +362,7 @@ export default function DiscoverPage() {
       )}
 
       {!loading && !error && !current && !filteredEmpty && (
-        <div className="text-center py-20">
+        <div className="flex min-h-[55vh] flex-col items-center justify-center px-6 text-center">
           <p className="text-lg font-bold mb-1">You&rsquo;re all caught up</p>
           <p className="text-ink-soft text-sm">
             That&rsquo;s today&rsquo;s roundup. New curated matches tomorrow — quality
