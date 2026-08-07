@@ -99,6 +99,45 @@ export default function SettingsPage() {
       <section><p className="text-xs font-bold uppercase tracking-[0.16em] text-ink-faint">Account</p><div className="mt-2 rounded-2xl border border-red-200 bg-card px-4"><button type="button" onClick={deleteAccount} disabled={deleting} className="flex min-h-14 w-full items-center justify-between gap-3 py-3 text-left disabled:opacity-50"><span><span className="block font-bold text-red-600">Delete account</span><span className="mt-1 block text-sm text-ink-soft">Permanently removes your profile, matches, and messages. This can&rsquo;t be undone.</span></span><span className="shrink-0 font-semibold text-red-600">{deleting ? "Deleting…" : "Delete"}</span></button></div></section>
       <section><p className="text-xs font-bold uppercase tracking-[0.16em] text-ink-faint">Your data</p><button onClick={downloadData} className="mt-2 flex min-h-14 w-full items-center justify-between rounded-2xl border border-line bg-card px-4 text-left"><span><span className="block font-bold">Download my data</span><span className="mt-1 block text-sm text-ink-soft">Download your profile, matches, and messages.</span></span><span className="text-brand">Download</span></button></section>
       {message && <p className="text-center text-sm font-semibold text-brand">{message}</p>}
+      {/* Policies. These used to live in the global site footer, but that
+          footer renders at full body width and collides with the tab bar, so it
+          is now hidden inside the app. Settings is where an app is expected to
+          keep them anyway, and Apple and Stripe both require them reachable
+          from within the product rather than only on the marketing site. */}
+      <section className="mt-8 border-t border-line pt-6">
+        <h2 className="text-xs font-bold uppercase tracking-widest text-ink-faint">
+          Policies
+        </h2>
+        <p className="mt-2 text-xs leading-relaxed text-ink-soft">
+          The rules everyone here agrees to, and what happens to your data.
+        </p>
+        <nav
+          aria-label="Legal and policies"
+          className="mt-3 flex flex-wrap gap-x-4 gap-y-2"
+        >
+          {[
+            { href: "/terms", label: "Terms of Service" },
+            { href: "/privacy", label: "Privacy Policy" },
+            { href: "/guidelines", label: "Community Guidelines" },
+            { href: "/acceptable-use", label: "Acceptable Use Policy" },
+            { href: "/safety", label: "Safety" },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-xs font-semibold text-ink-soft underline underline-offset-4 transition-colors hover:text-ink"
+            >
+              {item.label}
+            </Link>
+          ))}
+          <a
+            href="mailto:kswwllc@gmail.com"
+            className="text-xs font-semibold text-ink-soft underline underline-offset-4 transition-colors hover:text-ink"
+          >
+            Contact
+          </a>
+        </nav>
+      </section>
     </main>
   </div>;
 }
