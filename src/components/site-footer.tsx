@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { APP_NAME } from "@/lib/constants";
 
 // Every legal page we publish has to actually be reachable. Stripe and the App
@@ -15,6 +18,16 @@ const LINKS = [
 ];
 
 export default function SiteFooter({ inApp = false }: { inApp?: boolean }) {
+  const pathname = usePathname();
+
+  // Inside the signed-in app the tab bar is the bottom of the screen, and a
+  // web-style footer stacked above it is wrong twice over: it renders at full
+  // body width while the app itself is capped to a phone column, so the links
+  // spill out either side, and it collides with the fixed Save bar on the
+  // profile editor. Policies stay reachable from Settings instead, which is
+  // where an app is expected to keep them.
+  if (pathname?.startsWith("/app")) return null;
+
   return (
     <footer
       className={`border-t border-line bg-cream px-6 py-8 text-center ${
