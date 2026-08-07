@@ -577,7 +577,7 @@ export default function ProfilePage() {
               >
                 {PROMPT_BANK.map((q) => (
                   <option key={q} value={q} disabled={usedQuestions.has(q) && q !== p.question}>
-                    {q}
+                    {usedQuestions.has(q) && q !== p.question ? q + " (already used)" : q}
                   </option>
                 ))}
               </select>
