@@ -285,7 +285,7 @@ export default function DiscoverPage() {
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-3xl text-brand" aria-hidden="true">✿</div>
             <h2 id="wildflower-title" className="mt-4 text-center text-xl font-extrabold">Send a Wildflower?</h2>
             <p className="mt-2 text-center text-sm leading-relaxed text-ink-soft">
-              Let {wildflowerTarget.display_name} know you&apos;re especially interested. A Wildflower is a one-time extra-interest signal.
+              {`Let ${wildflowerTarget.display_name} know you’re especially interested. A Wildflower is a one-time extra-interest signal.`}
             </p>
             <div className="mt-4 rounded-2xl bg-cream px-4 py-3 text-center">
               <p className="text-xs font-bold uppercase tracking-wide text-ink-faint">One-time purchase</p>
