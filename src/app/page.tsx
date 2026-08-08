@@ -16,7 +16,7 @@ export default function LandingPage() {
   return (
     <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-between border-x border-amber-900/10 bg-[#FFFDF9] font-sans text-[#2C1810] shadow-2xl">
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-amber-900/10 bg-[#FFFDF9]/90 px-5 py-3.5 backdrop-blur-md">
-        <span className="text-xl font-bold tracking-tight text-[#D92B4B]">SaddleMatch</span>
+        <span className="font-display text-[1.4rem] font-bold tracking-tight text-[#D92B4B]">SaddleMatch</span>
         <Link
           href="/login"
           className="rounded-full border border-[#D92B4B]/20 px-3 py-1.5 text-sm font-semibold text-[#D92B4B] transition-opacity hover:opacity-80"
@@ -31,10 +31,12 @@ export default function LandingPage() {
           <span aria-hidden="true">☆</span>
         </div>
 
-        <h1 className="mb-3 text-3xl font-extrabold leading-tight tracking-tight text-[#1A0C08]">
-          Built for Austin&rsquo;s Country Lifestyle
+        <h1 className="mb-3 font-display text-[2.25rem] font-bold leading-[1.08] tracking-tight text-[#1A0C08]">
+          Built for{" "}
+            <span className="italic text-[#D92B4B]">Austin&rsquo;s</span>{" "}
+            Country Lifestyle
         </h1>
-        <p className="mb-6 max-w-xs text-sm leading-relaxed text-stone-600">
+        <p className="mb-7 max-w-[19rem] text-base leading-relaxed text-stone-600">
           Meet local singles who love two-stepping, live country music, rodeos,
           and real Texas connections.
         </p>
