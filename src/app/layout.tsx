@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { APP_NAME, TAGLINE } from "@/lib/constants";
 import SiteFooter from "@/components/site-footer";
@@ -38,11 +39,22 @@ export const metadata: Metadata = {
   },
 };
 
+// A display serif for headlines only, loaded through next/font so Next
+// self-hosts it at build time: no extra network request, no flash of
+// unstyled text, no layout shift. Body copy stays in the sans.
+const display = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-display",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={display.variable}>
       {/*
         The footer lives here rather than on each page so the policy links are
         genuinely reachable everywhere. Stripe and App Store review both check
