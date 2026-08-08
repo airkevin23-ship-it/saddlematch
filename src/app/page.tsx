@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 // Single-screen mobile landing. Everything above the fold, one action.
@@ -16,7 +17,14 @@ export default function LandingPage() {
   return (
     <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-between border-x border-amber-900/10 bg-[#FFFDF9] font-sans text-[#2C1810] shadow-2xl">
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-amber-900/10 bg-[#FFFDF9]/90 px-5 py-3.5 backdrop-blur-md">
-        <span className="font-display text-[1.4rem] font-bold tracking-tight text-[#D92B4B]">SaddleMatch</span>
+        <Image
+            src="/saddlematch-wordmark.png"
+            alt="SaddleMatch"
+            width={376}
+            height={42}
+            priority
+            className="h-5 w-auto"
+          />
         <Link
           href="/login"
           className="rounded-full border border-[#D92B4B]/20 px-3 py-1.5 text-sm font-semibold text-[#D92B4B] transition-opacity hover:opacity-80"
