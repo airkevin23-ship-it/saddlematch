@@ -47,7 +47,7 @@ const display = Playfair_Display({
   weight: ["700"],
   style: ["normal", "italic"],
   display: "swap",
-  variable: "--font-display",
+  variable: "--font-playfair",
 });
 
 export default function RootLayout({
