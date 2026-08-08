@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { DAILY_QUEUE_SIZE } from "@/lib/constants";
+import {
+  DAILY_QUEUE_SIZE_FREE,
+  DAILY_QUEUE_SIZE_PLUS,
+} from "@/lib/constants";
+import { hasActiveSubscription } from "@/lib/subscription";
 
 // Coffee Meets Bagel / Crush style: instead of an infinite swipe deck,
 // each user gets a small, capped, once-a-day queue of candidates.
@@ -15,6 +19,14 @@ export async function GET(request: Request) {
   if (!user) {
         return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
+
+  // Free members get one curated person a day; Plus raises the cap. This is
+  // what makes "One match every day" on the landing page and in /welcome
+  // literally true, and what gives the "More daily curated matches" line in
+  // PLUS_FEATURES something real to sell.
+  const queueSize = (await hasActiveSubscription(user.id))
+    ? DAILY_QUEUE_SIZE_PLUS
+    : DAILY_QUEUE_SIZE_FREE;
 
   const { data: me } = await supabase
       .from("profiles")
@@ -76,7 +88,7 @@ export async function GET(request: Request) {
           .eq("is_active", true)
           .eq("is_quarantined", false)
           .not("id", "in", `(${excludeIds.join(",")})`)
-          .limit(DAILY_QUEUE_SIZE * 3);
+          .limit(queueSize * 3);
 
       const genders = filteredGenders.length ? filteredGenders : me.interested_in;
         if (genders?.length) {
@@ -86,7 +98,7 @@ export async function GET(request: Request) {
 
       const { data: pool } = await query;
         const shuffled = (pool ?? []).map((p) => p.id).sort(() => Math.random() - 0.5);
-        candidateIds = shuffled.slice(0, DAILY_QUEUE_SIZE);
+        candidateIds = shuffled.slice(0, queueSize);
 
       if (!hasTemporaryFilters) {
               await supabase.from("daily_queues").upsert({
