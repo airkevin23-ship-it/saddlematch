@@ -349,14 +349,11 @@ export default function ProfilePage() {
           {/* Same shell, spacing and type scale as the Discover card, so
               "Preview" really is what another member sees. */}
           <div className="overflow-hidden rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06]">
-            <div className="flex aspect-[4/5] items-center justify-center bg-line text-ink-faint">
-              {profile.photo_urls[0] ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={profile.photo_urls[0]} alt="Profile preview" className="h-full w-full object-cover" />
-              ) : (
-                <CowboyHatIcon className="h-14 w-14" />
-              )}
-            </div>
+            <ProfileMedia
+              photoUrls={profile.photo_urls}
+              videoUrl={profile.intro_video_url}
+              alt="Profile preview"
+            />
 
             <div className="p-5">
               <h2 className="text-2xl font-extrabold tracking-tight">
