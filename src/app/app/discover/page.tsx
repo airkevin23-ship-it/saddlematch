@@ -559,7 +559,12 @@ export default function DiscoverPage() {
             )}
           </div>
 
-          <div className="sticky bottom-20 sm:bottom-0 flex border-t border-line bg-card">
+          {/* Sits at the end of the card rather than floating over it. It was
+              sticky bottom-20, but the card wrapping it has overflow-hidden, and an
+              overflow-hidden ancestor breaks position: sticky — so the bar hovered
+              over the last prompt instead of clearing it, and the prompt answer was
+              unreadable. Anchored in flow it can never cover content. */}
+          <div className="flex border-t border-line bg-card">
             <button
               onClick={() => handleSwipe("pass")}
               disabled={sending}
