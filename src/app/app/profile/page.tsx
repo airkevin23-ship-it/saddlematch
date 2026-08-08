@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { CITIES, PROMPT_BANK } from "@/lib/constants";
-import { CowboyHatIcon } from "@/components/western-icons";
+import ProfileMedia from "@/components/profile-media";
 import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 
