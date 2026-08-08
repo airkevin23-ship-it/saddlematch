@@ -6,6 +6,61 @@ import type { PublicProfile } from "@/types/db";
 import { CITIES } from "@/lib/constants";
 import { CowboyHatIcon } from "@/components/western-icons";
 
+// Three sample profiles shown when the real queue is empty. They exist so
+// the app can be demonstrated before Austin has members. Every one is
+// flagged is_demo, which renders the "Sample profile" badge on the photo,
+// so nobody is misled into thinking they are real people.
+//
+// These must be removed before any App Store submission — placeholder
+// profiles in a review build are grounds for rejection under Guideline 4.2.
+const SAMPLE_PROFILES: PublicProfile[] = [
+  {
+    id: "sample-maddie",
+    display_name: "Maddie",
+    age: 27,
+    gender: "female",
+    city_id: 2,
+    bio: "Live music, weekend trail rides, and finding the best breakfast tacos in town.",
+    interests: ["Horses", "Live music", "Weekend trips"],
+    photo_urls: ["/maddie-profile.png"],
+    prompts: [{ question: "Best local spot for a first date…", answer: "Somewhere with good queso and a little live music." }],
+    is_active: true,
+    is_demo: true,
+    created_at: "2026-01-01T00:00:00.000Z",
+    relationship_intent: "open_to_either",
+  },
+  {
+    id: "sample-jordan",
+    display_name: "Jordan",
+    age: 29,
+    gender: "male",
+    city_id: 2,
+    bio: "East Austin regular, always up for a rodeo, a road trip, or cooking for friends.",
+    interests: ["Rodeos", "Cooking", "Dogs"],
+    photo_urls: ["/jordan-profile.png"],
+    prompts: [{ question: "My simple pleasures are…", answer: "A great cup of coffee, a good dog, and a wide-open Saturday." }],
+    is_active: true,
+    is_demo: true,
+    created_at: "2026-01-01T00:00:00.000Z",
+    relationship_intent: "open_to_either",
+  },
+  {
+    id: "sample-casey",
+    display_name: "Casey",
+    age: 26,
+    gender: "female",
+    city_id: 2,
+    bio: "Country concerts, family dinners, and making room for the people who matter.",
+    interests: ["Country music", "Family", "Outdoors"],
+    photo_urls: ["/casey-profile.png"],
+    prompts: [{ question: "The way to win me over is…", answer: "Be kind, be consistent, and make me laugh." }],
+    is_active: true,
+    is_demo: true,
+    created_at: "2026-01-01T00:00:00.000Z",
+    relationship_intent: "open_to_either",
+  },
+];
+
 
 const RELATIONSHIP_INTENT_LABELS: Record<string, string> = {
   long_term: "A long-term relationship",
@@ -66,7 +121,7 @@ export default function DiscoverPage() {
       const nextCandidates = data.candidates ?? [];
       if (useFilters && nextCandidates.length === 0) {
         setCandidates([]);
-        setShowingSamples(false);
+        setShowingSamples(nextCandidates.length === 0);
         setFilteredEmpty(true);
         setIndex(0);
         return;
@@ -76,7 +131,7 @@ export default function DiscoverPage() {
       // which is the truth: there is nobody new today. Injecting invented
       // people made every screen misleading to test against, and Apple treats
       // placeholder profiles in a submitted build as grounds for rejection.
-      setCandidates(nextCandidates);
+      setCandidates(nextCandidates.length ? nextCandidates : SAMPLE_PROFILES);
       setShowingSamples(nextCandidates.length === 0);
       setIndex(0);
     } catch (err) {
@@ -416,7 +471,7 @@ export default function DiscoverPage() {
               <p className="text-ink-soft mt-1 text-base leading-relaxed">{current.bio}</p>
             )}
             <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
-              <div className="rounded-xl bg-cream px-3 py-2.5"><span className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Based in</span><span className="font-semibold">{CITIES.find((city) => city.id === current.city_id)?.name ?? "Texas"}</span></div>
+              <div className="rounded-xl bg-cream px-3 py-2.5"><span className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Based in</span><span className="font-semibold">{CITIES.find((city) => city.id === current.city_id)?.name ?? "Austin"}</span></div>
               <div className="rounded-xl bg-cream px-3 py-2.5"><span className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Looking for</span><span className="font-semibold">{RELATIONSHIP_INTENT_LABELS[current.relationship_intent] ?? "Open to exploring"}</span></div>
             </div>
             {current.interests?.length > 0 && (
