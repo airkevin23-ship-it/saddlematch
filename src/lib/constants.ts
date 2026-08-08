@@ -97,7 +97,16 @@ export const PLUS_FEATURES: string[] = [
 
 // How many new candidates get curated into a user's queue each day
 // (Coffee Meets Bagel / Crush style — capped, not infinite).
-export const DAILY_QUEUE_SIZE = 8;
+// Free members get one curated person a day. That single number is the whole
+// product promise: the landing hero, the /welcome walkthrough and the App
+// Store description all say "one match every day", so if this drifts the
+// marketing becomes a lie on day one.
+export const DAILY_QUEUE_SIZE_FREE = 1;
+
+// Plus raises the daily cap. This is what "More daily curated matches" in
+// PLUS_FEATURES actually refers to — without a lower free tier that line is
+// selling something every user already has.
+export const DAILY_QUEUE_SIZE_PLUS = 8;
 
 // Hinge-style prompt bank. Users pick 3 and write short answers —
 // this replaces a blank "write your bio" box, which most people
