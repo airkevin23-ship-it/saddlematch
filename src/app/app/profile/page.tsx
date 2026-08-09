@@ -232,6 +232,43 @@ export default function ProfilePage() {
     }
   }
 
+  // photo_urls[0] is the main profile photo shown in Discover, so reordering
+  // is really "choose what people see first". Arrows rather than drag: touch
+  // dragging inside a scrolling page is unreliable, and buttons work with
+  // screen readers.
+  async function reorderPhotos(nextPhotos: string[]) {
+    if (!profile) return;
+    const previous = profile;
+    setProfile({ ...profile, photo_urls: nextPhotos });
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ photo_urls: nextPhotos, updated_at: new Date().toISOString() })
+      .eq("id", profile.id);
+    if (updateError) {
+      setProfile(previous);
+      setError("We could not save your photo order. Please try again.");
+    }
+  }
+
+  function movePhoto(index: number, direction: -1 | 1) {
+    if (!profile) return;
+    const target = index + direction;
+    if (target < 0 || target >= profile.photo_urls.length) return;
+    const next = [...profile.photo_urls];
+    const held = next[index];
+    next[index] = next[target];
+    next[target] = held;
+    void reorderPhotos(next);
+  }
+
+  function makeMainPhoto(index: number) {
+    if (!profile || index === 0) return;
+    const next = [...profile.photo_urls];
+    const chosen = next.splice(index, 1)[0];
+    next.unshift(chosen);
+    void reorderPhotos(next);
+  }
+
   async function removeVideo() {
     if (!profile) return;
     setProfile({ ...profile, intro_video_url: null });
@@ -415,6 +452,11 @@ export default function ProfilePage() {
               <div key={url} className="relative aspect-square overflow-hidden rounded-xl bg-line">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={url} alt={`Profile photo ${index + 1}`} className="h-full w-full object-cover" />
+                {index === 0 && (
+                  <span className="absolute left-1 top-1 rounded-md bg-brand px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                    Main
+                  </span>
+                )}
                 <button
                   type="button"
                   onClick={() => removePhoto(url)}
@@ -423,9 +465,45 @@ export default function ProfilePage() {
                 >
                   ×
                 </button>
+                <div className="absolute inset-x-0 bottom-0 flex items-stretch justify-between bg-ink/70">
+                  <button
+                    type="button"
+                    onClick={() => movePhoto(index, -1)}
+                    disabled={index === 0}
+                    className="min-h-8 flex-1 text-sm font-bold text-white disabled:opacity-30"
+                    aria-label={`Move photo ${index + 1} earlier`}
+                  >
+                    ‹
+                  </button>
+                  {index !== 0 && (
+                    <button
+                      type="button"
+                      onClick={() => makeMainPhoto(index)}
+                      className="min-h-8 px-1 text-[9px] font-bold uppercase tracking-wide text-white"
+                      aria-label={`Make photo ${index + 1} your main photo`}
+                    >
+                      Main
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => movePhoto(index, 1)}
+                    disabled={index === profile.photo_urls.length - 1}
+                    className="min-h-8 flex-1 text-sm font-bold text-white disabled:opacity-30"
+                    aria-label={`Move photo ${index + 1} later`}
+                  >
+                    ›
+                  </button>
+                </div>
               </div>
             ))}
           </div>
+          {profile.photo_urls.length > 1 && (
+            <p className="mt-2 text-xs text-ink-soft">
+              The photo marked <span className="font-semibold text-ink">Main</span> is what people see
+              first in Discover. Use the arrows to reorder.
+            </p>
+          )}
           {profile.photo_urls.length < 6 && (
             <div className="mt-3 grid grid-cols-2 gap-2">
               <label className="flex min-h-12 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-cream px-3 text-sm font-bold text-ink-soft hover:border-brand hover:text-brand">
