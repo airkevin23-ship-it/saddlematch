@@ -29,6 +29,9 @@ export interface Profile {
   interests: string[];
   photo_urls: string[];
   intro_video_url?: string | null;
+  voice_prompt_url?: string | null;
+  voice_prompt_question?: string | null;
+  voice_prompt_duration_ms?: number | null;
   prompts: Prompt[];
   is_active: boolean;
   is_demo?: boolean;
