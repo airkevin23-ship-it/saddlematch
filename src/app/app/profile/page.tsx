@@ -7,6 +7,7 @@ import { CITIES, PROMPT_BANK } from "@/lib/constants";
 import ProfileMedia from "@/components/profile-media";
 import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import VoicePromptRecorder from "@/components/voice-prompt-recorder";
+import SaddleUpPicker from "@/components/saddle-up-picker";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 
 const DETAIL_FIELDS = [
@@ -539,6 +540,22 @@ export default function ProfilePage() {
             </div>
           )}
           {mediaSaving && <p className="mt-3 text-xs font-medium text-brand">Uploading your media…</p>}
+        </section>
+
+        <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
+          <h2 className="font-bold">Saddle Up Together</h2>
+          <SaddleUpPicker
+            profileId={profile.id}
+            initialSpots={profile.saddle_up_spots}
+            initialHeadline={profile.saddle_up_headline}
+            onSaved={(v) =>
+              setProfile((current) =>
+                current
+                  ? { ...current, saddle_up_spots: v.spots, saddle_up_headline: v.headline }
+                  : current,
+              )
+            }
+          />
         </section>
 
         <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
