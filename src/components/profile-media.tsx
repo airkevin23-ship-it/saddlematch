@@ -24,9 +24,12 @@ export default function ProfileMedia({
   videoUrl?: string | null;
   alt?: string;
 }) {
+  // Photos first, video last. The main photo is the one the profile editor
+  // promises people will see first, so it has to lead here too. A video that
+  // opens on a still frame is a weak first impression next to a chosen photo.
   const items: MediaItem[] = [
-    ...(videoUrl ? [{ kind: "video" as const, src: videoUrl }] : []),
     ...(photoUrls ?? []).map((src) => ({ kind: "photo" as const, src })),
+    ...(videoUrl ? [{ kind: "video" as const, src: videoUrl }] : []),
   ];
 
   const [index, setIndex] = useState(0);
