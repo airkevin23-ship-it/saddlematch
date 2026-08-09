@@ -12,29 +12,30 @@ import { spotLabel } from "@/lib/saddle-up";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 
 const DETAIL_FIELDS = [
-  ["politics", "Politics", ["Prefer not to say", "Conservative", "Moderate", "Liberal", "Not political"]],
-  ["languages", "Languages spoken", ["Not answered yet", "English", "Spanish", "English and Spanish", "Other"]],
-  ["relationshipType", "Relationship type", ["Not answered yet", "Monogamous", "Open to exploring", "Prefer not to say"]],
-  ["drinking", "Drinking", ["Not answered yet", "No", "Sometimes", "Socially", "Regularly"]],
-  ["smoking", "Smoking", ["Not answered yet", "No", "Sometimes", "Yes"]],
-  ["marijuana", "Marijuana", ["Not answered yet", "No", "Sometimes", "Yes"]],
-  ["drugs", "Drugs", ["Not answered yet", "No", "Prefer not to say"]],
-  // Vitals. Height is here because it is one of the things people most often
-  // want to know, and it had no home in the profile at all.
+  // The questions people actually scan for first. Height and ethnicity lead
+  // because they are the two most-asked and the two Kevin flagged as missing.
   ["height", "Height", ["Not answered yet", "Under 5\u20321", "5\u20321\u2013 5\u20324", "5\u20325\u2013 5\u20328", "5\u20329\u2013 6\u20320", "6\u20321\u2013 6\u20324", "Over 6\u20324", "Prefer not to say"]],
   ["ethnicity", "Ethnicity", ["Not answered yet", "American Indian", "Black", "East Asian", "Hispanic or Latino", "Middle Eastern", "Pacific Islander", "South Asian", "Southeast Asian", "White", "Multiracial", "Other", "Prefer not to say"]],
   ["children", "Children", ["Not answered yet", "Don\u2019t have children", "Have children", "Prefer not to say"]],
   ["familyPlans", "Family plans", ["Not answered yet", "Want children", "Don\u2019t want children", "Open to children", "Not sure yet", "Prefer not to say"]],
-  ["pets", "Pets", ["Not answered yet", "Dog", "Cat", "Horse", "Other pets", "No pets", "Prefer not to say"]],
+  ["relationshipType", "Relationship type", ["Not answered yet", "Monogamous", "Open to exploring", "Prefer not to say"]],
 
-  // Virtues. Faith sits here rather than in a western-specific block because it
-  // is a normal thing to want to know, in Austin or anywhere.
+  // Who you are day to day.
   ["work", "Work", ["Not answered yet", "Ranching or agriculture", "Trades", "Healthcare", "Education", "Service industry", "Tech", "Business", "Creative", "Military or first responder", "Student", "Other", "Prefer not to say"]],
   ["education", "Education", ["Not answered yet", "High school", "Trade school", "Some college", "Undergraduate degree", "Graduate degree", "Prefer not to say"]],
   ["faith", "Religious beliefs", ["Not answered yet", "Christian", "Catholic", "Jewish", "Muslim", "Hindu", "Buddhist", "Spiritual", "Agnostic", "Atheist", "Other", "Prefer not to say"]],
   ["hometown", "Hometown", ["Not answered yet", "Austin born and raised", "Elsewhere in Texas", "Another state", "Another country", "Prefer not to say"]],
-  // Kevin's own question, and the sharpest signal on the list.
   ["austinStatus", "Austin is", ["Not answered yet", "Home for good", "Home for now", "Just passing through", "Still deciding"]],
+  ["pets", "Pets", ["Not answered yet", "Dog", "Cat", "Horse", "Other pets", "No pets", "Prefer not to say"]],
+
+  // Lower down on purpose. These matter to some people and to nobody else,
+  // and putting them first made the editor feel like an interrogation.
+  ["languages", "Languages spoken", ["Not answered yet", "English", "Spanish", "English and Spanish", "Other"]],
+  ["politics", "Politics", ["Prefer not to say", "Conservative", "Moderate", "Liberal", "Not political"]],
+  ["drinking", "Drinking", ["Not answered yet", "No", "Sometimes", "Socially", "Regularly"]],
+  ["smoking", "Smoking", ["Not answered yet", "No", "Sometimes", "Yes"]],
+  ["marijuana", "Marijuana", ["Not answered yet", "No", "Sometimes", "Yes"]],
+  ["drugs", "Drugs", ["Not answered yet", "No", "Prefer not to say"]],
 ] as const;
 
 type DetailKey = typeof DETAIL_FIELDS[number][0];
@@ -404,11 +405,12 @@ export default function ProfilePage() {
           {/* Same shell, spacing and type scale as the Discover card, so
               "Preview" really is what another member sees. */}
           <div className="overflow-hidden rounded-3xl border border-line bg-card shadow-xl shadow-black/[0.06]">
-            <ProfileMedia
-              photoUrls={profile.photo_urls}
-              videoUrl={profile.intro_video_url}
-              alt="Profile preview"
-            />
+        {(profile.photo_urls ?? []).length > 0 ? (
+          <ProfileMedia
+            photoUrls={(profile.photo_urls ?? []).slice(0, 1)}
+            alt="Profile preview"
+          />
+        ) : null}
 
             <div className="p-5">
               <h2 className="text-2xl font-extrabold tracking-tight">
@@ -434,9 +436,16 @@ export default function ProfilePage() {
               {answeredPrompts.length > 0 && (
                 <div className="mt-5 space-y-3">
                   {answeredPrompts.map((p, i) => (
-                    <div key={i} className="rounded-2xl border border-line bg-cream p-4">
+                    <div key={i}>
+                      <div className="rounded-2xl border border-line bg-cream p-4">
                       <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{p.question}</p>
-                      <p className="mt-2 text-base font-medium leading-relaxed">{p.answer}</p>
+                      <p className="mt-2 font-display text-[22px] leading-[1.35] text-ink">{p.answer}</p>
+                      </div>
+                      {(profile.photo_urls ?? [])[i + 1] ? (
+                        <div className="mt-3 overflow-hidden rounded-2xl">
+                          <ProfileMedia photoUrls={[(profile.photo_urls ?? [])[i + 1]]} alt="Profile photo" />
+                        </div>
+                      ) : null}
                     </div>
                   ))}
                 </div>
@@ -484,6 +493,22 @@ export default function ProfilePage() {
                   ))}
                 </div>
               )}
+          {/* Photos left over after interleaving, then the intro video last.
+              The video is the closer, not the opener. */}
+          {(profile.photo_urls ?? []).slice(answeredPrompts.length + 1).length > 0 && (
+            <div className="mt-5 space-y-3">
+              {(profile.photo_urls ?? []).slice(answeredPrompts.length + 1).map((src) => (
+                <div key={src} className="overflow-hidden rounded-2xl">
+                  <ProfileMedia photoUrls={[src]} alt="Profile photo" />
+                </div>
+              ))}
+            </div>
+          )}
+          {profile.intro_video_url && (
+            <div className="mt-5 overflow-hidden rounded-2xl">
+              <ProfileMedia videoUrl={profile.intro_video_url} alt="Intro video" />
+            </div>
+          )}
             </div>
           </div>
         </section>
