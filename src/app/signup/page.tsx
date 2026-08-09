@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import SocialSignIn from "@/components/social-sign-in";
 import { APP_NAME } from "@/lib/constants";
 
 export default function SignupPage() {
@@ -127,6 +128,8 @@ export default function SignupPage() {
             {loading ? "Creating account…" : "Sign up"}
           </button>
         </form>
+
+          <SocialSignIn next="/onboarding" />
 
         <p className="text-sm text-ink-soft mt-6">
           Already have an account?{" "}
