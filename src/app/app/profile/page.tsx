@@ -14,7 +14,7 @@ import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 const DETAIL_FIELDS = [
   // The questions people actually scan for first. Height and ethnicity lead
   // because they are the two most-asked and the two Kevin flagged as missing.
-  ["height", "Height", ["Not answered yet", "Under 5\u20321", "5\u20321\u2013 5\u20324", "5\u20325\u2013 5\u20328", "5\u20329\u2013 6\u20320", "6\u20321\u2013 6\u20324", "Over 6\u20324", "Prefer not to say"]],
+  ["height", "Height", ["Not answered yet", "4′ 0″ (122 cm)", "4′ 1″ (124 cm)", "4′ 2″ (127 cm)", "4′ 3″ (130 cm)", "4′ 4″ (132 cm)", "4′ 5″ (135 cm)", "4′ 6″ (137 cm)", "4′ 7″ (140 cm)", "4′ 8″ (142 cm)", "4′ 9″ (145 cm)", "4′ 10″ (147 cm)", "4′ 11″ (150 cm)", "5′ 0″ (152 cm)", "5′ 1″ (155 cm)", "5′ 2″ (157 cm)", "5′ 3″ (160 cm)", "5′ 4″ (163 cm)", "5′ 5″ (165 cm)", "5′ 6″ (168 cm)", "5′ 7″ (170 cm)", "5′ 8″ (173 cm)", "5′ 9″ (175 cm)", "5′ 10″ (178 cm)", "5′ 11″ (180 cm)", "6′ 0″ (183 cm)", "6′ 1″ (185 cm)", "6′ 2″ (188 cm)", "6′ 3″ (191 cm)", "6′ 4″ (193 cm)", "6′ 5″ (196 cm)", "6′ 6″ (198 cm)", "6′ 7″ (201 cm)", "6′ 8″ (203 cm)", "6′ 9″ (206 cm)", "6′ 10″ (208 cm)", "6′ 11″ (211 cm)", "7′ 0″ (213 cm)", "7′ 1″ (216 cm)", "7′ 2″ (218 cm)", "7′ 3″ (221 cm)", "7′ 4″ (224 cm)", "7′ 5″ (226 cm)", "7′ 6″ (229 cm)"]],
   ["ethnicity", "Ethnicity", ["Not answered yet", "American Indian", "Black", "East Asian", "Hispanic or Latino", "Middle Eastern", "Pacific Islander", "South Asian", "Southeast Asian", "White", "Multiracial", "Other", "Prefer not to say"]],
   ["children", "Children", ["Not answered yet", "Don\u2019t have children", "Have children", "Prefer not to say"]],
   ["familyPlans", "Family plans", ["Not answered yet", "Want children", "Don\u2019t want children", "Open to children", "Not sure yet", "Prefer not to say"]],
@@ -40,6 +40,9 @@ const DETAIL_FIELDS = [
 
 type DetailKey = typeof DETAIL_FIELDS[number][0];
 type Details = Record<DetailKey, string>;
+// Height is always shown. It is one of the first things people look for, and
+// a profile that hides it reads as evasive rather than private.
+const ALWAYS_VISIBLE: DetailKey[] = ["height"];
 const EMPTY_DETAILS: Details = Object.fromEntries(DETAIL_FIELDS.map(([key, , options]) => [key, options[0]])) as Details;
 const EMPTY_VISIBILITY: Record<DetailKey, boolean> = Object.fromEntries(DETAIL_FIELDS.map(([key]) => [key, true])) as Record<DetailKey, boolean>;
 const DATING_INTENTIONS: { value: RelationshipIntent; label: string }[] = [
@@ -164,7 +167,7 @@ export default function ProfilePage() {
         min_age: minAge,
         max_age: maxAge,
         relationship_intent: relationshipIntent,
-        preference_details: { ...(profile.preference_details ?? {}), profile: { values: details, visibility } } as unknown as Record<string, string>,
+        preference_details: { ...(profile.preference_details ?? {}), profile: { values: details, visibility: { ...visibility, height: true } } } as unknown as Record<string, string>,
         updated_at: new Date().toISOString(),
       })
       .eq("id", profile.id);
@@ -483,9 +486,9 @@ export default function ProfilePage() {
               )}
 
 
-              {DETAIL_FIELDS.filter(([key]) => visibility[key]).length > 0 && (
+              {DETAIL_FIELDS.filter(([key]) => (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").length > 0 && (
                 <div className="mt-5 rounded-2xl border border-line bg-cream px-4">
-                  {DETAIL_FIELDS.filter(([key]) => visibility[key]).map(([key, label]) => (
+                  {DETAIL_FIELDS.filter(([key]) => (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").map(([key, label]) => (
                     <div key={key} className="border-b border-line py-3 last:border-0">
                       <p className="text-[10px] font-bold uppercase tracking-wide text-ink-faint">{label}</p>
                       <p className="mt-0.5 font-semibold">{details[key]}</p>
@@ -703,7 +706,7 @@ export default function ProfilePage() {
 
         <div>
           <label className="text-sm text-ink-soft block mb-1 font-medium">
-            Display name
+            Name
           </label>
           <input
             value={profile.display_name}
@@ -755,7 +758,7 @@ export default function ProfilePage() {
         <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
           <div className="flex items-center justify-between"><h2 className="font-bold">About you</h2><span className="text-xs text-ink-faint">Visible controls</span></div>
           <p className="mt-1 text-xs text-ink-soft">Choose what to share on your public profile. You can change this anytime.</p>
-          <div className="mt-3">{DETAIL_FIELDS.map(([key, label, options]) => <div key={key} className="border-b border-line py-3 last:border-0"><div className="flex items-center justify-between gap-3"><label className="min-w-0 flex-1"><span className="block text-sm font-bold">{label}</span><select value={details[key]} onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))} className="mt-1 w-full bg-transparent text-base text-ink-soft outline-none">{options.map((option) => <option key={option}>{option}</option>)}</select></label><button type="button" onClick={() => setVisibility((current) => ({ ...current, [key]: !current[key] }))} className={`min-h-9 rounded-lg px-2 text-xs font-bold ${visibility[key] ? "bg-brand-soft text-brand-dark" : "bg-line text-ink-faint"}`}>{visibility[key] ? "Visible" : "Hidden"}</button></div></div>)}</div>
+          <div className="mt-3">{DETAIL_FIELDS.map(([key, label, options]) => <div key={key} className="border-b border-line py-3 last:border-0"><div className="flex items-center justify-between gap-3"><label className="min-w-0 flex-1"><span className="block text-sm font-bold">{label}</span><select value={details[key]} onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))} className="mt-1 w-full bg-transparent text-base text-ink-soft outline-none">{options.map((option) => <option key={option}>{option}</option>)}</select></label>{ALWAYS_VISIBLE.includes(key) ? <span className="shrink-0 rounded-lg bg-line px-2 py-1 text-xs font-bold text-ink-faint">Always visible</span> : <button type="button" onClick={() => setVisibility((current) => ({ ...current, [key]: !current[key] }))} className={`min-h-9 rounded-lg px-2 text-xs font-bold ${visibility[key] ? "bg-brand-soft text-brand-dark" : "bg-line text-ink-faint"}`}>{visibility[key] ? "Visible" : "Hidden"}</button>}</div></div>)}</div>
         </section>
 
         <div className="pt-4 border-t border-line">
