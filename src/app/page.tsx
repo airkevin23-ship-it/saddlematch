@@ -33,7 +33,7 @@ export default function LandingPage() {
         </Link>
       </header>
 
-      <main className="flex flex-1 flex-col items-center px-6 pb-36 pt-10 text-center">
+      <main className="flex flex-1 flex-col items-center px-6 pb-10 pt-10 text-center">
         <div className="mb-4 max-w-[15.5rem] rounded-full bg-[#D92B4B]/10 px-4 py-1.5 text-center text-xs font-semibold uppercase leading-snug tracking-widest text-[#D92B4B]">
           <span aria-hidden="true">☆</span> Dating for the western lifestyle{" "}
           <span aria-hidden="true">☆</span>
@@ -158,19 +158,11 @@ export default function LandingPage() {
           </p>
         </section>
 
-        {/* The sticky bar stays pinned for the whole scroll; this is the close
-            for someone who read all the way down. */}
-        <Link
-          href="/signup"
-          className="mt-8 block w-full rounded-xl bg-[#D92B4B] px-6 py-3.5 text-center text-base font-bold text-white shadow-lg shadow-[#D92B4B]/25 transition-all hover:bg-[#C0223F] active:scale-[0.98]"
-        >
-          Create My Free Profile
-        </Link>
-        <p className="mt-2 text-xs text-stone-500">Free to join. 18+.</p>
+        <p className="mt-8 text-xs text-stone-500">Free to join. 18+.</p>
 
       </main>
 
-      <div className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md border-t border-amber-900/10 bg-white/95 p-4 backdrop-blur-md">
+      <div className="sticky bottom-0 z-40 border-t border-amber-900/10 bg-white/95 p-4 backdrop-blur-md">
         <Link
           href="/signup"
           className="block w-full rounded-xl bg-[#D92B4B] px-6 py-3.5 text-center text-base font-bold text-white shadow-lg shadow-[#D92B4B]/25 transition-all hover:bg-[#C0223F] active:scale-[0.98]"
