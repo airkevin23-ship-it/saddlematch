@@ -11,6 +11,23 @@ import SaddleUpPicker from "@/components/saddle-up-picker";
 import { spotLabel } from "@/lib/saddle-up";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 import {
+// Presentation only: how the About You rows are grouped in the editor. The
+// field list itself stays in @/lib/profile-details so it cannot drift.
+const DETAIL_GROUPS: { title: string; keys: string[] }[] = [
+  { title: "The basics", keys: ["age", "height"] },
+  {
+    title: "Background",
+    keys: ["work", "education", "faith", "ethnicity", "relationshipType"],
+  },
+  {
+    title: "Life",
+    keys: ["children", "familyPlans", "hometown", "austinStatus", "pets"],
+  },
+  {
+    title: "Lifestyle",
+    keys: ["languages", "politics", "drinking", "smoking", "marijuana", "drugs"],
+  },
+];
   ALWAYS_VISIBLE,
   DETAIL_FIELDS,
   type DetailKey,
@@ -745,7 +762,48 @@ export default function ProfilePage() {
         <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
           <div className="flex items-center justify-between"><h2 className="font-bold">About you</h2><span className="text-xs text-ink-faint">Visible controls</span></div>
           <p className="mt-1 text-xs text-ink-soft">Choose what to share on your public profile. You can change this anytime.</p>
-          <div className="mt-3">{DETAIL_FIELDS.map(([key, label, options]) => <div key={key} className="border-b border-line py-3 last:border-0"><div className="flex items-center justify-between gap-3"><label className="min-w-0 flex-1"><span className="block text-sm font-bold">{label}</span><select value={details[key]} onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))} className="mt-1 w-full bg-transparent text-base text-ink-soft outline-none">{options.map((option) => <option key={option}>{option}</option>)}</select></label>{ALWAYS_VISIBLE.includes(key) ? <span className="shrink-0 rounded-lg bg-line px-2 py-1 text-xs font-bold text-ink-faint">Always visible</span> : <button type="button" onClick={() => setVisibility((current) => ({ ...current, [key]: !current[key] }))} className={`min-h-9 rounded-lg px-2 text-xs font-bold ${visibility[key] ? "bg-brand-soft text-brand-dark" : "bg-line text-ink-faint"}`}>{visibility[key] ? "Visible" : "Hidden"}</button>}</div></div>)}</div>
+          <div className="mt-4 space-y-7">
+            {DETAIL_GROUPS.map((group) => (
+              <div key={group.title}>
+                <div className="flex items-center gap-2">
+                  <p className="font-display text-base font-bold text-ink">{group.title}</p>
+                  <span className="h-px flex-1 bg-line" />
+                </div>
+                <div className="mt-2 rounded-2xl border border-line bg-cream/40 px-4">
+                  {DETAIL_FIELDS.filter(([key]) => group.keys.includes(key)).map(([key, label, options]) => (
+                    <div key={key} className="border-b border-line py-3 last:border-0">
+                      <div className="flex items-center justify-between gap-3">
+                        <label className="min-w-0 flex-1">
+                          <span className="block text-[11px] font-bold uppercase tracking-wide text-ink-faint">{label}</span>
+                          <select
+                            value={details[key]}
+                            onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))}
+                            className="mt-0.5 w-full bg-transparent text-base font-semibold text-ink outline-none"
+                          >
+                            {options.map((option) => (
+                              <option key={option}>{option}</option>
+                            ))}
+                          </select>
+                        </label>
+                        {/* Only speak up when something is hidden. Sixteen rows all
+                            shouting "Visible" told the member nothing. */}
+                        {!ALWAYS_VISIBLE.includes(key) && (
+                          <button
+                            type="button"
+                            onClick={() => setVisibility((current) => ({ ...current, [key]: !current[key] }))}
+                            aria-label={visibility[key] ? `Hide ${label}` : `Show ${label}`}
+                            className={`shrink-0 rounded-lg px-2 py-1 text-[11px] font-bold ${visibility[key] ? "text-ink-faint" : "bg-line text-ink-soft"}`}
+                          >
+                            {visibility[key] ? "Hide" : "Hidden"}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         <div className="pt-4 border-t border-line">
