@@ -80,7 +80,7 @@ export default function LandingPage() {
           Sample profile &mdash; what a daily match looks like.
         </p>
         <p className="text-xs font-semibold italic text-stone-500">
-          One thoughtful match every day. No endless swiping.
+          Get one thoughtfully curated profile each day. Plus members can explore up to eight.
         </p>
 
 
@@ -94,11 +94,11 @@ export default function LandingPage() {
             {[
               {
                 title: "Build a profile worth reading",
-                body: "Answer three prompts instead of staring at an empty bio. Add photos, a short video, and your voice if you want to.",
+                body: "Add photos, an intro video, and prompts.",
               },
               {
                 title: "Meet one person a day",
-                body: "Every morning, one match \u2014 chosen for shared interests and the parts of Austin you actually spend time in.",
+                body: "Each day, one match \u2014 chosen for shared interests and the parts of Austin you actually spend time in.",
               },
               {
                 title: "Start with something real",
@@ -131,8 +131,8 @@ export default function LandingPage() {
           </h2>
           <ul className="space-y-2">
             {[
-              ["18+ only", "Every profile is reviewed before it appears."],
-              ["Block and report on every profile", "One tap, no explanation needed."],
+              ["18+ only", "Profiles can be reported and are reviewed when safety concerns arise."],
+              ["Block and report every member profile", "One tap, no explanation needed."],
               ["You control what is visible", "Hide or pause your profile any time."],
             ].map(([title, body]) => (
               <li key={title} className="flex gap-2.5 rounded-xl bg-white/70 px-3.5 py-3">
