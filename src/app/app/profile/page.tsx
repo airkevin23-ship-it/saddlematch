@@ -19,6 +19,22 @@ const DETAIL_FIELDS = [
   ["smoking", "Smoking", ["Not answered yet", "No", "Sometimes", "Yes"]],
   ["marijuana", "Marijuana", ["Not answered yet", "No", "Sometimes", "Yes"]],
   ["drugs", "Drugs", ["Not answered yet", "No", "Prefer not to say"]],
+  // Vitals. Height is here because it is one of the things people most often
+  // want to know, and it had no home in the profile at all.
+  ["height", "Height", ["Not answered yet", "Under 5\u20321", "5\u20321\u2013 5\u20324", "5\u20325\u2013 5\u20328", "5\u20329\u2013 6\u20320", "6\u20321\u2013 6\u20324", "Over 6\u20324", "Prefer not to say"]],
+  ["ethnicity", "Ethnicity", ["Not answered yet", "American Indian", "Black", "East Asian", "Hispanic or Latino", "Middle Eastern", "Pacific Islander", "South Asian", "Southeast Asian", "White", "Multiracial", "Other", "Prefer not to say"]],
+  ["children", "Children", ["Not answered yet", "Don\u2019t have children", "Have children", "Prefer not to say"]],
+  ["familyPlans", "Family plans", ["Not answered yet", "Want children", "Don\u2019t want children", "Open to children", "Not sure yet", "Prefer not to say"]],
+  ["pets", "Pets", ["Not answered yet", "Dog", "Cat", "Horse", "Other pets", "No pets", "Prefer not to say"]],
+
+  // Virtues. Faith sits here rather than in a western-specific block because it
+  // is a normal thing to want to know, in Austin or anywhere.
+  ["work", "Work", ["Not answered yet", "Ranching or agriculture", "Trades", "Healthcare", "Education", "Service industry", "Tech", "Business", "Creative", "Military or first responder", "Student", "Other", "Prefer not to say"]],
+  ["education", "Education", ["Not answered yet", "High school", "Trade school", "Some college", "Undergraduate degree", "Graduate degree", "Prefer not to say"]],
+  ["faith", "Religious beliefs", ["Not answered yet", "Christian", "Catholic", "Jewish", "Muslim", "Hindu", "Buddhist", "Spiritual", "Agnostic", "Atheist", "Other", "Prefer not to say"]],
+  ["hometown", "Hometown", ["Not answered yet", "Austin born and raised", "Elsewhere in Texas", "Another state", "Another country", "Prefer not to say"]],
+  // Kevin's own question, and the sharpest signal on the list.
+  ["austinStatus", "Austin is", ["Not answered yet", "Home for good", "Home for now", "Just passing through", "Still deciding"]],
 ] as const;
 
 type DetailKey = typeof DETAIL_FIELDS[number][0];
