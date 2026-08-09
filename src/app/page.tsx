@@ -168,21 +168,6 @@ export default function LandingPage() {
         </Link>
         <p className="mt-2 text-xs text-stone-500">Free to join. 18+.</p>
 
-        {/* SiteFooter is hidden on /app routes, so the legal links Stripe and
-            App Store review look for live here. Every href is a real route. */}
-        <nav className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[11px] text-stone-400">
-          {[
-            ["Terms", "/terms"],
-            ["Privacy", "/privacy"],
-            ["Community Guidelines", "/guidelines"],
-            ["Safety", "/safety"],
-            ["Acceptable Use", "/acceptable-use"],
-          ].map(([label, href]) => (
-            <Link key={href} href={href} className="underline hover:text-stone-600">
-              {label}
-            </Link>
-          ))}
-        </nav>
       </main>
 
       <div className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md border-t border-amber-900/10 bg-white/95 p-4 backdrop-blur-md">
