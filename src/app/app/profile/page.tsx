@@ -142,7 +142,7 @@ export default function ProfilePage() {
         min_age: minAge,
         max_age: maxAge,
         relationship_intent: relationshipIntent,
-        preference_details: { ...(profile.preference_details ?? {}), profile: { values: details, visibility: { ...visibility, height: true } } } as unknown as Record<string, string>,
+        preference_details: { ...(profile.preference_details ?? {}), profile: { values: details, visibility: { ...visibility, age: true, height: true } } } as unknown as Record<string, string>,
         updated_at: new Date().toISOString(),
       })
       .eq("id", profile.id);
@@ -392,7 +392,12 @@ export default function ProfilePage() {
 
             <div className="p-5">
               <h2 className="text-2xl font-extrabold tracking-tight">
-                {profile.display_name}{age ? `, ${age}` : ""}
+                {profile.display_name}
+              {details.age && details.age !== "Not answered yet"
+                ? `, ${details.age}`
+                : age
+                  ? `, ${age}`
+                  : ""}
               </h2>
           {/* Name, age and height lead the profile and cannot be hidden.
               They are the three things people check first. */}
