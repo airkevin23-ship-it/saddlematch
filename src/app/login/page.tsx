@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import SocialSignIn from "@/components/social-sign-in";
 import { APP_NAME } from "@/lib/constants";
 
 function toE164(raw: string): string | null {
@@ -235,6 +236,8 @@ export default function LoginPage() {
                 {loading ? "Logging in…" : "Log in"}
               </button>
             </form>
+
+            <SocialSignIn />
 
             <Link href="/forgot-password" className="mt-4 inline-flex min-h-11 items-center text-sm text-brand hover:text-brand-dark font-semibold">
               Forgot password?
