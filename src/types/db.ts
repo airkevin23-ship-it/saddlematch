@@ -32,6 +32,8 @@ export interface Profile {
   voice_prompt_url?: string | null;
   voice_prompt_question?: string | null;
   voice_prompt_duration_ms?: number | null;
+  saddle_up_spots?: string[] | null;
+  saddle_up_headline?: string | null;
   prompts: Prompt[];
   is_active: boolean;
   is_demo?: boolean;
