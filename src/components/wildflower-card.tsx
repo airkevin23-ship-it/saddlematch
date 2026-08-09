@@ -1,29 +1,32 @@
-// The Wildflower artifact itself, rendered as a component so the exact same
-// card can be shown in two places: as a preview inside the purchase modal, so
-// a buyer can see what five dollars actually buys, and later on the recipient
-// side once the read path exists.
-//
-// The flower is inline SVG rather than an image file. That keeps the card a
-// single self-contained component with nothing to upload, lets it inherit the
-// brand colours, and stays crisp at any size.
+import Image from "next/image";
 
-function Flower({ className }: { className?: string }) {
+// The Wildflower card — the moment the whole feature exists for. Sizes and
+// colours below are Kevin's CSS translated one-for-one: 380px card, #FAF4EB
+// cream, #C87A64 terracotta, 140px photo, 32px badge, 200px bloom.
+//
+// The bloom is passed in rather than hardcoded so this cannot render a broken
+// image while the artwork is still being made. Without it the card still reads.
+
+type Pronouns = { possessive: string; contraction: string };
+
+// Gender is free text in the profiles table, so anything unrecognised falls
+// through to they/their. Getting someone's pronouns wrong on the one screen
+// built to make them feel good is worse than being slightly generic.
+function pronounsFor(gender?: string | null): Pronouns {
+  const g = (gender ?? "").trim().toLowerCase();
+  if (["man", "male", "m"].includes(g)) {
+    return { possessive: "his", contraction: "he’d" };
+  }
+  if (["woman", "female", "f"].includes(g)) {
+    return { possessive: "her", contraction: "she’d" };
+  }
+  return { possessive: "their", contraction: "they’d" };
+}
+
+function Sparkle({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 120" className={className} aria-hidden="true">
-      <g stroke="#7d8f6a" strokeWidth="2.5" fill="none" strokeLinecap="round">
-        <path d="M60 116V64" />
-        <path d="M60 92c-10 0-18-6-21-15 10-2 18 3 21 15Z" fill="#8fa07a" stroke="none" />
-        <path d="M60 78c9-1 16-7 18-16-9-1-16 4-18 16Z" fill="#8fa07a" stroke="none" />
-      </g>
-      <g fill="#e9a9a1">
-        <ellipse cx="60" cy="30" rx="12" ry="17" />
-        <ellipse cx="60" cy="30" rx="12" ry="17" transform="rotate(72 60 47)" />
-        <ellipse cx="60" cy="30" rx="12" ry="17" transform="rotate(144 60 47)" />
-        <ellipse cx="60" cy="30" rx="12" ry="17" transform="rotate(216 60 47)" />
-        <ellipse cx="60" cy="30" rx="12" ry="17" transform="rotate(288 60 47)" />
-      </g>
-      <circle cx="60" cy="47" r="8" fill="#d98878" />
-      <circle cx="60" cy="47" r="4" fill="#c4705f" />
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
     </svg>
   );
 }
@@ -31,54 +34,77 @@ function Flower({ className }: { className?: string }) {
 export default function WildflowerCard({
   senderName,
   senderPhotoUrl,
-  preview = false,
+  senderGender,
+  flowerSrc,
 }: {
   senderName: string;
   senderPhotoUrl?: string | null;
-  /** Softens the closing line for use as a sample in the purchase modal. */
-  preview?: boolean;
+  senderGender?: string | null;
+  flowerSrc?: string;
 }) {
+  const p = pronounsFor(senderGender);
+
   return (
-    <div className="mx-auto w-full max-w-[300px] rounded-3xl border border-brand/15 bg-[#fdf4ec] px-6 py-7 text-center">
-      <div className="relative mx-auto w-fit">
-        <span className="block h-24 w-24 overflow-hidden rounded-full ring-2 ring-brand/40 ring-offset-2 ring-offset-[#fdf4ec]">
-          {senderPhotoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={senderPhotoUrl} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <span className="grid h-full w-full place-items-center bg-line text-xl font-bold text-ink-soft">
-              {senderName.slice(0, 1)}
-            </span>
-          )}
-        </span>
-        <span className="absolute -bottom-2 left-1/2 grid h-8 w-8 -translate-x-1/2 place-items-center rounded-full bg-brand text-sm text-white">
-          &#9733;
+    <div className="mx-auto w-full max-w-[380px] rounded-[20px] border border-[#EBE1D1] bg-[#FAF4EB] px-[30px] py-10 text-center shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
+      {/* 140px photo. The 3px terracotta ring plus 4px of padding is what
+          creates the double-ring look in the mockup. */}
+      <div className="relative mx-auto mb-[30px] h-[140px] w-[140px]">
+        <div className="h-full w-full rounded-full border-[3px] border-[#C87A64] p-1">
+          <div className="relative h-full w-full overflow-hidden rounded-full bg-stone-200">
+            {senderPhotoUrl ? (
+              <Image
+                src={senderPhotoUrl}
+                alt={senderName}
+                fill
+                sizes="140px"
+                className="object-cover"
+              />
+            ) : null}
+          </div>
+        </div>
+        {/* The badge's border matches the card background, so it reads as
+            punched through the photo ring rather than sitting on top of it. */}
+        <span className="absolute -bottom-2.5 left-1/2 flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-[#FAF4EB] bg-[#C87A64] text-white">
+          <Sparkle className="h-3 w-3" />
         </span>
       </div>
 
-      <p className="mt-6 text-2xl font-extrabold leading-tight tracking-tight text-ink">
-        {senderName} sent you
+      <h1 className="font-display mb-5 text-[32px] leading-[1.2] text-[#2D2D2D]">
+        <span className="font-semibold">{senderName}</span> sent you
+        <br />a{" "}
+        <span className="font-display text-[38px] italic text-[#C87A64]">Wildflower</span>
+      </h1>
+
+      {flowerSrc ? (
+        <div className="my-[30px]">
+          <Image
+            src={flowerSrc}
+            alt=""
+            width={600}
+            height={600}
+            className="mx-auto h-auto w-[200px] object-contain"
+          />
+        </div>
+      ) : (
+        <div className="my-10" />
+      )}
+
+      <p className="mb-[25px] text-base leading-[1.5] text-[#4A4A4A]">
+        An extra-interest signal &mdash;
         <br />
-        a <span className="italic text-brand">Wildflower</span>
+        {p.contraction} really like to get to know you.
       </p>
 
-      <Flower className="mx-auto mt-4 h-28 w-28" />
-
-      <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-        An extra-interest signal &mdash; they&rsquo;d really like to get to know
-        you.
-      </p>
-
-      <div className="mx-auto mt-5 flex items-center justify-center gap-3">
-        <span className="h-px w-12 bg-brand/25" />
-        <span className="text-brand/60">&#10022;</span>
-        <span className="h-px w-12 bg-brand/25" />
+      <div className="my-[25px] flex items-center justify-center gap-[15px]">
+        <span className="h-px w-[60px] bg-[#E6D9C8]" />
+        <Sparkle className="h-2.5 w-2.5 text-[#C87A64]" />
+        <span className="h-px w-[60px] bg-[#E6D9C8]" />
       </div>
 
-      <p className="mt-4 text-xs leading-relaxed text-ink-faint">
-        {preview
-          ? "This is the card they receive. It does not guarantee a match."
-          : "Open their profile in Discover to decide whether you would like to connect."}
+      <p className="text-sm leading-[1.5] text-[#737373]">
+        Open {p.possessive} profile in Discover to decide
+        <br />
+        whether you&rsquo;d like to connect.
       </p>
     </div>
   );
