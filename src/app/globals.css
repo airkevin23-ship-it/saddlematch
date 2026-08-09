@@ -92,3 +92,32 @@ header button {
   -webkit-user-select: none;
   user-select: none;
 }
+
+
+/* The Wildflower card reveal. Tailwind v4 has no tailwind.config.js theme
+   extension, so keyframes live here in CSS rather than in a config file. */
+@keyframes elegantReveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-elegantReveal {
+  animation: elegantReveal 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The card is authored at opacity-0 and made visible by the animation, so
+     merely switching the animation off would leave it permanently invisible
+     for anyone who asks their device to reduce motion. Snap to the end state. */
+  .animate-elegantReveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
