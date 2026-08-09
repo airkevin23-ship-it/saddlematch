@@ -8,6 +8,7 @@ import ProfileMedia from "@/components/profile-media";
 import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import VoicePromptRecorder from "@/components/voice-prompt-recorder";
 import SaddleUpPicker from "@/components/saddle-up-picker";
+import { spotLabel } from "@/lib/saddle-up";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 
 const DETAIL_FIELDS = [
@@ -424,6 +425,38 @@ export default function ProfilePage() {
                   ))}
                 </div>
               )}
+              {/* These render in Preview too, otherwise a member fills them in
+                  and then cannot see them anywhere. */}
+              {(profile.saddle_up_spots?.length || profile.saddle_up_headline) && (
+                <div className="mt-5 rounded-2xl border border-line bg-cream p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">Saddle Up Together</p>
+                  {profile.saddle_up_spots && profile.saddle_up_spots.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {profile.saddle_up_spots.map((id) => (
+                        <span key={id} className="rounded-full bg-line px-2.5 py-1 text-xs font-semibold">
+                          {spotLabel(id)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {profile.saddle_up_headline && (
+                    <p className="mt-3 text-base font-medium leading-relaxed">
+                      &ldquo;{profile.saddle_up_headline}&rdquo;
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {profile.voice_prompt_url && (
+                <div className="mt-5 rounded-2xl border border-line bg-cream p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">
+                    {profile.voice_prompt_question ?? "Voice prompt"}
+                  </p>
+                  {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                  <audio src={profile.voice_prompt_url} controls className="mt-2 w-full" />
+                </div>
+              )}
+
 
               {DETAIL_FIELDS.filter(([key]) => visibility[key]).length > 0 && (
                 <div className="mt-5 rounded-2xl border border-line bg-cream px-4">
