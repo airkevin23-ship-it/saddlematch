@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { CITIES, PROMPT_BANK } from "@/lib/constants";
@@ -36,7 +35,7 @@ const DATING_INTENTIONS: { value: RelationshipIntent; label: string }[] = [
 
 export default function ProfilePage() {
   const supabase = createClient();
-  const router = useRouter();
+  const [today] = useState(() => Date.now());
   const [profile, setProfile] = useState<Profile | null>(null);
   const [interestsInput, setInterestsInput] = useState("");
   const [prompts, setPrompts] = useState<Prompt[]>([]);
@@ -262,7 +261,7 @@ export default function ProfilePage() {
   const completionScore = Math.round((completedCount / checklist.length) * 100);
   const answeredPrompts = prompts.filter((p) => p.answer.trim().length > 0);
   const age = profile.birthdate
-    ? Math.floor((Date.now() - new Date(profile.birthdate).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+    ? Math.floor((today - new Date(profile.birthdate).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
     : null;
   const cityName = CITIES.find((c) => c.id === profile.city_id)?.name;
   const intentionLabel = DATING_INTENTIONS.find((option) => option.value === relationshipIntent)?.label ?? "Open to exploring";

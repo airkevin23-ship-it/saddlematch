@@ -49,7 +49,7 @@ export default async function AppLayout({
             <SignOutButton />
           </div>
         </header>
-        <main className="flex-1 pb-24">{children}</main>
+        <main className="flex-1 pb-[calc(6rem+env(safe-area-inset-bottom))]">{children}</main>
         <BottomNav avatarUrl={profile?.photo_urls?.[0] ?? null} />
       </div>
     </div>

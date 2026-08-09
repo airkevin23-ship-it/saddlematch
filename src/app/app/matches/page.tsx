@@ -67,13 +67,17 @@ export default function MatchesPage() {
       {!loading && matches.length === 0 && (
         <div className="rounded-2xl border border-line bg-card p-6 text-center">
           <p className="text-base font-bold leading-relaxed text-ink">
-            Your first match is waiting in today&rsquo;s roundup.
+            No real matches yet.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+            Likes on clearly marked sample profiles are only for exploring the app.
+            When you and a real member like each other, your conversation will appear here.
           </p>
           <Link
             href="/app/discover"
             className="mt-4 inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-6 text-sm font-bold text-white transition-colors hover:bg-brand-dark"
           >
-            Go to Discover
+            View today&rsquo;s picks
           </Link>
         </div>
       )}

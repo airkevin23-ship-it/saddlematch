@@ -88,6 +88,19 @@ export default function UpgradePage() {
         ))}
       </ul>
 
+      {!isActive && (
+        <div className="mt-8 grid grid-cols-2 overflow-hidden rounded-2xl border border-line bg-card text-left text-sm">
+          <div className="border-r border-line p-4">
+            <p className="font-extrabold text-ink">Free</p>
+            <p className="mt-1 leading-relaxed text-ink-soft">1 thoughtfully curated profile each day</p>
+          </div>
+          <div className="bg-brand-soft/50 p-4">
+            <p className="font-extrabold text-brand-dark">Plus</p>
+            <p className="mt-1 leading-relaxed text-ink-soft">Up to 8 curated profiles each day, plus every feature above</p>
+          </div>
+        </div>
+      )}
+
       <div className="mt-10">
         <p className="text-center text-4xl font-extrabold tracking-tight">
           {isActive ? SUBSCRIPTION_PRICE_LABEL : SUBSCRIPTION_INTRO_PRICE_LABEL}
@@ -99,6 +112,11 @@ export default function UpgradePage() {
             ? "Cancel anytime."
             : `${SUBSCRIPTION_INTRO_PERIOD}, then ${SUBSCRIPTION_PRICE_LABEL}. Cancel anytime.`}
         </p>
+        {!isActive && (
+          <p className="mt-3 text-center text-xs leading-relaxed text-ink-faint">
+            Your subscription renews monthly until canceled. Manage or cancel anytime in Settings.
+          </p>
+        )}
 
         {isActive ? (
           <button

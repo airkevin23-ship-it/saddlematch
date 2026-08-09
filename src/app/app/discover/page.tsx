@@ -117,7 +117,7 @@ export default function DiscoverPage() {
       }
       const res = await fetch(`/api/daily-queue${params.size ? `?${params}` : ""}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Couldn't load today's roundup.");
+      if (!res.ok) throw new Error(data.error || "Couldn't load today's picks.");
       const nextCandidates = data.candidates ?? [];
       if (useFilters && nextCandidates.length === 0) {
         setCandidates([]);
@@ -135,7 +135,7 @@ export default function DiscoverPage() {
       setShowingSamples(nextCandidates.length === 0);
       setIndex(0);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't load today's roundup.");
+      setError(err instanceof Error ? err.message : "Couldn't load today's picks.");
     } finally {
       setLoading(false);
     }
@@ -213,6 +213,10 @@ export default function DiscoverPage() {
   async function handlePreviewReason() {
     const current = candidates[index];
     if (!current) return;
+    if (current.is_demo) {
+      setSafetyMessage("AI compatibility notes are available on real member profiles.");
+      return;
+    }
     setPreviewLoading(true);
     setPreviewError(null);
     try {
@@ -253,6 +257,10 @@ export default function DiscoverPage() {
   }
 
   async function handleBlock(targetId: string) {
+    if (candidates[index]?.is_demo) {
+      setSafetyMessage("Sample profiles are fictional and cannot be blocked.");
+      return;
+    }
     if (!confirm("Block this person? You won't see each other again.")) return;
     setSafetyBusy(true);
     await fetch("/api/block", {
@@ -267,6 +275,10 @@ export default function DiscoverPage() {
   }
 
   async function handleReport(targetId: string) {
+    if (candidates[index]?.is_demo) {
+      setSafetyMessage("Sample profiles are fictional and do not need to be reported.");
+      return;
+    }
     const reason = prompt(
       "What's going on? (e.g. fake profile, harassment, inappropriate photo)"
     );
@@ -314,14 +326,16 @@ export default function DiscoverPage() {
 
       {!loading && !error && candidates.length > 0 && (
         <div className="mb-5 flex items-center justify-between px-1">
-          <p className="text-xs font-bold tracking-[0.16em] uppercase text-brand">Today&rsquo;s roundup</p>
+          <p className="text-xs font-bold tracking-[0.16em] uppercase text-brand">Today&rsquo;s picks</p>
           <button onClick={() => setFiltersOpen((open) => !open)} className="min-h-10 rounded-lg px-2 text-xs font-bold text-ink-soft hover:bg-card hover:text-ink">Filters</button>
         </div>
       )}
 
       {showingSamples && current && (
         <div className="mb-5 rounded-2xl border border-brand/25 bg-brand-soft px-4 py-3 text-center text-sm text-brand-dark">
-          <strong>Welcome to SaddleMatch.</strong> You&rsquo;re viewing sample profiles while your local community grows. They are clearly marked and cannot create a real match.
+          <strong>Explore how SaddleMatch works.</strong> These fictional sample profiles
+          cannot receive likes, Wildflowers, reports, or create matches. Real Austin
+          members will appear here as the community grows.
         </div>
       )}
 
@@ -347,7 +361,7 @@ export default function DiscoverPage() {
         <div className="flex min-h-[55vh] flex-col items-center justify-center px-6 text-center">
           <p className="text-lg font-bold">No one matches those filters</p>
           <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-soft">
-            Nobody in today&rsquo;s roundup fits what you set. Austin is still a
+            Nobody in today&rsquo;s picks fits what you set. Austin is still a
             small community here, so widening usually helps.
           </p>
           <div className="mt-5 flex flex-col items-center gap-2">
@@ -375,10 +389,13 @@ export default function DiscoverPage() {
 
       {!loading && !error && !current && !filteredEmpty && (
         <div className="flex min-h-[55vh] flex-col items-center justify-center px-6 text-center">
-          <p className="text-lg font-bold mb-1">You&rsquo;re all caught up</p>
-          <p className="text-ink-soft text-sm">
-            That&rsquo;s today&rsquo;s roundup. New curated matches tomorrow — quality
-            over an endless deck.
+          <p className="text-lg font-bold mb-1">
+            {showingSamples ? "You’ve explored every sample" : "You’re all caught up"}
+          </p>
+          <p className="max-w-xs text-sm leading-relaxed text-ink-soft">
+            {showingSamples
+              ? "Real Austin members will appear in your daily picks as the community grows. Sample activity never creates a match."
+              : "That’s all of today’s curated picks. Check back tomorrow—quality over an endless deck."}
           </p>
           <button
             onClick={() => loadQueue()}
@@ -454,14 +471,14 @@ export default function DiscoverPage() {
                 <button
                   onClick={() => handleReport(current.id)}
                   disabled={safetyBusy}
-                  className="text-[11px] text-ink-faint hover:text-ink-soft font-medium disabled:opacity-50"
+                  className={`text-[11px] text-ink-faint hover:text-ink-soft font-medium disabled:opacity-50 ${current.is_demo ? "hidden" : ""}`}
                 >
                   Report
                 </button>
                 <button
                   onClick={() => handleBlock(current.id)}
                   disabled={safetyBusy}
-                  className="text-[11px] text-ink-faint hover:text-red-600 font-medium disabled:opacity-50"
+                  className={`text-[11px] text-ink-faint hover:text-red-600 font-medium disabled:opacity-50 ${current.is_demo ? "hidden" : ""}`}
                 >
                   Block
                 </button>
@@ -488,11 +505,11 @@ export default function DiscoverPage() {
             )}
 
             <button
-              onClick={() => setWildflowerTarget(current)}
-              disabled={wildflowerLoading}
+              onClick={() => current.is_demo ? setSafetyMessage("Wildflowers can only be sent to real members.") : setWildflowerTarget(current)}
+              disabled={wildflowerLoading || current.is_demo}
               className="mt-4 flex min-h-12 w-full items-center justify-center rounded-xl border border-brand/30 bg-brand-soft px-4 text-sm font-bold text-brand-dark hover:bg-brand hover:text-white disabled:opacity-50 transition-colors"
             >
-              {wildflowerLoading ? "Opening checkout…" : "✿ Send a Wildflower"}
+              {current.is_demo ? "Wildflowers available on real profiles" : wildflowerLoading ? "Opening checkout…" : "✿ Send a Wildflower"}
             </button>
             <p className="mt-1.5 text-center text-[11px] text-ink-faint">A one-time extra-interest signal. It does not guarantee a match.</p>
 
@@ -514,10 +531,10 @@ export default function DiscoverPage() {
               ) : (
                 <button
                   onClick={handlePreviewReason}
-                  disabled={previewLoading}
+                  disabled={previewLoading || current.is_demo}
                   className="text-xs text-brand hover:text-brand-dark font-semibold disabled:opacity-50"
                 >
-                  {previewLoading ? "Thinking…" : "✨ See what you might have in common (AI, Plus)"}
+                  {current.is_demo ? "AI insights available on real profiles" : previewLoading ? "Thinking…" : "✨ See what you might have in common (AI, Plus)"}
                 </button>
               )}
               {previewError && <p className="text-xs text-red-600 mt-1">{previewError}</p>}
@@ -577,20 +594,32 @@ export default function DiscoverPage() {
               over the last prompt instead of clearing it, and the prompt answer was
               unreadable. Anchored in flow it can never cover content. */}
           <div className="flex border-t border-line bg-card">
-            <button
-              onClick={() => handleSwipe("pass")}
-              disabled={sending}
-              className="flex-1 min-h-14 text-ink-soft hover:bg-line/40 font-semibold disabled:opacity-50 transition-colors"
-            >
-              Pass
-            </button>
-            <button
-              onClick={() => handleSwipe("like")}
-              disabled={sending}
-              className="flex-1 min-h-14 text-brand hover:bg-brand-soft font-bold border-l border-line disabled:opacity-50 transition-colors"
-            >
-              Like profile
-            </button>
+            {current.is_demo ? (
+              <button
+                onClick={() => handleSwipe("pass")}
+                disabled={sending}
+                className="min-h-14 flex-1 font-bold text-brand transition-colors hover:bg-brand-soft disabled:opacity-50"
+              >
+                View next sample
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => handleSwipe("pass")}
+                  disabled={sending}
+                  className="flex-1 min-h-14 text-ink-soft hover:bg-line/40 font-semibold disabled:opacity-50 transition-colors"
+                >
+                  Pass
+                </button>
+                <button
+                  onClick={() => handleSwipe("like")}
+                  disabled={sending}
+                  className="flex-1 min-h-14 text-brand hover:bg-brand-soft font-bold border-l border-line disabled:opacity-50 transition-colors"
+                >
+                  Like profile
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
