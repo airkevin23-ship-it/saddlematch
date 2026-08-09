@@ -1,11 +1,12 @@
 import Image from "next/image";
 
-// The Wildflower card — the moment the whole feature exists for. Sizes and
-// colours below are Kevin's CSS translated one-for-one: 380px card, #FAF4EB
-// cream, #C87A64 terracotta, 140px photo, 32px badge, 200px bloom.
+// The Wildflower card — the moment the whole feature exists for.
 //
-// The bloom is passed in rather than hardcoded so this cannot render a broken
-// image while the artwork is still being made. Without it the card still reads.
+// Kevin's premium design: gradient cream field, bronze ring on the photo, a
+// soft aura behind the bloom, gradient hairline dividers. Values are his.
+//
+// The bloom is a prop rather than a hardcoded path so the card cannot render a
+// broken image if the artwork is missing. Same for the photo.
 
 type Pronouns = { possessive: string; contraction: string };
 
@@ -45,63 +46,72 @@ export default function WildflowerCard({
   const p = pronounsFor(senderGender);
 
   return (
-    <div className="mx-auto w-full max-w-[380px] rounded-[20px] border border-[#EBE1D1] bg-[#FAF4EB] px-[30px] py-10 text-center shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
-      {/* 140px photo. The 3px terracotta ring plus 4px of padding is what
-          creates the double-ring look in the mockup. */}
-      <div className="relative mx-auto mb-[30px] h-[140px] w-[140px]">
-        <div className="h-full w-full rounded-full border-[3px] border-[#C87A64] p-1">
-          <div className="relative h-full w-full overflow-hidden rounded-full bg-stone-200">
+    <div
+      className="animate-elegantReveal w-full max-w-[380px] rounded-[24px] border border-[#E6DEC8] bg-[linear-gradient(180deg,#FCF9F2_0%,#F5EFE4_100%)] px-[35px] py-[45px] text-center opacity-0"
+      style={{
+        boxShadow:
+          "0 20px 40px rgba(45, 35, 25, 0.08), 0 4px 12px rgba(45, 35, 25, 0.04), inset 0 1px 0px rgba(255, 255, 255, 0.8)",
+      }}
+    >
+      {/* Photo in a bronze gradient ring */}
+      <div className="relative mx-auto mb-[35px] h-[144px] w-[144px]">
+        <div className="h-full w-full rounded-full bg-[linear-gradient(135deg,#E6B999_0%,#C87A64_50%,#8A4B37_100%)] p-[3px] shadow-[0_8px_16px_rgba(200,122,100,0.2)]">
+          <div className="relative h-full w-full overflow-hidden rounded-full border-[4px] border-[#FCF9F2] bg-[#E4DED6]">
             {senderPhotoUrl ? (
               <Image
                 src={senderPhotoUrl}
                 alt={senderName}
                 fill
-                sizes="140px"
+                sizes="144px"
                 className="object-cover"
               />
             ) : null}
           </div>
         </div>
-        {/* The badge's border matches the card background, so it reads as
-            punched through the photo ring rather than sitting on top of it. */}
-        <span className="absolute -bottom-2.5 left-1/2 flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-[#FAF4EB] bg-[#C87A64] text-white">
-          <Sparkle className="h-3 w-3" />
-        </span>
+        <div className="absolute -bottom-[6px] left-1/2 flex h-[34px] w-[34px] -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-[#F8F3E9] bg-[linear-gradient(135deg,#D48873_0%,#B86A54_100%)] shadow-[0_4px_8px_rgba(184,106,84,0.3)] text-white">
+          <Sparkle className="h-3.5 w-3.5" />
+        </div>
       </div>
 
-      <h1 className="font-display mb-5 text-[32px] leading-[1.2] text-[#2D2D2D]">
+      {/* font-display is Playfair. Tailwind's font-serif would fall back to a
+          generic system serif and lose the brand face entirely. */}
+      <h1 className="font-display mb-[15px] text-[34px] leading-[1.15] tracking-[-0.5px] text-[#24211F]">
         <span className="font-semibold">{senderName}</span> sent you
         <br />a{" "}
-        <span className="font-display text-[38px] italic text-[#C87A64]">Wildflower</span>
+        <span className="font-display text-[42px] italic tracking-normal text-[#B86A54]">
+          Wildflower
+        </span>
       </h1>
 
-      {flowerSrc ? (
-        <div className="my-[30px]">
+      <div className="relative my-[25px] flex justify-center">
+        <div className="absolute left-1/2 top-1/2 z-0 h-[120px] w-[120px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(200,122,100,0.08)_0%,rgba(252,249,242,0)_70%)]" />
+        {flowerSrc ? (
           <Image
             src={flowerSrc}
             alt=""
-            width={600}
-            height={600}
-            className="mx-auto h-auto w-[200px] object-contain"
+            width={640}
+            height={722}
+            className="relative z-10 h-auto w-[220px] object-contain drop-shadow-[0_10px_15px_rgba(0,0,0,0.03)]"
           />
-        </div>
-      ) : (
-        <div className="my-10" />
-      )}
+        ) : (
+          <div className="h-[220px]" />
+        )}
+      </div>
 
-      <p className="mb-[25px] text-base leading-[1.5] text-[#4A4A4A]">
-        An extra-interest signal &mdash;
-        <br />
+      <p className="mb-[30px] text-[17px] font-normal leading-[1.6] text-[#3A3532]">
+        <span className="mb-[6px] block text-[11px] font-medium uppercase tracking-[2px] text-[#8C8279]">
+          An extra-interest signal
+        </span>
         {p.contraction} really like to get to know you.
       </p>
 
-      <div className="my-[25px] flex items-center justify-center gap-[15px]">
-        <span className="h-px w-[60px] bg-[#E6D9C8]" />
-        <Sparkle className="h-2.5 w-2.5 text-[#C87A64]" />
-        <span className="h-px w-[60px] bg-[#E6D9C8]" />
+      <div className="my-[30px] flex items-center justify-center gap-[15px] opacity-70">
+        <div className="h-px w-[70px] bg-[linear-gradient(90deg,rgba(230,222,200,0)_0%,#D4C7B0_50%,rgba(230,222,200,0)_100%)]" />
+        <Sparkle className="h-2.5 w-2.5 text-[#B86A54]" />
+        <div className="h-px w-[70px] bg-[linear-gradient(90deg,rgba(230,222,200,0)_0%,#D4C7B0_50%,rgba(230,222,200,0)_100%)]" />
       </div>
 
-      <p className="text-sm leading-[1.5] text-[#737373]">
+      <p className="text-[14px] font-light leading-[1.6] text-[#8C8279]">
         Open {p.possessive} profile in Discover to decide
         <br />
         whether you&rsquo;d like to connect.
