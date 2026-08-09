@@ -103,6 +103,8 @@ export default function DiscoverPage() {
   async function loadQueue(useFilters = false) {
     setLoading(true);
     setError(null);
+    // A safety notice raised on one card must not survive into the next queue.
+    setSafetyMessage(null);
     setOpenPromptIndex(null);
     setComment("");
     setPreviewReason(null);
