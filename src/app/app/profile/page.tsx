@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CITIES, PROMPT_BANK } from "@/lib/constants";
 import ProfileMedia from "@/components/profile-media";
 import NeighbourhoodSelect from "@/components/neighbourhood-select";
+import VoicePromptRecorder from "@/components/voice-prompt-recorder";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 
 const DETAIL_FIELDS = [
@@ -538,6 +539,32 @@ export default function ProfilePage() {
             </div>
           )}
           {mediaSaving && <p className="mt-3 text-xs font-medium text-brand">Uploading your media…</p>}
+        </section>
+
+        <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
+          <h2 className="font-bold">Voice prompt <span className="text-ink-faint font-medium">(optional)</span></h2>
+          <p className="text-xs text-ink-soft mt-1">
+            Up to 30 seconds. Hearing someone speak tells you more than a photo does.
+            Keep it respectful and do not share private contact details.
+          </p>
+          <VoicePromptRecorder
+            profileId={profile.id}
+            initialUrl={profile.voice_prompt_url}
+            initialQuestion={profile.voice_prompt_question}
+            initialDurationMs={profile.voice_prompt_duration_ms}
+            onSaved={(v) =>
+              setProfile((current) =>
+                current
+                  ? {
+                      ...current,
+                      voice_prompt_url: v.url,
+                      voice_prompt_question: v.question,
+                      voice_prompt_duration_ms: v.durationMs,
+                    }
+                  : current,
+              )
+            }
+          />
         </section>
 
         <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
