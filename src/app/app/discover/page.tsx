@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { PublicProfile } from "@/types/db";
 import { CITIES } from "@/lib/constants";
 import { CowboyHatIcon } from "@/components/western-icons";
-import { heightOf, orderedDetails } from "@/lib/profile-details";
+import { ageOf, heightOf, orderedDetails } from "@/lib/profile-details";
 
 // Three sample profiles shown when the real queue is empty. They exist so
 // the app can be demonstrated before Austin has members. Every one is
@@ -468,7 +468,10 @@ export default function DiscoverPage() {
           <div className="p-5 sm:p-6">
             <div className="flex items-start justify-between gap-2">
               <h2 className="text-2xl font-extrabold tracking-tight">
-                {current.display_name}, {current.age}
+                {current.display_name}
+                {ageOf(current.visible_details) ?? current.age
+                  ? `, ${ageOf(current.visible_details) ?? current.age}`
+                  : ""}
               </h2>
               <div className="flex items-center gap-3 shrink-0 pt-1">
                 <button
