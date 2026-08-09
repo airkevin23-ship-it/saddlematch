@@ -74,15 +74,15 @@ export default function LandingPage() {
           </div>
         </div>
 
+        {/* Sample profile is fictional. Labelled so it cannot read as a claim
+            about who is already on the app. */}
+        <p className="-mt-2 mb-5 text-[11px] font-medium text-stone-400">
+          Sample profile &mdash; what a daily match looks like.
+        </p>
         <p className="text-xs font-semibold italic text-stone-500">
           One thoughtful match every day. No endless swiping.
         </p>
 
-        {/* Sample profile is fictional. Labelled so it cannot read as a claim
-            about who is already on the app. */}
-        <p className="mb-4 text-[11px] font-medium text-stone-400">
-          Sample profile &mdash; what a daily match looks like.
-        </p>
 
         {/* How it works. One match a day is unfamiliar mechanics and it is the
             whole product, so this section gets the most room on the page. */}
