@@ -11,6 +11,12 @@ import SaddleUpPicker from "@/components/saddle-up-picker";
 import { spotLabel } from "@/lib/saddle-up";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 import {
+  ALWAYS_VISIBLE,
+  DETAIL_FIELDS,
+  type DetailKey,
+  type Details,
+} from "@/lib/profile-details";
+
 // Presentation only: how the About You rows are grouped in the editor. The
 // field list itself stays in @/lib/profile-details so it cannot drift.
 const DETAIL_GROUPS: { title: string; keys: string[] }[] = [
@@ -27,11 +33,6 @@ const DETAIL_GROUPS: { title: string; keys: string[] }[] = [
     keys: ["languages", "politics", "drinking", "smoking", "marijuana", "drugs"],
   },
 ];
-  ALWAYS_VISIBLE,
-  DETAIL_FIELDS,
-  type DetailKey,
-  type Details,
-} from "@/lib/profile-details";
 
 
 const EMPTY_DETAILS: Details = Object.fromEntries(DETAIL_FIELDS.map(([key, , options]) => [key, options[0]])) as Details;
