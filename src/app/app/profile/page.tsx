@@ -655,7 +655,7 @@ export default function ProfilePage() {
           <p className="text-xs text-ink-soft mt-1">A short, authentic video helps people get to know you. Up to 50 MB. Keep it respectful and do not include minors or private contact details.</p>
           {profile.intro_video_url ? (
             <div className="mt-3">
-              <video src={profile.intro_video_url} controls playsInline className="w-full rounded-xl bg-ink" />
+              <video src={profile.intro_video_url} controls playsInline className="aspect-square w-full rounded-xl bg-ink object-cover" />
               <button type="button" onClick={removeVideo} className="mt-2 min-h-11 text-sm font-semibold text-red-600 hover:text-red-700">Remove video</button>
             </div>
           ) : (
@@ -721,7 +721,7 @@ export default function ProfilePage() {
               className="w-full rounded-xl bg-card border border-line px-3 py-3 text-base"
             >
               {(options as readonly string[]).map((option) => (
-                <option key={option}>{option}</option>
+                <option key={option} value={option}>{option.split(" (")[0]}</option>
               ))}
             </select>
           </div>
