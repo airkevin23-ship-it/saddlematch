@@ -490,12 +490,12 @@ export default function ProfilePage() {
               )}
 
 
-              {DETAIL_FIELDS.filter(([key]) => key !== "height" && (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").length > 0 && (
+              {DETAIL_FIELDS.filter(([key]) => key !== "age" && key !== "height" && (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").length > 0 && (
                 <div className="mt-5 rounded-2xl border border-line bg-cream px-4">
-                  {DETAIL_FIELDS.filter(([key]) => key !== "height" && (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").map(([key, label]) => (
-                    <div key={key} className="border-b border-line py-3 last:border-0">
-                      <p className="text-[10px] font-bold uppercase tracking-wide text-ink-faint">{label}</p>
-                      <p className="mt-0.5 font-semibold">{details[key]}</p>
+                  {DETAIL_FIELDS.filter(([key]) => key !== "age" && key !== "height" && (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").map(([key, label]) => (
+                    <div key={key} className="flex items-baseline justify-between gap-3 border-b border-line py-2.5 last:border-0">
+                      <span className="text-[11px] font-bold uppercase tracking-wide text-ink-faint">{label}</span>
+                      <span className="text-sm font-semibold text-ink">{details[key]}</span>
                     </div>
                   ))}
                 </div>
