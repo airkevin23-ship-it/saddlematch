@@ -874,7 +874,7 @@ export default function ProfilePage() {
 
       </div>
 
-      <div className="fixed inset-x-0 bottom-[4.5rem] z-40 mx-auto w-full max-w-md border-t border-line bg-card/95 px-6 py-3 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-[5rem] z-40 mx-auto w-full max-w-md border-t border-line bg-card/95 px-6 py-4 backdrop-blur shadow-[0_-4px_16px_rgba(27,25,23,0.08)]">
         <div className="mx-auto max-w-md">
           {error && <p className="mb-2 text-center text-sm font-semibold text-red-600">{error}</p>}
           <button
@@ -887,6 +887,6 @@ export default function ProfilePage() {
           <p className="mt-2 text-center text-xs text-ink-faint">Unsaved changes are not lost—save when ready.</p>
         </div>
       </div>
-    </div>
+	</div>
   );
 }
