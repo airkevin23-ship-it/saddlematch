@@ -734,7 +734,7 @@ export default function ProfilePage() {
               onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))}
               className="w-full rounded-xl bg-card border border-line px-3 py-3 text-base"
             >
-              {options.map((option) => (
+              {(options as readonly string[]).map((option) => (
                 <option key={option}>{option}</option>
               ))}
             </select>
@@ -800,7 +800,7 @@ export default function ProfilePage() {
                             onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))}
                             className="mt-0.5 w-full bg-transparent text-base font-semibold text-ink outline-none"
                           >
-                            {options.map((option) => (
+                            {(options as readonly string[]).map((option) => (
                               <option key={option}>{option}</option>
                             ))}
                           </select>
