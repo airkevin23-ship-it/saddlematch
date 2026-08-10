@@ -66,6 +66,7 @@ export default function ProfilePage() {
   const [celebrate, setCelebrate] = useState(false);
   const [details, setDetails] = useState<Details>(EMPTY_DETAILS);
   const [visibility, setVisibility] = useState<Record<DetailKey, boolean>>(EMPTY_VISIBILITY);
+	  const [editTab, setEditTab] = useState<"photos" | "basics" | "about" | "prompts">("photos");
 
   useEffect(() => {
     (async () => {
@@ -507,7 +508,23 @@ export default function ProfilePage() {
       )}
 
       <div className={profileTab === "edit" ? "space-y-5" : "hidden"}>
-        <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
+				        <div className="mb-6 flex w-full rounded-full bg-line p-1">
+									{([["photos", "Photos"], ["basics", "Basics"], ["about", "About You"], ["prompts", "Prompts"]] as const).map(([value, label]) => (
+			            <button
+										              key={value}
+										              type="button"
+										              onClick={() => setEditTab(value)}
+										              className={`flex-1 min-h-10 rounded-full text-sm font-bold transition-colors ${
+																		                editTab === value ? "bg-card text-ink shadow-sm" : "text-ink-faint"
+																	}`}
+										            >
+										{label}
+											</button>
+			          ))}
+								</div>
+				{editTab === "photos" && (
+			        <>
+							        <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
           <div className="flex items-start justify-between gap-3 mb-4">
             <div>
               <h2 className="font-bold">Photos</h2>
@@ -692,8 +709,11 @@ export default function ProfilePage() {
             </div>
           )}
         </section>
+							</>)}
 
-        <div>
+				{editTab === "basics" && (
+			<>
+			<div>
           <label className="text-sm text-ink-soft block mb-1 font-medium">
             Name
           </label>
@@ -764,8 +784,11 @@ export default function ProfilePage() {
           </div>
           <label className="mt-3 block text-sm text-ink-soft">I&rsquo;m looking for<select value={relationshipIntent} onChange={(e) => setRelationshipIntent(e.target.value as RelationshipIntent)} className="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-ink outline-none focus:border-brand">{DATING_INTENTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
         </section>
+			</>)}
 
-        <section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
+				{editTab === "about" && (
+			<>
+			<section className="rounded-2xl border border-line bg-card p-4 sm:p-5">
           <div className="flex items-center justify-between"><h2 className="font-bold">About you</h2><span className="text-xs text-ink-faint">Visible controls</span></div>
           <p className="mt-1 text-xs text-ink-soft">Choose what to share on your public profile. You can change this anytime.</p>
           <div className="mt-4 space-y-7">
@@ -811,8 +834,11 @@ export default function ProfilePage() {
             ))}
           </div>
         </section>
+			</>)}
 
-        <div className="pt-4 border-t border-line">
+				{editTab === "prompts" && (
+			<>
+			<div className="pt-4 border-t border-line">
           <p className="text-sm font-bold mb-3">Your 3 prompts</p>
           {prompts.map((p, i) => (
             <div key={i} className="mb-5">
@@ -844,6 +870,7 @@ export default function ProfilePage() {
             </div>
           ))}
         </div>
+			</>)}
 
       </div>
 
