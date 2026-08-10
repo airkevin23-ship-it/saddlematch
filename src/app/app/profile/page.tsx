@@ -14,7 +14,6 @@ import {
 // Presentation only: how the About You rows are grouped in the editor. The
 // field list itself stays in @/lib/profile-details so it cannot drift.
 const DETAIL_GROUPS: { title: string; keys: string[] }[] = [
-  { title: "The basics", keys: ["age", "height"] },
   {
     title: "Background",
     keys: ["work", "education", "faith", "ethnicity", "relationshipType"],
@@ -720,6 +719,27 @@ export default function ProfilePage() {
             className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
           />
         </div>
+
+        {/* Age and height live beside the name because they are the same kind of
+            thing: who you are. Burying age among the lifestyle questions was what
+            made this page feel disorganised. */}
+        {DETAIL_FIELDS.filter(([key]) => key === "age" || key === "height").map(([key, label, options]) => (
+          <div key={key}>
+            <label className="text-sm text-ink-soft block mb-1 font-semibold" htmlFor={`basic-${key}`}>
+              {label}
+            </label>
+            <select
+              id={`basic-${key}`}
+              value={details[key]}
+              onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))}
+              className="w-full rounded-xl bg-card border border-line px-3 py-3 text-base"
+            >
+              {options.map((option) => (
+                <option key={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+        ))}
 
         <NeighbourhoodSelect
           value={profile.city_id}
