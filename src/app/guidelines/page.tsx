@@ -25,7 +25,7 @@ export default function GuidelinesPage() {
               actually looks like to be a good member here.
             </p>
             <p className="text-ink-soft mb-3">
-              {APP_NAME} is small and it is local. Right now that means Austin. You are likely to
+              {APP_NAME}{" "}is small and it is local. Right now that means Austin. You are likely to
               run into the people you meet here at a dance hall, a coffee shop, or a friend&rsquo;s
               party. That is a feature, and it is worth behaving accordingly.
             </p>
