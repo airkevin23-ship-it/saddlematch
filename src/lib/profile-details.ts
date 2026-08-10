@@ -5,7 +5,7 @@
 // lives here rather than inside a page component so the two cannot drift
 // apart: a field added here shows up in both places or neither.
 
-export const DETAIL_FIELDS = [
+const RAW_DETAIL_FIELDS = [
   // Vitals. These lead every profile and cannot be hidden.
   ["age", "Age", ["Not answered yet", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"]],
   ["height", "Height", ["Not answered yet", "4′ 0″ (122 cm)", "4′ 1″ (124 cm)", "4′ 2″ (127 cm)", "4′ 3″ (130 cm)", "4′ 4″ (132 cm)", "4′ 5″ (135 cm)", "4′ 6″ (137 cm)", "4′ 7″ (140 cm)", "4′ 8″ (142 cm)", "4′ 9″ (145 cm)", "4′ 10″ (147 cm)", "4′ 11″ (150 cm)", "5′ 0″ (152 cm)", "5′ 1″ (155 cm)", "5′ 2″ (157 cm)", "5′ 3″ (160 cm)", "5′ 4″ (163 cm)", "5′ 5″ (165 cm)", "5′ 6″ (168 cm)", "5′ 7″ (170 cm)", "5′ 8″ (173 cm)", "5′ 9″ (175 cm)", "5′ 10″ (178 cm)", "5′ 11″ (180 cm)", "6′ 0″ (183 cm)", "6′ 1″ (185 cm)", "6′ 2″ (188 cm)", "6′ 3″ (191 cm)", "6′ 4″ (193 cm)", "6′ 5″ (196 cm)", "6′ 6″ (198 cm)", "6′ 7″ (201 cm)", "6′ 8″ (203 cm)", "6′ 9″ (206 cm)", "6′ 10″ (208 cm)", "6′ 11″ (211 cm)", "7′ 0″ (213 cm)", "7′ 1″ (216 cm)", "7′ 2″ (218 cm)", "7′ 3″ (221 cm)", "7′ 4″ (224 cm)", "7′ 5″ (226 cm)", "7′ 6″ (229 cm)"]],
@@ -34,7 +34,17 @@ export const DETAIL_FIELDS = [
   ["drugs", "Drugs", ["Not answered yet", "No", "Prefer not to say"]],
 ] as const;
 
-export type DetailKey = (typeof DETAIL_FIELDS)[number][0];
+export type DetailKey = (typeof RAW_DETAIL_FIELDS)[number][0];
+
+// Exported with an explicit type rather than as a bare `as const`. Left raw,
+// every caller that filters this list ends up with a union of differently
+// shaped tuples, and TypeScript then refuses to call .map() on `options`.
+// Widening once here keeps the literal keys while making every row uniform.
+export const DETAIL_FIELDS: readonly (readonly [
+  DetailKey,
+  string,
+  readonly string[],
+])[] = RAW_DETAIL_FIELDS;
 export type Details = Record<DetailKey, string>;
 
 // Height is always shown. It is one of the first things people look for, and
