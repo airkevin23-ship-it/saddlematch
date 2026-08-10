@@ -407,8 +407,8 @@ export default function ProfilePage() {
           />
         ) : null}
 
-            <div className="p-5">
-              {profile.bio && profile.bio.trim() && (
+            <div className="px-5 pt-5">
+                          {profile.bio && profile.bio.trim() && (
                 <p className="mt-1 text-base leading-relaxed text-ink-soft">{profile.bio}</p>
               )}
 
@@ -434,7 +434,7 @@ export default function ProfilePage() {
                       <p className="mt-2 font-display text-[22px] leading-[1.35] text-ink">{p.answer}</p>
                       </div>
                       {(profile.photo_urls ?? [])[i + 1] ? (
-                        <div className="mt-3 overflow-hidden rounded-2xl">
+                        <div className="mt-3 -mx-5 overflow-hidden rounded-2xl">
                           <ProfileMedia photoUrls={[(profile.photo_urls ?? [])[i + 1]]} alt="Profile photo" />
                         </div>
                       ) : null}
@@ -490,14 +490,14 @@ export default function ProfilePage() {
           {(profile.photo_urls ?? []).slice(answeredPrompts.length + 1).length > 0 && (
             <div className="mt-5 space-y-3">
               {(profile.photo_urls ?? []).slice(answeredPrompts.length + 1).map((src) => (
-                <div key={src} className="overflow-hidden rounded-2xl">
+                <div key={src} className="-mx-5 overflow-hidden rounded-2xl">
                   <ProfileMedia photoUrls={[src]} alt="Profile photo" />
                 </div>
               ))}
             </div>
           )}
           {profile.intro_video_url && (
-            <div className="mt-5 overflow-hidden rounded-2xl">
+            <div className="mt-5 -mx-5 overflow-hidden rounded-2xl">
               <ProfileMedia videoUrl={profile.intro_video_url} alt="Intro video" />
             </div>
           )}
