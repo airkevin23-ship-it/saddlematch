@@ -95,6 +95,12 @@ export const PLUS_FEATURES: string[] = [
   "More curated matches",
 ];
 
+// Fallback so the Discover queue never looks empty while the real
+// member pool is thin. Flip to false before any App Store submission —
+// placeholder profiles in a review build are grounds for rejection
+// under Guideline 4.2.
+export const SHOW_SAMPLE_PROFILES = true;
+
 // How many new candidates get curated into a user's queue each day
 // (Coffee Meets Bagel / Crush style — capped, not infinite).
 // Free members get one curated person a day. That single number is the whole
