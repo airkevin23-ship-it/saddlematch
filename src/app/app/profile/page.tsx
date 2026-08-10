@@ -887,6 +887,6 @@ export default function ProfilePage() {
           <p className="mt-2 text-center text-xs text-ink-faint">Unsaved changes are not lost—save when ready.</p>
         </div>
       </div>
-	</div>
+    </div>
   );
 }
