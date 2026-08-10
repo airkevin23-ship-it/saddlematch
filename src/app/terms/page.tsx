@@ -80,7 +80,7 @@ export default function TermsPage() {
           <section>
             <h2 className="font-bold text-base mb-2">7. Changes</h2>
             <p className="text-ink-soft">
-              We may update these terms as {APP_NAME} evolves. We&rsquo;ll post the
+              We may update these terms as {APP_NAME}{" "}evolves. We&rsquo;ll post the
               updated date at the top of this page when we do.
             </p>
           </section>
