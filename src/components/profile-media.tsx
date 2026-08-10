@@ -38,7 +38,7 @@ export default function ProfileMedia({
 
   if (!current) {
     return (
-      <div className="flex aspect-[4/5] items-center justify-center bg-line text-sm text-ink-soft">
+      <div className="flex aspect-square items-center justify-center bg-line text-sm text-ink-soft">
         No photos yet
       </div>
     );
@@ -54,7 +54,7 @@ export default function ProfileMedia({
   };
 
   return (
-    <div className="relative aspect-[4/5] w-full overflow-hidden bg-line">
+    <div className="relative aspect-square w-full overflow-hidden bg-line">
       {current.kind === "video" ? (
         <video
           key={current.src}
