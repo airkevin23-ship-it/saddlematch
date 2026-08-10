@@ -408,21 +408,6 @@ export default function ProfilePage() {
         ) : null}
 
             <div className="p-5">
-              <h2 className="text-2xl font-extrabold tracking-tight">
-                {profile.display_name}
-              {details.age && details.age !== "Not answered yet"
-                ? `, ${details.age}`
-                : age
-                  ? `, ${age}`
-                  : ""}
-              </h2>
-          {/* Name, age and height lead the profile and cannot be hidden.
-              They are the three things people check first. */}
-          {details.height && details.height !== "Not answered yet" && (
-            <p className="mt-0.5 text-sm font-semibold text-ink-soft">
-              {details.height.replace(/\s*\(.*\)$/, "")}
-            </p>
-          )}
               {profile.bio && profile.bio.trim() && (
                 <p className="mt-1 text-base leading-relaxed text-ink-soft">{profile.bio}</p>
               )}
@@ -490,9 +475,9 @@ export default function ProfilePage() {
               )}
 
 
-              {DETAIL_FIELDS.filter(([key]) => key !== "age" && key !== "height" && (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").length > 0 && (
+              {DETAIL_FIELDS.filter(([key]) => (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").length > 0 && (
                 <div className="mt-5 rounded-2xl border border-line bg-cream px-4">
-                  {DETAIL_FIELDS.filter(([key]) => key !== "age" && key !== "height" && (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").map(([key, label]) => (
+                  {DETAIL_FIELDS.filter(([key]) => (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").map(([key, label]) => (
                     <div key={key} className="flex items-baseline justify-between gap-3 border-b border-line py-2.5 last:border-0">
                       <span className="text-[11px] font-bold uppercase tracking-wide text-ink-faint">{label}</span>
                       <span className="text-sm font-semibold text-ink">{details[key]}</span>
