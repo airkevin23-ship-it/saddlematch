@@ -1,9 +1,8 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { PublicProfile } from "@/types/db";
-import { CITIES } from "@/lib/constants";
+import { CITIES, SHOW_SAMPLE_PROFILES } from "@/lib/constants";
 import { CowboyHatIcon } from "@/components/western-icons";
 import { ageOf, heightOf, orderedDetails } from "@/lib/profile-details";
 
@@ -130,12 +129,14 @@ export default function DiscoverPage() {
         return;
       }
       setFilteredEmpty(false);
-      // No fixture fallback. An empty queue now renders the caught-up state,
-      // which is the truth: there is nobody new today. Injecting invented
-      // people made every screen misleading to test against, and Apple treats
-      // placeholder profiles in a submitted build as grounds for rejection.
-      setCandidates(nextCandidates.length ? nextCandidates : SAMPLE_PROFILES);
-      setShowingSamples(nextCandidates.length === 0);
+      // Sample profiles only appear when SHOW_SAMPLE_PROFILES is on (see
+      // src/lib/constants.ts) so the queue never looks like a ghost town
+      // while the real Austin pool is thin. Flip that flag to false
+      // before any App Store submission — placeholder profiles in a
+      // review build are grounds for rejection under Guideline 4.2.
+      const useSamples = nextCandidates.length === 0 && SHOW_SAMPLE_PROFILES;
+      setCandidates(useSamples ? SAMPLE_PROFILES : nextCandidates);
+      setShowingSamples(useSamples);
       setIndex(0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Couldn't load today's picks.");
