@@ -9,17 +9,37 @@ import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import { CowboyHatIcon, HorseshoeIcon, LassoHeartIcon } from "@/components/western-icons";
 import type { Gender, Prompt, RelationshipIntent } from "@/types/db";
 
-// Bounds for the birthdate picker: no one under 18 (enforced again on submit,
-// this just keeps the native date picker from defaulting to today and forcing
-// people to page back a year at a time to reach a real birth year) and a
-// generous upper bound on age.
-function isoDateYearsAgo(years: number): string {
-  const d = new Date();
-  d.setFullYear(d.getFullYear() - years);
-  return d.toISOString().slice(0, 10);
+// Separate Month / Day / Year selects instead of the native <input type="date">.
+// The native picker still opens on today's date on Android regardless of
+// min/max (that only clamps which dates are *selectable*, not where the
+// calendar view starts), so picking a birth year meant paging back one
+// month at a time -- 600+ taps to reach 1972. Native <select> elements open
+// as a fast scrollable list with type-ahead (tapping "1972" jumps straight
+// there), so this is a real fix rather than a tweak to the broken widget.
+const CURRENT_YEAR = new Date().getFullYear();
+const BIRTH_YEARS = Array.from({ length: 83 }, (_, i) => String(CURRENT_YEAR - 18 - i));
+const MONTHS = [
+  { value: "01", label: "January" },
+  { value: "02", label: "February" },
+  { value: "03", label: "March" },
+  { value: "04", label: "April" },
+  { value: "05", label: "May" },
+  { value: "06", label: "June" },
+  { value: "07", label: "July" },
+  { value: "08", label: "August" },
+  { value: "09", label: "September" },
+  { value: "10", label: "October" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
+];
+function daysInMonth(year: string, month: string): number {
+  if (!year || !month) return 31;
+  return new Date(Number(year), Number(month), 0).getDate();
 }
-const BIRTHDATE_MAX = isoDateYearsAgo(18);
-const BIRTHDATE_MIN = isoDateYearsAgo(100);
+function parseBirthdate(value: string): { year: string; month: string; day: string } {
+  const [year = "", month = "", day = ""] = value.split("-");
+  return { year, month, day };
+}
 
 // A small brand-soft circle behind a western line-art icon, sitting above a
 // step's headline. Matches the treatment already used on the landing page,
@@ -89,6 +109,20 @@ export default function OnboardingPage() {
       if (user) setUserId(user.id);
     })();
   }, [supabase]);
+
+  const { year: birthYear, month: birthMonth, day: birthDay } = parseBirthdate(birthdate);
+
+  function updateBirthdatePart(part: "year" | "month" | "day", value: string) {
+    const current = parseBirthdate(birthdate);
+    const next = { ...current, [part]: value };
+    // Clamp the day if switching to a shorter month (e.g. Jan 31 -> Feb) so
+    // the composed date never comes out invalid.
+    const maxDay = daysInMonth(next.year, next.month);
+    if (next.day && Number(next.day) > maxDay) {
+      next.day = String(maxDay).padStart(2, "0");
+    }
+    setBirthdate(next.year && next.month && next.day ? `${next.year}-${next.month}-${next.day}` : "");
+  }
 
   function toggleInterestedIn(g: Gender) {
     setInterestedIn((prev) =>
@@ -331,14 +365,50 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <label className="text-sm text-ink-soft block mb-1 font-medium">Birthdate</label>
-                <input
-                  type="date"
-                  value={birthdate}
-                  onChange={(e) => setBirthdate(e.target.value)}
-                  min={BIRTHDATE_MIN}
-                  max={BIRTHDATE_MAX}
-                  className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
-                />
+                <div className="grid grid-cols-[1.3fr_1fr_1fr] gap-2">
+                  <select
+                    aria-label="Birth month"
+                    value={birthMonth}
+                    onChange={(e) => updateBirthdatePart("month", e.target.value)}
+                    className="w-full rounded-xl bg-card border border-line px-2 py-3 text-sm outline-none focus:border-brand transition-colors"
+                  >
+                    <option value="">Month</option>
+                    {MONTHS.map((m) => (
+                      <option key={m.value} value={m.value}>
+                        {m.label}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    aria-label="Birth day"
+                    value={birthDay}
+                    onChange={(e) => updateBirthdatePart("day", e.target.value)}
+                    className="w-full rounded-xl bg-card border border-line px-2 py-3 text-sm outline-none focus:border-brand transition-colors"
+                  >
+                    <option value="">Day</option>
+                    {Array.from({ length: daysInMonth(birthYear, birthMonth) }, (_, i) => {
+                      const d = String(i + 1).padStart(2, "0");
+                      return (
+                        <option key={d} value={d}>
+                          {i + 1}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <select
+                    aria-label="Birth year"
+                    value={birthYear}
+                    onChange={(e) => updateBirthdatePart("year", e.target.value)}
+                    className="w-full rounded-xl bg-card border border-line px-2 py-3 text-sm outline-none focus:border-brand transition-colors"
+                  >
+                    <option value="">Year</option>
+                    {BIRTH_YEARS.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div>
                 <label className="text-sm text-ink-soft block mb-1 font-medium">I am a</label>
