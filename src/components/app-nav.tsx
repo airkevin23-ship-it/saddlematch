@@ -39,6 +39,14 @@ function ChatIcon({ className }: IconProps) {
   );
 }
 
+function HeartIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M12 20s-7.5-4.4-7.5-10A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.8c0 5.6-7.5 10-7.5 10Z" />
+    </svg>
+  );
+}
+
 function SlidersIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
@@ -91,6 +99,7 @@ export function HeaderActions() {
 
 const TABS = [
   { href: "/app/discover", label: "Discover", Icon: CardsIcon },
+  { href: "/app/likes", label: "Likes", Icon: HeartIcon },
   { href: "/app/matches", label: "Matches", Icon: ChatIcon },
   { href: "/app/upgrade", label: "Plus", Icon: WesternStarIcon },
 ];
@@ -103,9 +112,11 @@ const TABS = [
 export function BottomNav({
   avatarUrl,
   matchBadge = 0,
+  likesBadge = 0,
 }: {
   avatarUrl?: string | null;
   matchBadge?: number;
+  likesBadge?: number;
 }) {
   const isActive = useIsActive();
   const profileActive = isActive("/app/profile");
@@ -113,7 +124,7 @@ export function BottomNav({
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed inset-x-0 bottom-0 z-30 mx-auto grid w-full max-w-md grid-cols-4 border-t border-line bg-card/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur shadow-[0_-8px_24px_rgba(27,25,23,0.06)]"
+      className="fixed inset-x-0 bottom-0 z-30 mx-auto grid w-full max-w-md grid-cols-5 border-t border-line bg-card/95 px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur shadow-[0_-8px_24px_rgba(27,25,23,0.06)]"
     >
       {TABS.map(({ href, label, Icon }) => {
         const active = isActive(href);
@@ -131,6 +142,11 @@ export function BottomNav({
               {href === "/app/matches" && matchBadge > 0 && (
                 <span className="absolute -right-2.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1 text-[11px] font-bold leading-none text-white">
                   {matchBadge > 9 ? "9+" : matchBadge}
+                </span>
+              )}
+              {href === "/app/likes" && likesBadge > 0 && (
+                <span className="absolute -right-2.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1 text-[11px] font-bold leading-none text-white">
+                  {likesBadge > 9 ? "9+" : likesBadge}
                 </span>
               )}
             </span>

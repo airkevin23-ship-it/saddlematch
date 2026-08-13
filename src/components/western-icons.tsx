@@ -65,6 +65,28 @@ export function CowboyHatIcon({ className }: IconProps) {
   );
 }
 
+// A heart looped from a single rope, with a small lasso-knot flourish —
+// used as the hero illustration on empty states (e.g. Likes You) instead
+// of a stock photo/illustration, so it stays on-brand and license-free.
+export function LassoHeartIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 20.3s-7.8-4.6-7.8-10.4A4.4 4.4 0 0 1 12 7.1a4.4 4.4 0 0 1 7.8 2.8c0 5.8-7.8 10.4-7.8 10.4Z" />
+      <path d="M15.6 4.6c1.6-.6 3.3.2 3.7 1.8.3 1.1-.2 2.2-1.2 2.8" />
+      <circle cx="19.6" cy="5.8" r=".6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export function CactusIcon({ className }: IconProps) {
   return (
     <svg
