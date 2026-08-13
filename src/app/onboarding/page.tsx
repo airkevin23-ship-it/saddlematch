@@ -7,6 +7,18 @@ import { APP_NAME, CITIES, PROMPT_BANK } from "@/lib/constants";
 import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import type { Gender, Prompt, RelationshipIntent } from "@/types/db";
 
+// Bounds for the birthdate picker: no one under 18 (enforced again on submit,
+// this just keeps the native date picker from defaulting to today and forcing
+// people to page back a year at a time to reach a real birth year) and a
+// generous upper bound on age.
+function isoDateYearsAgo(years: number): string {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - years);
+  return d.toISOString().slice(0, 10);
+}
+const BIRTHDATE_MAX = isoDateYearsAgo(18);
+const BIRTHDATE_MIN = isoDateYearsAgo(100);
+
 const GENDERS: { value: Gender; label: string }[] = [
   { value: "male", label: "Man" },
   { value: "female", label: "Woman" },
@@ -307,6 +319,8 @@ export default function OnboardingPage() {
                   type="date"
                   value={birthdate}
                   onChange={(e) => setBirthdate(e.target.value)}
+                  min={BIRTHDATE_MIN}
+                  max={BIRTHDATE_MAX}
                   className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
                 />
               </div>
