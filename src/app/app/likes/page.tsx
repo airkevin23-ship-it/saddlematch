@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { usePreLaunchStatus, PreLaunchHoldingRoom } from "@/components/pre-launch-gate";
 import type { PublicProfile } from "@/types/db";
 import { CowboyHatIcon, LassoHeartIcon } from "@/components/western-icons";
 import { APP_NAME } from "@/lib/constants";
@@ -20,6 +21,7 @@ interface LikeRow {
 // can like back or pass right from here. Matching the freemium split
 // PLUS_FEATURES already advertises as "See who liked you".
 export default function LikesPage() {
+  const { status: launchStatus, loading: launchLoading } = usePreLaunchStatus();
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
   const [isPlus, setIsPlus] = useState(false);
@@ -124,6 +126,13 @@ export default function LikesPage() {
 
     setLikes((current) => current.filter((l) => l.swipeId !== row.swipeId));
     setBusyId(null);
+  }
+
+  if (launchLoading) {
+    return <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink-soft">Loading…</div>;
+  }
+  if (launchStatus && !launchStatus.isLaunched) {
+    return <PreLaunchHoldingRoom status={launchStatus} />;
   }
 
   return (

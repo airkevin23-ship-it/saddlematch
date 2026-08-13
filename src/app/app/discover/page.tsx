@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { usePreLaunchStatus, PreLaunchHoldingRoom } from "@/components/pre-launch-gate";
 import type { PublicProfile } from "@/types/db";
 import { CITIES, SHOW_SAMPLE_PROFILES } from "@/lib/constants";
 import { CowboyHatIcon } from "@/components/western-icons";
@@ -74,6 +75,7 @@ const RELATIONSHIP_INTENT_LABELS: Record<string, string> = {
 };
 
 export default function DiscoverPage() {
+  const { status: launchStatus, loading: launchLoading } = usePreLaunchStatus();
   const supabase = createClient();
   const [candidates, setCandidates] = useState<PublicProfile[]>([]);
   const [showingSamples, setShowingSamples] = useState(false);
@@ -315,6 +317,13 @@ export default function DiscoverPage() {
   }
 
   const current = candidates[index];
+
+  if (launchLoading) {
+    return <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink-soft">Loading…</div>;
+  }
+  if (launchStatus && !launchStatus.isLaunched) {
+    return <PreLaunchHoldingRoom status={launchStatus} />;
+  }
 
   return (
     <div className="max-w-xl mx-auto px-4 sm:px-6 py-6 sm:py-10 bg-cream min-h-screen text-ink">
