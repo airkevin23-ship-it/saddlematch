@@ -92,12 +92,26 @@ export default function MatchThreadPage() {
 
   async function sendMessage(text: string) {
     if (!text.trim() || !userId) return;
-    const { error } = await supabase.from("messages").insert({
-      match_id: matchId,
-      sender_id: userId,
-      body: text.trim(),
-    });
-    if (!error) setBody("");
+    const { data, error } = await supabase
+      .from("messages")
+      .insert({
+        match_id: matchId,
+        sender_id: userId,
+        body: text.trim(),
+      })
+      .select("id")
+      .single();
+    if (!error) {
+      setBody("");
+      if (data) {
+        // Best-effort — a failed notification should never block sending.
+        fetch("/api/notify/message", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messageId: data.id }),
+        }).catch(() => {});
+      }
+    }
   }
 
   async function handleBlock() {
