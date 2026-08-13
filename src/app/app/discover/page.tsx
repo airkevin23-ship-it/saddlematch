@@ -200,12 +200,29 @@ export default function DiscoverPage() {
 
       if (match) {
         if (likeCommentArg) {
-          await supabase.from("messages").insert({
-            match_id: match.id,
-            sender_id: user.id,
-            body: likeCommentArg,
-          });
+          const { data: sentMessage } = await supabase
+            .from("messages")
+            .insert({
+              match_id: match.id,
+              sender_id: user.id,
+              body: likeCommentArg,
+            })
+            .select("id")
+            .single();
+          if (sentMessage) {
+            fetch("/api/notify/message", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ messageId: sentMessage.id }),
+            }).catch(() => {});
+          }
         }
+        // Best-effort — a failed notification should never block the swipe.
+        fetch("/api/notify/match", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ matchId: match.id }),
+        }).catch(() => {});
         setMatchToast(`You matched with ${current.display_name}! 🎉`);
         setTimeout(() => setMatchToast(null), 4000);
       }
