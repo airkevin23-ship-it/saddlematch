@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display } from "next/font/google";
+import { Oswald } from "next/font/google";
 import "./globals.css";
 import { APP_NAME, TAGLINE } from "@/lib/constants";
 import SiteFooter from "@/components/site-footer";
@@ -31,23 +31,29 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
   },
   icons: {
+    // Transparent PNG is fine for the favicon; browsers composite it onto
+    // whatever chrome color surrounds it.
     icon: "/saddlematch-logo.png",
-    apple: "/saddlematch-logo.png",
+    // iOS composites transparent apple-touch-icons against black rather
+    // than leaving them see-through, so this needs the opaque variant.
+    apple: "/saddlematch-icon-maskable.png",
   },
   verification: {
     google: "Z3Av3uQVkE7i5PEZX3V-PagHve9JEdGUJNM3kLYVbeQ",
   },
 };
 
-// A display serif for headlines only, loaded through next/font so Next
-// self-hosts it at build time: no extra network request, no flash of
-// unstyled text, no layout shift. Body copy stays in the sans.
-const display = Playfair_Display({
+// A bold, condensed display face for headlines only — collegiate/varsity
+// in spirit (the same family of look as university athletics branding),
+// loaded through next/font so Next self-hosts it at build time: no extra
+// network request, no flash of unstyled text, no layout shift. Body copy
+// stays in the sans.
+const display = Oswald({
   subsets: ["latin"],
-  weight: ["700"],
-  style: ["normal", "italic"],
+  weight: ["600", "700"],
+  style: ["normal"],
   display: "swap",
-  variable: "--font-playfair",
+  variable: "--font-oswald",
 });
 
 export default function RootLayout({

@@ -33,7 +33,12 @@ export default function manifest(): MetadataRoute.Manifest {
       {
         // Maskable tells Android it may crop this to whatever shape the
         // launcher uses, instead of dropping the square into a white circle.
-        src: "/saddlematch-logo.png",
+        // Unlike the "any" icon above, a maskable icon must NOT be
+        // transparent — the OS fills transparent regions with its own
+        // (unstyled) background when it applies the mask, which is why
+        // this points at a separate opaque variant with the logo inset
+        // into the safe zone instead of reusing the transparent PNG.
+        src: "/saddlematch-icon-maskable.png",
         sizes: "1254x1254",
         type: "image/png",
         purpose: "maskable",
