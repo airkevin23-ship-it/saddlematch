@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { APP_NAME, CITIES, PROMPT_BANK } from "@/lib/constants";
 import NeighbourhoodSelect from "@/components/neighbourhood-select";
-import { CowboyHatIcon, HorseshoeIcon, LassoHeartIcon } from "@/components/western-icons";
+import { HorseshoeIcon, LassoHeartIcon } from "@/components/western-icons";
 import type { Gender, Prompt, RelationshipIntent } from "@/types/db";
 
 // Separate Month / Day / Year selects instead of the native <input type="date">.
@@ -301,7 +301,6 @@ export default function OnboardingPage() {
       <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full py-8">
         {step === 0 && (
           <div className="text-center">
-            <StepIcon icon={CowboyHatIcon} />
             <h1 className="font-display text-2xl font-bold leading-snug mb-2">Add your best photo</h1>
             <p className="text-ink-soft leading-relaxed mb-6">
               Profiles with a real photo get a lot more matches. You can add

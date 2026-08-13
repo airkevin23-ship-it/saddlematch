@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { PublicProfile } from "@/types/db";
-import { CowboyHatIcon } from "@/components/western-icons";
 import { usePreLaunchStatus, PreLaunchHoldingRoom } from "@/components/pre-launch-gate";
 
 interface MatchRow {
@@ -106,9 +105,7 @@ export default function MatchesPage() {
                   alt={m.otherProfile.display_name}
                   className="w-full h-full object-cover"
                 />
-              ) : (
-                <CowboyHatIcon className="w-6 h-6" />
-              )}
+              ) : null}
             </div>
             <div>
               <p className="font-bold flex items-center gap-1.5">

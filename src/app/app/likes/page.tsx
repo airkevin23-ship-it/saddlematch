@@ -5,7 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { usePreLaunchStatus, PreLaunchHoldingRoom } from "@/components/pre-launch-gate";
 import type { PublicProfile } from "@/types/db";
-import { CowboyHatIcon, LassoHeartIcon } from "@/components/western-icons";
+import { LassoHeartIcon } from "@/components/western-icons";
 import { APP_NAME } from "@/lib/constants";
 
 interface LikeRow {
@@ -190,11 +190,7 @@ export default function LikesPage() {
                     alt=""
                     className="h-full w-full object-cover blur-md scale-110"
                   />
-                ) : (
-                  <div className="grid h-full w-full place-items-center text-ink-faint blur-md">
-                    <CowboyHatIcon className="h-8 w-8" />
-                  </div>
-                )}
+                ) : null}
               </div>
             ))}
           </div>
@@ -228,11 +224,7 @@ export default function LikesPage() {
                     alt={row.profile.display_name}
                     className="h-full w-full object-cover"
                   />
-                ) : (
-                  <div className="grid h-full w-full place-items-center text-ink-faint">
-                    <CowboyHatIcon className="h-10 w-10" />
-                  </div>
-                )}
+                ) : null}
               </div>
               <div className="p-2.5">
                 <p className="text-sm font-bold flex items-center gap-1.5">

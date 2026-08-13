@@ -4,7 +4,6 @@ import { createClient } from "@/lib/supabase/client";
 import { usePreLaunchStatus, PreLaunchHoldingRoom } from "@/components/pre-launch-gate";
 import type { PublicProfile } from "@/types/db";
 import { CITIES, SHOW_SAMPLE_PROFILES } from "@/lib/constants";
-import { CowboyHatIcon } from "@/components/western-icons";
 import { ageOf, heightOf, orderedDetails } from "@/lib/profile-details";
 
 // Three sample profiles shown when the real queue is empty. They exist so
@@ -452,9 +451,7 @@ export default function DiscoverPage() {
               {photoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={photoUrl} alt={`${current.display_name} photo ${photoIndex + 1}`} className="w-full h-full object-cover" />
-              ) : (
-                <CowboyHatIcon className="w-14 h-14" />
-              )}
+              ) : null}
               <button
                 onClick={() => setOpenPromptIndex(openPromptIndex === "photo" ? null : "photo")}
                 className={`absolute right-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-ink text-xl text-white shadow-lg ring-4 ring-card transition-colors hover:bg-brand ${
