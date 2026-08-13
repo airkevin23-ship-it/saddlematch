@@ -59,8 +59,12 @@ export function CowboyHatIcon({ className }: IconProps) {
       className={className}
       aria-hidden="true"
     >
-      <path d="M3 16.5c0-1 1.4-1.7 2.7-2.1C7 14 8 12.7 8 11.2c0-3 2-5.7 4-5.7s4 2.7 4 5.7c0 1.5 1 2.8 2.3 3.2 1.3.4 2.7 1.1 2.7 2.1 0 1.4-4.3 2.5-9 2.5s-9-1.1-9-2.5Z" />
-      <path d="M6.5 16c1.4.5 3.4.8 5.5.8s4.1-.3 5.5-.8" />
+      {/* Wide flat brim, clearly wider than the crown, so this reads as a hat
+          at a glance rather than any other rounded silhouette — the previous
+          version was a smooth dome sitting directly on a tight ring and read
+          badly at larger sizes. */}
+      <path d="M2.5 16C2.5 14.3 5 13.3 8 13.1L8 13C8 9.5 9.8 6.5 12 6.5C14.2 6.5 16 9.5 16 13L16 13.1C19 13.3 21.5 14.3 21.5 16C21.5 17.4 17.2 18.5 12 18.5C6.8 18.5 2.5 17.4 2.5 16Z" />
+      <path d="M8.3 12.8L15.7 12.8" />
     </svg>
   );
 }
