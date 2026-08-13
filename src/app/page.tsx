@@ -27,21 +27,21 @@ export default function LandingPage() {
           />
         <Link
           href="/login"
-          className="rounded-full border border-[#D92B4B]/20 px-3 py-1.5 text-sm font-semibold text-[#D92B4B] transition-opacity hover:opacity-80"
+          className="rounded-full border border-[#B5541F]/20 px-3 py-1.5 text-sm font-semibold text-[#B5541F] transition-opacity hover:opacity-80"
         >
           Log in
         </Link>
       </header>
 
       <main className="flex flex-1 flex-col items-center px-6 pb-10 pt-10 text-center">
-        <div className="mb-4 max-w-[15.5rem] rounded-full bg-[#D92B4B]/10 px-4 py-1.5 text-center text-xs font-semibold uppercase leading-snug tracking-widest text-[#D92B4B]">
+        <div className="mb-4 max-w-[15.5rem] rounded-full bg-[#B5541F]/10 px-4 py-1.5 text-center text-xs font-semibold uppercase leading-snug tracking-widest text-[#B5541F]">
           <span aria-hidden="true">☆</span> Dating for the western lifestyle{" "}
           <span aria-hidden="true">☆</span>
         </div>
 
         <h1 className="mb-3 font-display text-[2.25rem] font-bold leading-[1.08] tracking-tight text-[#1A0C08]">
           Built for{" "}
-            <span className="italic text-[#D92B4B]">Austin&rsquo;s</span>{" "}
+            <span className="italic text-[#B5541F]">Austin&rsquo;s</span>{" "}
             Country Lifestyle
         </h1>
         <p className="mb-7 max-w-[19rem] text-base leading-relaxed text-stone-600">
@@ -109,7 +109,7 @@ export default function LandingPage() {
                 key={step.title}
                 className="flex gap-3 rounded-2xl border border-amber-900/10 bg-white p-4 shadow-sm"
               >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#D92B4B] text-sm font-bold text-white">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#B5541F] text-sm font-bold text-white">
                   {i + 1}
                 </span>
                 <div>
@@ -136,7 +136,7 @@ export default function LandingPage() {
               ["You control what is visible", "Hide or pause your profile any time."],
             ].map(([title, body]) => (
               <li key={title} className="flex gap-2.5 rounded-xl bg-white/70 px-3.5 py-3">
-                <span aria-hidden="true" className="font-bold text-[#D92B4B]">
+                <span aria-hidden="true" className="font-bold text-[#B5541F]">
                   &#10003;
                 </span>
                 <p className="text-sm leading-snug text-stone-700">
@@ -149,7 +149,7 @@ export default function LandingPage() {
 
         {/* Founding member. Deliberately no member counts and no testimonials:
             there are no members yet, and inventing them is not recoverable. */}
-        <section className="mt-10 w-full rounded-2xl border border-[#D92B4B]/15 bg-[#D92B4B]/5 p-5 text-left">
+        <section className="mt-10 w-full rounded-2xl border border-[#B5541F]/15 bg-[#B5541F]/5 p-5 text-left">
           <h2 className="font-display text-xl font-bold text-[#1A0C08]">Austin first</h2>
           <p className="mt-2 text-sm leading-relaxed text-stone-600">
             SaddleMatch is opening in Austin before anywhere else. Join now and
@@ -165,7 +165,7 @@ export default function LandingPage() {
       <div className="sticky bottom-0 z-40 border-t border-amber-900/10 bg-white/95 p-4 backdrop-blur-md">
         <Link
           href="/signup"
-          className="block w-full rounded-xl bg-[#D92B4B] px-6 py-3.5 text-center text-base font-bold text-white shadow-lg shadow-[#D92B4B]/25 transition-all hover:bg-[#C0223F] active:scale-[0.98]"
+          className="block w-full rounded-xl bg-[#B5541F] px-6 py-3.5 text-center text-base font-bold text-white shadow-lg shadow-[#B5541F]/25 transition-all hover:bg-[#8A3E15] active:scale-[0.98]"
         >
           Create My Free Profile
         </Link>

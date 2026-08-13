@@ -11,12 +11,14 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Display serif for headlines only. The variable is set on <html> by
-     next/font in layout.tsx; the fallbacks matter because the utility is
-     used above the fold. */
-  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+  /* Bold condensed display face for headlines only. The variable is set on
+     <html> by next/font in layout.tsx; the fallbacks matter because the
+     utility is used above the fold. */
+  --font-display: var(--font-oswald), "Arial Narrow", Impact, sans-serif;
 
-  /* TX Connect brand palette — warm, Hinge-inspired light theme */
+  /* SaddleMatch brand palette — burnt orange & charcoal, Western/Austin
+     inspired. Replaces an earlier pink palette that read as a generic
+     dating-app color rather than a Western one. */
   --color-cream: #fff8f3;
   --color-card: #ffffff;
   --color-ink: #1b1917;
@@ -24,9 +26,9 @@
   --color-ink-faint: #a39c94;
   --color-line: #ece2d8;
   --color-line-strong: #ddd0c2;
-  --color-brand: #e0264f;
-  --color-brand-dark: #bd1c40;
-  --color-brand-soft: #fde6ec;
+  --color-brand: #b5541f;
+  --color-brand-dark: #8a3e15;
+  --color-brand-soft: #f5e4d3;
 }
 
 body {
