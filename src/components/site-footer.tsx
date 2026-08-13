@@ -13,7 +13,7 @@ const LINKS = [
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/guidelines", label: "Community Guidelines" },
   { href: "/acceptable-use", label: "Acceptable Use Policy" },
-  { href: "/safety", label: "Safety" },
+  { href: "/safety", label: "Safety Policy" },
   { href: "mailto:kswwllc@gmail.com", label: "Contact" },
 ];
 

@@ -120,7 +120,7 @@ export default function SettingsPage() {
             { href: "/privacy", label: "Privacy Policy" },
             { href: "/guidelines", label: "Community Guidelines" },
             { href: "/acceptable-use", label: "Acceptable Use Policy" },
-            { href: "/safety", label: "Safety" },
+            { href: "/safety", label: "Safety Policy" },
           ].map((item) => (
             <Link
               key={item.href}
