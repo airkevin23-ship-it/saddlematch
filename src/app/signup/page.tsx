@@ -22,7 +22,7 @@ export default function SignupPage() {
     setError(null);
 
     if (!agreed) {
-      setError("You need to confirm you're 18+ and agree to the Terms and Privacy Policy.");
+      setError("You need to confirm you're 18+, that you've read the safety disclosure, and agree to the Terms and Privacy Policy.");
       return;
     }
 
@@ -99,6 +99,12 @@ export default function SignupPage() {
             className="w-full rounded-xl bg-card border border-line px-4 py-3 outline-none focus:border-brand transition-colors"
           />
 
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+            <p className="text-[11px] font-extrabold uppercase leading-snug text-red-800">
+              SaddleMatch does not conduct criminal background screenings on its members.
+            </p>
+          </div>
+
           <label className="flex items-start gap-2.5 text-xs text-ink-soft leading-relaxed cursor-pointer">
             <input
               type="checkbox"
@@ -107,7 +113,11 @@ export default function SignupPage() {
               className="mt-0.5 shrink-0 accent-brand w-4 h-4"
             />
             <span>
-              I confirm I&rsquo;m 18 or older and agree to the{" "}
+              I confirm I&rsquo;m 18 or older, I&rsquo;ve read the notice above and the{" "}
+              <Link href="/safety" target="_blank" className="text-brand hover:text-brand-dark font-medium">
+                Safety Policy
+              </Link>
+              , and I agree to the{" "}
               <Link href="/terms" target="_blank" className="text-brand hover:text-brand-dark font-medium">
                 Terms of Service
               </Link>{" "}
