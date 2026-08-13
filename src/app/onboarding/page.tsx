@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { ComponentType } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { APP_NAME, CITIES, PROMPT_BANK } from "@/lib/constants";
 import NeighbourhoodSelect from "@/components/neighbourhood-select";
+import { CowboyHatIcon, HorseshoeIcon, LassoHeartIcon } from "@/components/western-icons";
 import type { Gender, Prompt, RelationshipIntent } from "@/types/db";
 
 // Bounds for the birthdate picker: no one under 18 (enforced again on submit,
@@ -18,6 +20,19 @@ function isoDateYearsAgo(years: number): string {
 }
 const BIRTHDATE_MAX = isoDateYearsAgo(18);
 const BIRTHDATE_MIN = isoDateYearsAgo(100);
+
+// A small brand-soft circle behind a western line-art icon, sitting above a
+// step's headline. Matches the treatment already used on the landing page,
+// the pre-launch holding room, and Likes You -- onboarding is the one place
+// in the app that was still using a plain bold sans headline instead of the
+// app's actual display type and icon set.
+function StepIcon({ icon: Icon }: { icon: ComponentType<{ className?: string }> }) {
+  return (
+    <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-brand-soft text-brand">
+      <Icon className="h-8 w-8" />
+    </div>
+  );
+}
 
 const GENDERS: { value: Gender; label: string }[] = [
   { value: "male", label: "Man" },
@@ -252,7 +267,8 @@ export default function OnboardingPage() {
       <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full py-8">
         {step === 0 && (
           <div className="text-center">
-            <h1 className="text-2xl font-extrabold tracking-tight mb-2">Add your best photo</h1>
+            <StepIcon icon={CowboyHatIcon} />
+            <h1 className="font-display text-2xl font-bold leading-snug mb-2">Add your best photo</h1>
             <p className="text-ink-soft leading-relaxed mb-6">
               Profiles with a real photo get a lot more matches. You can add
               more later.
@@ -302,7 +318,7 @@ export default function OnboardingPage() {
 
         {step === 1 && (
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight mb-1">About you</h1>
+            <h1 className="font-display text-2xl font-bold leading-snug mb-1">About you</h1>
             <p className="text-ink-soft mb-6 text-sm">Just the basics — you can add more later.</p>
             <div className="space-y-4">
               <div>
@@ -363,7 +379,8 @@ export default function OnboardingPage() {
 
         {step === 2 && (
           <div className="text-center">
-            <h1 className="text-2xl font-extrabold tracking-tight mb-2">Where are you based?</h1>
+            <StepIcon icon={HorseshoeIcon} />
+            <h1 className="font-display text-2xl font-bold leading-snug mb-2">Where are you based?</h1>
             <p className="text-ink-soft leading-relaxed mb-6">
               SaddleMatch is Austin-only for now. Pick the area you call home &mdash;
               it sets who shows up in your daily matches.
@@ -380,7 +397,8 @@ export default function OnboardingPage() {
 
         {step === 3 && (
           <div className="text-center">
-            <h1 className="text-2xl font-extrabold tracking-tight mb-2">What are you into?</h1>
+            <StepIcon icon={LassoHeartIcon} />
+            <h1 className="font-display text-2xl font-bold leading-snug mb-2">What are you into?</h1>
             <p className="text-ink-soft leading-relaxed mb-6">
               A few things you love — separated by commas.
             </p>
@@ -395,7 +413,7 @@ export default function OnboardingPage() {
 
         {step === 4 && (
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight mb-1">Your 3 prompts</h1>
+            <h1 className="font-display text-2xl font-bold leading-snug mb-1">Your 3 prompts</h1>
             <p className="text-ink-soft mb-6 text-sm">
               These are what people see and like on your profile — pick prompts
               you can answer specifically.
