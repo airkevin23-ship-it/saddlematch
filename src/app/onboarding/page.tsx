@@ -36,10 +36,6 @@ function daysInMonth(year: string, month: string): number {
   if (!year || !month) return 31;
   return new Date(Number(year), Number(month), 0).getDate();
 }
-function parseBirthdate(value: string): { year: string; month: string; day: string } {
-  const [year = "", month = "", day = ""] = value.split("-");
-  return { year, month, day };
-}
 
 // A small brand-soft circle behind a western line-art icon, sitting above a
 // step's headline. Matches the treatment already used on the landing page,
@@ -87,7 +83,19 @@ export default function OnboardingPage() {
   const [photoUploading, setPhotoUploading] = useState(false);
 
   const [displayName, setDisplayName] = useState("");
-  const [birthdate, setBirthdate] = useState("");
+  // Year / month / day are tracked as three independent pieces of state
+  // rather than derived from a single composed date string. They used to
+  // be parsed back out of one `birthdate` string on every render, but that
+  // string was only ever set once all three were chosen -- so picking just
+  // the month (with day/year still blank) produced "", which on re-render
+  // parsed back out to an empty month too, snapping the select right back
+  // to its placeholder. Each pick looked like it did nothing because it
+  // genuinely didn't persist. Independent state means picking one part
+  // sticks regardless of what else is still unset.
+  const [birthYear, setBirthYear] = useState("");
+  const [birthMonth, setBirthMonth] = useState("");
+  const [birthDay, setBirthDay] = useState("");
+  const birthdate = birthYear && birthMonth && birthDay ? `${birthYear}-${birthMonth}-${birthDay}` : "";
   const [gender, setGender] = useState<Gender>("male");
   const [interestedIn, setInterestedIn] = useState<Gender[]>(["female"]);
 
@@ -110,18 +118,19 @@ export default function OnboardingPage() {
     })();
   }, [supabase]);
 
-  const { year: birthYear, month: birthMonth, day: birthDay } = parseBirthdate(birthdate);
-
   function updateBirthdatePart(part: "year" | "month" | "day", value: string) {
-    const current = parseBirthdate(birthdate);
-    const next = { ...current, [part]: value };
+    const nextYear = part === "year" ? value : birthYear;
+    const nextMonth = part === "month" ? value : birthMonth;
+    let nextDay = part === "day" ? value : birthDay;
     // Clamp the day if switching to a shorter month (e.g. Jan 31 -> Feb) so
     // the composed date never comes out invalid.
-    const maxDay = daysInMonth(next.year, next.month);
-    if (next.day && Number(next.day) > maxDay) {
-      next.day = String(maxDay).padStart(2, "0");
+    const maxDay = daysInMonth(nextYear, nextMonth);
+    if (nextDay && Number(nextDay) > maxDay) {
+      nextDay = String(maxDay).padStart(2, "0");
     }
-    setBirthdate(next.year && next.month && next.day ? `${next.year}-${next.month}-${next.day}` : "");
+    setBirthYear(nextYear);
+    setBirthMonth(nextMonth);
+    setBirthDay(nextDay);
   }
 
   function toggleInterestedIn(g: Gender) {
