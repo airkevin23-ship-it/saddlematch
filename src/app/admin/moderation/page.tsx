@@ -52,7 +52,10 @@ export default async function ModerationPage() {
 
   return (
         <main className="mx-auto min-h-screen max-w-3xl bg-cream px-5 py-10 text-ink sm:px-8">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand">SaddleMatch safety</p>
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand">SaddleMatch safety</p>
+                <a href="/admin/launch" className="text-xs font-bold text-ink-soft underline underline-offset-4 hover:text-ink">Launch settings</a>
+              </div>
               <h1 className="mt-2 text-3xl font-extrabold">Report moderation</h1>
               <p className="mt-2 text-sm leading-relaxed text-ink-soft">Review open reports carefully. Dismissing restores visibility; actioning keeps a profile hidden from Discover.</p>
               <div className="mt-7 space-y-4">

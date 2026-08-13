@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { PublicProfile } from "@/types/db";
 import { CowboyHatIcon } from "@/components/western-icons";
+import { usePreLaunchStatus, PreLaunchHoldingRoom } from "@/components/pre-launch-gate";
 
 interface MatchRow {
   id: string;
@@ -16,6 +17,7 @@ export default function MatchesPage() {
   const supabase = createClient();
   const [matches, setMatches] = useState<MatchRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const { status: launchStatus, loading: launchLoading } = usePreLaunchStatus();
 
   useEffect(() => {
     (async () => {
@@ -57,6 +59,13 @@ export default function MatchesPage() {
       setLoading(false);
     })();
   }, [supabase]);
+
+  if (launchLoading) {
+    return <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink-soft">Loading…</div>;
+  }
+  if (launchStatus && !launchStatus.isLaunched) {
+    return <PreLaunchHoldingRoom status={launchStatus} />;
+  }
 
   return (
     <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink">
