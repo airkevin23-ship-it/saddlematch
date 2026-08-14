@@ -6,14 +6,16 @@ interface DetailRow {
   value: string;
 }
 
-// The "About me" detail list on the profile view: a small icon next to a
-// bold word, grouped under a serif heading — the same pattern reference
-// apps like Krush use for their attribute rows. Pulled out as its own
-// component (rather than inlined) so the same treatment can be reused
-// elsewhere later without copy-pasting the icon map and markup again.
+// A small icon next to a bold word, optionally grouped under a serif
+// heading — the same pattern reference apps like Krush use for their
+// attribute rows. Used on the profile view (with a heading, since it's a
+// standalone "About me" section) and the Discover card (without one, since
+// it sits directly under the bio and doesn't need its own label). Pulled out
+// as its own component so the treatment can be reused without copy-pasting
+// the icon map and markup at every call site.
 export default function DetailRowList({
   rows,
-  heading = "About me",
+  heading,
 }: {
   rows: DetailRow[];
   heading?: string;
@@ -22,8 +24,8 @@ export default function DetailRowList({
 
   return (
     <div className="mt-5">
-      <h3 className="font-serif-heading text-xl font-bold text-ink">{heading}</h3>
-      <div className="mt-3 space-y-0.5">
+      {heading && <h3 className="font-serif-heading text-xl font-bold text-ink">{heading}</h3>}
+      <div className={`space-y-0.5 ${heading ? "mt-3" : ""}`}>
         {rows.map((row) => {
           const Icon = DETAIL_ICONS[row.key as keyof typeof DETAIL_ICONS];
           return (

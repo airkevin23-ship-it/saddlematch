@@ -186,7 +186,7 @@ export default function MatchThreadPage() {
     <div className="max-w-md mx-auto px-6 py-8 flex flex-col h-[calc(100vh-64px)] bg-cream text-ink">
       <div className="mb-4">
         <div className="flex items-start justify-between gap-2">
-          <h1 className="text-lg font-extrabold tracking-tight flex items-center gap-1.5">
+          <h1 className="font-serif-heading text-lg font-bold tracking-tight flex items-center gap-1.5">
             {otherProfile
               ? `${otherProfile.display_name}, ${otherProfile.age}`
               : "Loading…"}

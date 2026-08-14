@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { WesternStarIcon } from "@/components/western-icons";
+import { WesternStarIcon, LassoHeartIcon } from "@/components/western-icons";
 
 // Persistent app chrome: the same top bar and bottom tab bar on every screen,
 // at every width. SaddleMatch is a phone app, so the tab bar is never hidden
@@ -35,14 +35,6 @@ function ChatIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
       <path d="M21 11.5a7.5 7.5 0 0 1-10.9 6.7L4 20l1.8-5.1A7.5 7.5 0 1 1 21 11.5Z" />
-    </svg>
-  );
-}
-
-function HeartIcon({ className }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <path d="M12 20s-7.5-4.4-7.5-10A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.8c0 5.6-7.5 10-7.5 10Z" />
     </svg>
   );
 }
@@ -99,7 +91,7 @@ export function HeaderActions() {
 
 const TABS = [
   { href: "/app/discover", label: "Discover", Icon: CardsIcon },
-  { href: "/app/likes", label: "Likes", Icon: HeartIcon },
+  { href: "/app/likes", label: "Likes", Icon: LassoHeartIcon },
   { href: "/app/matches", label: "Matches", Icon: ChatIcon },
   { href: "/app/upgrade", label: "Plus", Icon: WesternStarIcon },
 ];
