@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { ComponentType } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { APP_NAME, CITIES, PROMPT_BANK } from "@/lib/constants";
+import { APP_NAME, CITIES, PROMPT_BANK, isAiPromoActive, AI_FREE_PROMO_LABEL } from "@/lib/constants";
 import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import { HorseshoeIcon, LassoHeartIcon } from "@/components/western-icons";
 import type { Gender, Prompt, RelationshipIntent } from "@/types/db";
@@ -523,7 +523,7 @@ export default function OnboardingPage() {
                   disabled={aiLoadingIndex !== null}
                   className="mt-1 text-xs text-brand hover:text-brand-dark font-semibold disabled:opacity-50"
                 >
-                  {aiLoadingIndex === i ? "Writing…" : "✨ Help me answer (AI, Plus)"}
+                  {aiLoadingIndex === i ? "Writing…" : `✨ Help me answer (AI, ${isAiPromoActive() ? AI_FREE_PROMO_LABEL : "Plus"})`}
                 </button>
               </div>
             ))}

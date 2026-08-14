@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { APP_NAME } from "@/lib/constants";
+import { APP_NAME, AI_FREE_PROMO_ENDS_AT } from "@/lib/constants";
 
 const LEGAL_ENTITY = "W&W Trading LLC, Austin, Texas, USA";
 const CONTACT_EMAIL = "contact@wwllcs.com";
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="font-bold text-base mb-2">6. AI features and what is sent to Anthropic</h2>
-            <p className="text-ink-soft mb-3">Some optional Plus features use AI: help writing a prompt answer, describing what you have in common with someone, and suggesting an opening message.</p>
+            <p className="text-ink-soft mb-3">Some optional Plus features use AI: help writing a prompt answer, describing what you have in common with someone, and suggesting an opening message. As a launch promotion, these are free for every member through {AI_FREE_PROMO_ENDS_AT.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })} — the data sent to Anthropic is the same either way, described below.</p>
             <p className="text-ink-soft mb-3">When you use one of these, we send the relevant profile information to Anthropic to generate a suggestion. For the compatibility feature that means the overlapping details between your profile and the other member&rsquo;s — shared interests, intentions, and city. For prompt help it means the prompt and any draft you have written.</p>
             <p className="text-ink-soft mb-3">We do not send your email address, phone number, password, payment details, or your private messages with matches.</p>
             <p className="text-ink-soft mb-3">Suggestions are shown to you and only to you. Nothing is posted to your profile or sent to another member unless you choose to send it. If you never use these features, nothing of yours is sent to Anthropic at all.</p>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { CITIES, PROMPT_BANK } from "@/lib/constants";
+import { CITIES, PROMPT_BANK, isAiPromoActive, AI_FREE_PROMO_LABEL } from "@/lib/constants";
 import ProfileMedia from "@/components/profile-media";
 import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import VoicePromptRecorder from "@/components/voice-prompt-recorder";
@@ -861,7 +861,7 @@ export default function ProfilePage() {
                 disabled={aiLoadingIndex !== null}
                 className="mt-1 text-xs text-brand hover:text-brand-dark font-semibold disabled:opacity-50"
               >
-                {aiLoadingIndex === i ? "Writing…" : "✨ Help me answer (AI, Plus)"}
+                {aiLoadingIndex === i ? "Writing…" : `✨ Help me answer (AI, ${isAiPromoActive() ? AI_FREE_PROMO_LABEL : "Plus"})`}
               </button>
             </div>
           ))}

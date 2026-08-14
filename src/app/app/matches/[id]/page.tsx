@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Message, PublicProfile } from "@/types/db";
+import { isAiPromoActive, AI_FREE_PROMO_LABEL } from "@/lib/constants";
 
 export default function MatchThreadPage() {
   const params = useParams<{ id: string }>();
@@ -235,7 +236,7 @@ export default function MatchThreadPage() {
             disabled={reasonLoading}
             className="text-xs text-brand hover:text-brand-dark font-semibold mt-1 disabled:opacity-50"
           >
-            {reasonLoading ? "Thinking…" : "✨ What you have in common (AI, Plus)"}
+            {reasonLoading ? "Thinking…" : `✨ What you have in common (AI, ${isAiPromoActive() ? AI_FREE_PROMO_LABEL : "Plus"})`}
           </button>
         )}
       </div>
@@ -283,7 +284,7 @@ export default function MatchThreadPage() {
             >
               {suggestionsLoading
                 ? "Thinking…"
-                : "✨ Suggest an opening message (AI, Plus)"}
+                : `✨ Suggest an opening message (AI, ${isAiPromoActive() ? AI_FREE_PROMO_LABEL : "Plus"})`}
             </button>
           )}
         </div>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { hasActiveSubscription } from "@/lib/subscription";
+import { hasAiAccess } from "@/lib/subscription";
 import { getAnthropicClient, AI_MODEL } from "@/lib/anthropic";
 import { CITIES } from "@/lib/constants";
 import {
@@ -12,10 +12,11 @@ import {
 
 // Common Ground for an existing match.
 //
-// Same rule as the preview route: the overlap is computed in plain code
-// and shown to everyone; the AI only rephrases that list, and only for
-// Plus. The phrased version is cached on the match row so we pay for it
-// once per match rather than once per visit.
+// Same rule as the preview route: the overlap is computed in plain code and
+// shown to everyone; the AI-phrased rewrite sits behind hasAiAccess, which
+// is free for every member during the launch promo and Plus-only after it
+// (see lib/subscription.ts#hasAiAccess). The phrased version is cached on
+// the match row so we pay for it once per match rather than once per visit.
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -89,7 +90,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const subscribed = await hasActiveSubscription(user.id);
+  const subscribed = await hasAiAccess(user.id);
   if (!subscribed) {
     return NextResponse.json({
       commonGround: chips,
