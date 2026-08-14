@@ -842,7 +842,7 @@ export default function ProfilePage() {
               <select
                 value={p.question}
                 onChange={(e) => updatePromptQuestion(i, e.target.value)}
-                className="w-full rounded-xl bg-card border border-line px-3 py-2 text-sm outline-none focus:border-brand mb-1 transition-colors"
+                className="w-full rounded-xl bg-card border border-line px-3 py-2 text-sm outline-none focus:border-brand mb-2 transition-colors"
               >
                 {PROMPT_BANK.map((q) => (
                   <option key={q} value={q} disabled={usedQuestions.has(q) && q !== p.question}>
@@ -850,12 +850,16 @@ export default function ProfilePage() {
                   </option>
                 ))}
               </select>
+              {/* rows=4 + min-h give room for a full 150-char answer to wrap
+                  without clipping - the 16px iOS zoom-prevention font size
+                  (see globals.css) makes wrapped lines taller than a 2-row
+                  box budgeted for, which was cutting answers off. */}
               <textarea
-                rows={2}
+                rows={4}
                 maxLength={150}
                 value={p.answer}
                 onChange={(e) => updatePromptAnswer(i, e.target.value)}
-                className="w-full rounded-xl bg-card border border-line px-4 py-3 text-sm outline-none focus:border-brand transition-colors"
+                className="w-full min-h-[6rem] rounded-xl bg-card border border-line px-4 py-3 text-sm leading-snug outline-none focus:border-brand transition-colors"
               />
               <button
                 onClick={() => handleAiPrompt(i)}
