@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { usePreLaunchStatus, PreLaunchHoldingRoom } from "@/components/pre-launch-gate";
 import type { PublicProfile } from "@/types/db";
-import { CITIES, SHOW_SAMPLE_PROFILES } from "@/lib/constants";
+import { CITIES, SHOW_SAMPLE_PROFILES, isAiPromoActive, AI_FREE_PROMO_LABEL } from "@/lib/constants";
 import { ageOf, heightOf, orderedDetails } from "@/lib/profile-details";
 
 // Three sample profiles shown when the real queue is empty. They exist so
@@ -586,7 +586,7 @@ export default function DiscoverPage() {
                   disabled={previewLoading || current.is_demo}
                   className="text-xs text-brand hover:text-brand-dark font-semibold disabled:opacity-50"
                 >
-                  {current.is_demo ? "AI insights available on real profiles" : previewLoading ? "Thinking…" : "✨ See what you might have in common (AI, Plus)"}
+                  {current.is_demo ? "AI insights available on real profiles" : previewLoading ? "Thinking…" : `✨ See what you might have in common (AI, ${isAiPromoActive() ? AI_FREE_PROMO_LABEL : "Plus"})`}
                 </button>
               )}
               {previewError && <p className="text-xs text-red-600 mt-1">{previewError}</p>}

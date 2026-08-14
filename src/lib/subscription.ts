@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { isAiPromoActive } from "@/lib/constants";
 
 // Returns true if the given (or currently logged-in) user has an active
 // or trialing Plus subscription. AI routes gate on this.
@@ -30,3 +31,16 @@ export async function hasActiveSubscription(userId: string): Promise<boolean> {
 
   return data?.status === "active" || data?.status === "trialing";
 }
+
+// Gate for the five AI routes specifically (bio, prompt-answer, icebreaker,
+// match-reason, preview-reason) - NOT for other Plus perks like the bigger
+// daily queue (see api/daily-queue), which stay paywalled during the promo.
+// During the launch window every member passes regardless of subscription
+// status; once AI_FREE_PROMO_ENDS_AT passes this collapses to exactly
+// hasActiveSubscription, so the paywall comes back on its own with no
+// follow-up deploy required.
+export async function hasAiAccess(userId: string): Promise<boolean> {
+  if (isAiPromoActive()) return true;
+  return hasActiveSubscription(userId);
+}
+

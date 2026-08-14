@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { hasActiveSubscription } from "@/lib/subscription";
+import { hasAiAccess } from "@/lib/subscription";
 import { getAnthropicClient, AI_MODEL } from "@/lib/anthropic";
 import { CITIES } from "@/lib/constants";
 import {
@@ -13,10 +13,11 @@ import {
 // Common Ground shown BEFORE deciding to like/pass.
 //
 // The overlap itself is computed in plain code and returned to everyone —
-// it costs nothing, so gating it would be gating arithmetic. Plus members
-// additionally get the AI-phrased version, where the model only rephrases
-// the list we already computed. Free users therefore never trigger an
-// Anthropic call from this route.
+// it costs nothing, so gating it would be gating arithmetic. The AI-phrased
+// version, where the model only rephrases the list we already computed, sits
+// behind hasAiAccess: normally Plus-only, but free for every member during
+// the launch promo (see lib/subscription.ts#hasAiAccess). Outside the promo,
+// free users never trigger an Anthropic call from this route.
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -64,7 +65,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const subscribed = await hasActiveSubscription(user.id);
+  const subscribed = await hasAiAccess(user.id);
   if (!subscribed) {
     return NextResponse.json({
       commonGround: chips,

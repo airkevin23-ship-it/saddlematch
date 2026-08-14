@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { hasActiveSubscription } from "@/lib/subscription";
+import { hasAiAccess } from "@/lib/subscription";
 import { getAnthropicClient, AI_MODEL } from "@/lib/anthropic";
 
 // Suggests a short, specific answer to a single Hinge-style prompt.
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const subscribed = await hasActiveSubscription(user.id);
+  const subscribed = await hasAiAccess(user.id);
   if (!subscribed) {
     return NextResponse.json(
       { error: "This is a Plus feature. Upgrade to use the AI prompt writer." },

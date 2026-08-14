@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { APP_NAME } from "@/lib/constants";
+import { APP_NAME, AI_FREE_PROMO_ENDS_AT } from "@/lib/constants";
 
 export const metadata = {
   title: `Terms of Service — ${APP_NAME}`,
@@ -56,6 +56,16 @@ export default function TermsPage() {
               or suggest an opening message. These are suggestions only — you
               decide what goes on your profile and what you send, and nothing
               is posted or sent without your action.
+            </p>
+            <p className="text-ink-soft mt-2">
+              As a launch promotion, these AI features are available to every
+              member at no extra cost through{" "}
+              {AI_FREE_PROMO_ENDS_AT.toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+                timeZone: "UTC",
+              })}. After that date they require a Plus subscription.
             </p>
           </section>
 

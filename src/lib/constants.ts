@@ -95,6 +95,27 @@ export const PLUS_FEATURES: string[] = [
   "More curated matches",
 ];
 
+// Launch promo: every AI feature (prompt answers, match insights,
+// icebreakers) is free for ALL members - Plus or not - until this date, then
+// reverts to Plus-only. This lives here (not in subscription.ts) because it's
+// pure date math with no Supabase dependency, so both the server-side gate
+// (lib/subscription.ts#hasAiAccess) and client-side button copy can import
+// the same source of truth without pulling server code into the browser
+// bundle. Three months from the Krush-inspired-profile launch, Aug 14 2026.
+export const AI_FREE_PROMO_ENDS_AT = new Date("2026-11-14T00:00:00Z");
+
+export function isAiPromoActive(): boolean {
+  return Date.now() < AI_FREE_PROMO_ENDS_AT.getTime();
+}
+
+// Short, always-in-sync-with-the-date label for AI button copy, e.g.
+// "free through Nov 14" - computed from AI_FREE_PROMO_ENDS_AT so nobody has
+// to remember to update a hardcoded date string in five different files.
+export const AI_FREE_PROMO_LABEL = `free through ${AI_FREE_PROMO_ENDS_AT.toLocaleDateString(
+  "en-US",
+  { month: "short", day: "numeric", timeZone: "UTC" }
+)}`;
+
 // Fallback so the Discover queue never looks empty while the real
 // member pool is thin. Flip to false before any App Store submission —
 // placeholder profiles in a review build are grounds for rejection
