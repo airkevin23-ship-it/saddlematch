@@ -68,7 +68,7 @@ export default function MatchesPage() {
 
   return (
     <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink">
-      <h1 className="text-xl font-extrabold mb-6 tracking-tight">Your matches</h1>
+      <h1 className="font-serif-heading text-xl font-bold mb-6 tracking-tight">Your matches</h1>
 
       {loading && <p className="text-ink-soft">Loading…</p>}
 
@@ -108,7 +108,7 @@ export default function MatchesPage() {
               ) : null}
             </div>
             <div>
-              <p className="font-bold flex items-center gap-1.5">
+              <p className="font-rounded font-bold flex items-center gap-1.5">
                 {m.otherProfile.display_name}, {m.otherProfile.age}
                 {m.otherProfile.is_demo && (
                   <span className="bg-ink text-cream text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full">

@@ -5,6 +5,7 @@ import { usePreLaunchStatus, PreLaunchHoldingRoom } from "@/components/pre-launc
 import type { PublicProfile } from "@/types/db";
 import { CITIES, SHOW_SAMPLE_PROFILES, isAiPromoActive, AI_FREE_PROMO_LABEL } from "@/lib/constants";
 import { ageOf, heightOf, orderedDetails } from "@/lib/profile-details";
+import DetailRowList from "@/components/detail-row-list";
 
 // Three sample profiles shown when the real queue is empty. They exist so
 // the app can be demonstrated before Austin has members. Every one is
@@ -491,7 +492,7 @@ export default function DiscoverPage() {
 
           <div className="p-5 sm:p-6">
             <div className="flex items-start justify-between gap-2">
-              <h2 className="text-2xl font-extrabold tracking-tight">
+              <h2 className="font-serif-heading text-2xl font-bold tracking-tight">
                 {current.display_name}
                 {ageOf(current.visible_details) ?? current.age
                   ? `, ${ageOf(current.visible_details) ?? current.age}`
@@ -528,21 +529,7 @@ export default function DiscoverPage() {
               <div className="rounded-xl bg-cream px-3 py-2.5"><span className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Based in</span><span className="font-semibold">{CITIES.find((city) => city.id === current.city_id)?.name ?? "Austin"}</span></div>
               <div className="rounded-xl bg-cream px-3 py-2.5"><span className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Looking for</span><span className="font-semibold">{RELATIONSHIP_INTENT_LABELS[current.relationship_intent] ?? "Open to exploring"}</span></div>
             </div>
-              {orderedDetails(current.visible_details).length > 0 && (
-                <div className="mt-4 rounded-2xl border border-line bg-cream/60 px-4">
-                  {orderedDetails(current.visible_details).map((row) => (
-                    <div
-                      key={row.key}
-                      className="flex items-baseline justify-between gap-3 border-b border-line py-2.5 last:border-0"
-                    >
-                      <span className="text-[11px] font-bold uppercase tracking-wide text-ink-faint">
-                        {row.label}
-                      </span>
-                      <span className="text-sm font-semibold text-ink">{row.value}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <DetailRowList rows={orderedDetails(current.visible_details)} />
             {current.interests?.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 {current.interests.map((interest) => (

@@ -333,7 +333,7 @@ export default function ProfilePage() {
     return (
       <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-8 pb-28 text-center text-ink">
         <span className="text-6xl" aria-hidden="true">🌵</span>
-        <h1 className="mt-6 text-3xl font-extrabold tracking-tight">You&rsquo;re ready.</h1>
+        <h1 className="mt-6 font-serif-heading text-3xl font-bold tracking-tight">You&rsquo;re ready.</h1>
         <p className="mt-4 text-base leading-relaxed text-ink-soft">
           We&rsquo;ll start looking for your first match.
         </p>
@@ -353,7 +353,7 @@ export default function ProfilePage() {
   return (
     <div className="max-w-md mx-auto px-6 pt-8 pb-40 bg-cream min-h-screen text-ink">
       <div className="mb-5 flex items-center justify-between">
-        <h1 className="text-xl font-extrabold tracking-tight">Your profile</h1>
+        <h1 className="font-serif-heading text-xl font-bold tracking-tight">Your profile</h1>
         <Link href="/app/discover" className="text-sm font-semibold text-ink-soft">Done</Link>
       </div>
 
@@ -478,6 +478,7 @@ export default function ProfilePage() {
 
 
               <DetailRowList
+                heading="About me"
                 rows={DETAIL_FIELDS
                   .filter(([key]) => (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet")
                   .map(([key, label]) => ({ key, label, value: details[key] }))}

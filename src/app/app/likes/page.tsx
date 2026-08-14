@@ -137,7 +137,7 @@ export default function LikesPage() {
 
   return (
     <div className="max-w-md mx-auto px-6 py-10 bg-cream min-h-screen text-ink">
-      <h1 className="text-xl font-extrabold mb-6 tracking-tight">Likes you</h1>
+      <h1 className="font-serif-heading text-xl font-bold mb-6 tracking-tight">Likes you</h1>
 
       {toast && (
         <div className="mb-4 rounded-xl bg-brand-soft border border-brand/30 text-brand-dark text-sm font-semibold px-4 py-3 text-center">
@@ -152,7 +152,7 @@ export default function LikesPage() {
           <div className="grid h-24 w-24 place-items-center rounded-full bg-brand-soft text-brand">
             <LassoHeartIcon className="h-12 w-12" />
           </div>
-          <h2 className="mt-6 font-display text-2xl font-bold leading-snug text-ink">
+          <h2 className="mt-6 font-serif-heading text-2xl font-bold leading-snug text-ink">
             No likes yet — we&rsquo;re here to help
           </h2>
           <p className="mt-2 max-w-xs text-sm leading-relaxed text-ink-soft">
@@ -194,7 +194,7 @@ export default function LikesPage() {
               </div>
             ))}
           </div>
-          <h2 className="mt-6 font-display text-2xl font-bold leading-snug text-ink">
+          <h2 className="mt-6 font-serif-heading text-2xl font-bold leading-snug text-ink">
             {likes.length} {likes.length === 1 ? "person likes" : "people like"} you
           </h2>
           <p className="mt-2 max-w-xs text-sm leading-relaxed text-ink-soft">
@@ -227,7 +227,7 @@ export default function LikesPage() {
                 ) : null}
               </div>
               <div className="p-2.5">
-                <p className="text-sm font-bold flex items-center gap-1.5">
+                <p className="font-rounded text-sm font-bold flex items-center gap-1.5">
                   {row.profile.display_name}, {row.profile.age}
                   {row.profile.is_demo && (
                     <span className="bg-ink text-cream text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full">
