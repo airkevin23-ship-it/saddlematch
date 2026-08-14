@@ -14,7 +14,7 @@ const LINKS = [
   { href: "/guidelines", label: "Community Guidelines" },
   { href: "/acceptable-use", label: "Acceptable Use Policy" },
   { href: "/safety", label: "Safety Policy" },
-  { href: "mailto:kswwllc@gmail.com", label: "Contact" },
+  { href: "mailto:contact@wwllcs.com", label: "Contact" },
 ];
 
 export default function SiteFooter({ inApp = false }: { inApp?: boolean }) {
@@ -46,7 +46,9 @@ export default function SiteFooter({ inApp = false }: { inApp?: boolean }) {
         ))}
       </nav>
       <p className="mt-5 text-xs text-ink-faint">
-        {APP_NAME} is for adults 18 and over. &copy; {new Date().getFullYear()} {APP_NAME}.
+        {APP_NAME} is for adults 18 and over. A W&amp;W Trading LLC company.
+        <br className="hidden sm:inline" />
+        &copy; {new Date().getFullYear()} W&amp;W Trading LLC. {APP_NAME} is a trademark of W&amp;W Trading LLC.
       </p>
     </footer>
   );

@@ -131,7 +131,7 @@ export default function SettingsPage() {
             </Link>
           ))}
           <a
-            href="mailto:kswwllc@gmail.com"
+            href="mailto:contact@wwllcs.com"
             className="text-xs font-semibold text-ink-soft underline underline-offset-4 transition-colors hover:text-ink"
           >
             Contact

@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
 
-// TODO Kevin: replace these two with your real legal entity and contact address
-// before submitting to the App Store or to Stripe for review.
-const LEGAL_ENTITY = "SaddleMatch (sole proprietorship), Austin, Texas, USA";
-const CONTACT_EMAIL = "kswwllc@gmail.com";
+const LEGAL_ENTITY = "W&W Trading LLC, Austin, Texas, USA";
+const CONTACT_EMAIL = "contact@wwllcs.com";
 
 export const metadata = {
   title: `Privacy Policy — ${APP_NAME}`,
