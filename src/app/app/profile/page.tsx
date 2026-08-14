@@ -9,6 +9,7 @@ import NeighbourhoodSelect from "@/components/neighbourhood-select";
 import VoicePromptRecorder from "@/components/voice-prompt-recorder";
 import SaddleUpPicker from "@/components/saddle-up-picker";
 import { spotLabel } from "@/lib/saddle-up";
+import DetailRowList from "@/components/detail-row-list";
 import type { Profile, Prompt, RelationshipIntent } from "@/types/db";
 import {
   ALWAYS_VISIBLE,
@@ -476,16 +477,11 @@ export default function ProfilePage() {
               )}
 
 
-              {DETAIL_FIELDS.filter(([key]) => (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").length > 0 && (
-                <div className="mt-5 rounded-2xl border border-line bg-cream px-4">
-                  {DETAIL_FIELDS.filter(([key]) => (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet").map(([key, label]) => (
-                    <div key={key} className="flex items-baseline justify-between gap-3 border-b border-line py-2.5 last:border-0">
-                      <span className="text-[11px] font-bold uppercase tracking-wide text-ink-faint">{label}</span>
-                      <span className="text-sm font-semibold text-ink">{details[key]}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <DetailRowList
+                rows={DETAIL_FIELDS
+                  .filter(([key]) => (ALWAYS_VISIBLE.includes(key) || visibility[key]) && details[key] && details[key] !== "Not answered yet")
+                  .map(([key, label]) => ({ key, label, value: details[key] }))}
+              />
           {/* Photos left over after interleaving, then the intro video last.
               The video is the closer, not the opener. */}
           {(profile.photo_urls ?? []).slice(answeredPrompts.length + 1).length > 0 && (

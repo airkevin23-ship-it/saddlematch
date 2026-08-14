@@ -16,6 +16,15 @@
      utility is used above the fold. */
   --font-display: var(--font-oswald), "Arial Narrow", Impact, sans-serif;
 
+  /* Editorial serif for the "About me" detail-row section heading on the
+     profile view — see layout.tsx for why this is kept separate from
+     --font-display. */
+  --font-serif-heading: var(--font-fraunces), Georgia, "Times New Roman", serif;
+
+  /* Bold rounded sans for detail-row values, paired with the small icons
+     in front of each row. */
+  --font-rounded: var(--font-jakarta), var(--font-sans), -apple-system, sans-serif;
+
   /* SaddleMatch brand palette — burnt orange & charcoal, Western/Austin
      inspired. Replaces an earlier pink palette that read as a generic
      dating-app color rather than a Western one. */
@@ -45,6 +54,18 @@ input,
 select,
 textarea {
   touch-action: manipulation;
+}
+
+/* Krush-inspired detail-row typography: a bold serif for the section
+   heading, a bold rounded sans for the values next to each small icon.
+   Scoped to utility classes rather than applied globally so the rest of
+   the app's type scale is untouched. */
+.font-serif-heading {
+  font-family: var(--font-serif-heading);
+}
+
+.font-rounded {
+  font-family: var(--font-rounded);
 }
 
 /* ---------------------------------------------------------------

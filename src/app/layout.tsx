@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Oswald } from "next/font/google";
+import { Oswald, Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { APP_NAME, TAGLINE } from "@/lib/constants";
 import SiteFooter from "@/components/site-footer";
@@ -56,11 +56,36 @@ const display = Oswald({
   variable: "--font-oswald",
 });
 
+// A bold editorial serif, used narrowly for the "About me" detail-list
+// heading on the profile view — the same role a bold serif plays over
+// attribute rows in reference apps like Krush. Kept separate from the
+// Oswald display face above (which stays on hero/nav headlines) so this
+// is additive rather than a wholesale typography swap.
+const serifHeading = Fraunces({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  style: ["normal"],
+  display: "swap",
+  variable: "--font-fraunces",
+});
+
+// A bold, slightly rounded sans for the detail-row values themselves
+// (height, ethnicity, work, etc.) — heavier and friendlier than the
+// default body sans, matching the weight Krush uses for its attribute
+// text so the small icon + bold word pairing actually reads as a system.
+const roundedSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  style: ["normal"],
+  display: "swap",
+  variable: "--font-jakarta",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={display.variable}>
+    <html lang="en" className={`${display.variable} ${serifHeading.variable} ${roundedSans.variable}`}>
       {/*
         The footer lives here rather than on each page so the policy links are
         genuinely reachable everywhere. Stripe and App Store review both check
