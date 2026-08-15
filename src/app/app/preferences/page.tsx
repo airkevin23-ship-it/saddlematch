@@ -97,7 +97,16 @@ const defaults: Details = Object.fromEntries(
 
 const CORE_KEYS: DetailKey[] = ["relationshipType", "children", "familyPlans"];
 const LIFESTYLE_KEYS: DetailKey[] = ["drinking", "smoking", "marijuana", "religion", "politics", "education", "languages"];
-const OPTIONAL_KEYS: DetailKey[] = ["height", "ethnicity"];
+const OPTIONAL_KEYS: DetailKey[] = ["height"];
+// Ethnicity is the one preference where "pick exactly one" doesn't reflect
+// how people actually feel about it - someone open to White or Hispanic
+// matches shouldn't have to throw away the filter entirely and see everyone.
+// It's rendered as its own toggle-chip block (same pattern as gender/areas
+// below) instead of going through the shared single-select PreferenceRow.
+// The chosen values are still stored as one comma-joined string in
+// details.ethnicity - preference_details is a free-form string map with no
+// per-key schema, and nothing downstream reads ethnicity yet, so no
+// migration or type change is needed to support multiple values here.
 
 function PreferenceRow({ icon, label, value, options, openLabel, onChange }: { icon: string; label: string; value: string; options: readonly string[]; openLabel?: string; onChange: (value: string) => void }) {
   return (
@@ -182,6 +191,16 @@ export default function PreferencesPage() {
   function changeDetail(key: DetailKey, value: string) {
     setDetails((current) => ({ ...current, [key]: value }));
     setDirty(true);
+  }
+
+  function toggleEthnicity(option: string) {
+    if (option === "Open to all") {
+      changeDetail("ethnicity", "Open to all");
+      return;
+    }
+    const current = details.ethnicity && details.ethnicity !== "Open to all" ? details.ethnicity.split(", ") : [];
+    const next = current.includes(option) ? current.filter((item) => item !== option) : [...current, option];
+    changeDetail("ethnicity", next.length > 0 ? next.join(", ") : "Open to all");
   }
 
   async function save() {
@@ -283,6 +302,21 @@ export default function PreferencesPage() {
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-ink-faint">Optional</p>
           <div className="mt-2 rounded-2xl border border-line bg-card px-4">
             {OPTIONAL_KEYS.map((key) => <PreferenceRow key={key} icon={DETAIL_ICONS[key]} label={DETAIL_LABELS[key]} value={details[key]} options={OPTIONS[key]} openLabel={OPEN_LABELS[key]} onChange={(value) => changeDetail(key, value)} />)}
+            <div className="border-b border-line py-4 last:border-b-0">
+              <p className="flex items-center gap-2 font-bold"><span aria-hidden="true">{DETAIL_ICONS.ethnicity}</span>{DETAIL_LABELS.ethnicity}</p>
+              <p className="mt-1 text-xs leading-relaxed text-ink-soft">Select every ethnicity you&apos;re open to matching with.</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {OPTIONS.ethnicity.map((option) => {
+                  const ethnicityValues = details.ethnicity && details.ethnicity !== "Open to all" ? details.ethnicity.split(", ") : [];
+                  const active = option === "Open to all" ? ethnicityValues.length === 0 : ethnicityValues.includes(option);
+                  return (
+                    <button key={option} type="button" onClick={() => toggleEthnicity(option)} className={`min-h-10 rounded-full border px-3 text-sm font-semibold ${active ? "border-brand bg-brand text-white" : "border-line text-ink-soft"}`}>
+                      {option === "Open to all" ? OPEN_LABELS.ethnicity : option}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </section>
         <p className="mt-6 text-center text-sm leading-relaxed text-ink-soft">These preferences help us curate your daily match. You can change them anytime.</p>
