@@ -9,6 +9,7 @@ import { APP_NAME } from "@/lib/constants";
 // footer is the single place they live, along with a working contact address.
 
 const LINKS = [
+  { href: "/company", label: "Company" },
   { href: "/terms", label: "Terms of Service" },
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/guidelines", label: "Community Guidelines" },
